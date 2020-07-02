@@ -2,6 +2,8 @@ package uk.ac.manchester.spirvtool.runner;
 
 import uk.ac.manchester.spirvtool.lib.Disassembler;
 
+import java.io.FileNotFoundException;
+
 public class SPIRVTool {
 	public static void main(String[] args) {
 
@@ -11,7 +13,13 @@ public class SPIRVTool {
 			System.exit(1);
 		}
 
-		Disassembler disasm = new Disassembler(args[0]);
+		SPVFileReader wordStream = null;
+		try {
+			wordStream = new SPVFileReader(args[0]);
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+		Disassembler disasm = new Disassembler(wordStream);
 
 		System.out.println(disasm);
 	}

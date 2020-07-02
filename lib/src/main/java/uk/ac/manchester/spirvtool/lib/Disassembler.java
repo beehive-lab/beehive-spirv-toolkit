@@ -1,14 +1,14 @@
 package uk.ac.manchester.spirvtool.lib;
 
 public class Disassembler {
-	private String filename;
+	private BinaryWordStream wordStream;
 
-	public Disassembler(String filename) {
-		this.filename = filename;
+	public Disassembler(BinaryWordStream wordStream) {
+		this.wordStream = wordStream;
 	}
 
 	@Override
 	public String toString() {
-		return "Disassembler - " + filename;
+		return "SPIR-V Disassembler";
 	}
 }

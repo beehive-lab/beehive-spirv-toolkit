@@ -1,16 +1,17 @@
 package uk.ac.manchester.spirvtool.lib;
 
 import org.junit.Test;
-import static org.junit.Assert.assertEquals;
+import org.mockito.Mockito;
 
-import uk.ac.manchester.spirvtool.lib.Disassembler;
+import static org.junit.Assert.assertEquals;
 
 public class DisassemblerTest {
 
 	@Test
 	public void testToString() {
-		Disassembler sut = new Disassembler("test");
+		BinaryWordStream wordStream = Mockito.mock(BinaryWordStream.class);
+		Disassembler sut = new Disassembler(wordStream);
 
-		assertEquals("Disassembler - test", sut.toString());
+		assertEquals("SPIR-V Disassembler", sut.toString());
 	}
 }
