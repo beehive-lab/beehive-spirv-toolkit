@@ -1,11 +1,19 @@
 package uk.ac.manchester.spirvtool.lib;
 
+import uk.ac.manchester.spirvtool.lib.grammar.SPIRVGrammar;
+import uk.ac.manchester.spirvtool.lib.grammar.SPIRVSpecification;
+
+import java.io.IOException;
+
 public class Disassembler {
 	private final BinaryWordStream wordStream;
 	private final SPIRVHeader header;
 
-	public Disassembler(BinaryWordStream wordStream) throws InvalidBinarySPIRVInputException {
+	public Disassembler(BinaryWordStream wordStream) throws InvalidBinarySPIRVInputException, IOException {
 		this.wordStream = wordStream;
+
+		SPIRVGrammar grammar = SPIRVSpecification.buildSPIRVGrammar();
+		System.out.println("grammar: " + grammar.magicNumber);
 
 		int magicNumber = wordStream.getNextWord();
 		if (magicNumber != 0x07230203) {

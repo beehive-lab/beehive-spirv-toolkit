@@ -37,6 +37,8 @@ public class SPIRVTool {
 				System.err.println("File " + new File(state.fileName).getName() + " is not a valid SPIR-V binary module");
 			}
 			System.exit(1);
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 
 		System.out.println(disasm);
