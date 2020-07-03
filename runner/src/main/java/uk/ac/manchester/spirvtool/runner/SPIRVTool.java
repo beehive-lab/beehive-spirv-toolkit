@@ -2,22 +2,45 @@ package uk.ac.manchester.spirvtool.runner;
 
 import org.apache.commons.cli.*;
 import uk.ac.manchester.spirvtool.lib.Disassembler;
+import uk.ac.manchester.spirvtool.lib.InvalidBinarySPIRVInputException;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 
 public class SPIRVTool {
+
+	public static Configuration state;
+
 	public static void main(String[] args) {
-		Configuration config = getArguments(args);
+		state = getArguments(args);
 
 		SPVFileReader wordStream = null;
 		try {
-			wordStream = new SPVFileReader(config.fileName);
+			wordStream = new SPVFileReader(state.fileName);
 		} catch (FileNotFoundException e) {
-			e.printStackTrace();
+			if (state.debug) {
+			    e.printStackTrace();
+            }
+			else {
+			    System.err.println("Could not find file: " + state.fileName);
+            }
+			System.exit(1);
 		}
-		Disassembler disasm = new Disassembler(wordStream);
+		Disassembler disasm = null;
+		try {
+			disasm = new Disassembler(wordStream);
+		} catch (InvalidBinarySPIRVInputException e) {
+			if (state.debug) {
+				e.printStackTrace();
+			}
+			else {
+				System.err.println("File " + new File(state.fileName).getName() + " is not a valid SPIR-V binary module");
+			}
+			System.exit(1);
+		}
 
 		System.out.println(disasm);
+		System.out.println(disasm.getHeader());
 	}
 
 	private static Configuration getArguments(String[] args) {
@@ -33,7 +56,8 @@ public class SPIRVTool {
 			handleError(options);
 		}
 
-		if (cmd == null || cmd.getArgs().length != 1 || cmd.hasOption('h')) {
+		assert cmd != null;
+		if (cmd.getArgs().length != 1 || cmd.hasOption('h')) {
 			handleError(options);
 		}
 

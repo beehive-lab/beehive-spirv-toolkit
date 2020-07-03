@@ -8,10 +8,12 @@ import static org.junit.Assert.assertEquals;
 public class DisassemblerTest {
 
 	@Test
-	public void testToString() {
+	public void testMagicNumberInHeader() throws InvalidBinarySPIRVInputException {
 		BinaryWordStream wordStream = Mockito.mock(BinaryWordStream.class);
-		Disassembler sut = new Disassembler(wordStream);
+		Mockito.when(wordStream.getNextWord()).thenReturn(0x07230203).thenReturn(0x03022307);
 
-		assertEquals("SPIR-V Disassembler", sut.toString());
+		Disassembler littleE = new Disassembler(wordStream);
+
+		assertEquals(littleE.getHeader().magicNumber, 0x07230203);
 	}
 }
