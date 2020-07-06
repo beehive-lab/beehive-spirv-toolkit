@@ -42,10 +42,19 @@ public class Disassembler {
 	}
 
 	public void disassemble() {
-		output.println("Instructions: " + grammar.instructions.length);
-		for (int i = 0; i <grammar.instructions.length; i++) {
-			SPIRVInstruction current = grammar.instructions[i];
-			output.println(current.name + ": " + current.opCode);
+		while (true) {
+			int currentWord = wordStream.getNextWord();
+			if (currentWord == -1) return;
+
+			int opcode = currentWord & 0xFFFF;
+			int wordcount = currentWord >> 16;
+			SPIRVInstruction currentInstruction = grammar.getInstructionByOpCode(opcode);
+			output.print(currentInstruction + " -");
+
+			for (int i = 0; i < wordcount - 1; i++) {
+				output.print(" " + wordStream.getNextWord());
+			}
+			output.println();
 		}
 	}
 
