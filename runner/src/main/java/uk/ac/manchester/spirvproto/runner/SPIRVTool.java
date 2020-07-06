@@ -1,8 +1,9 @@
-package uk.ac.manchester.spirvtool.runner;
+package uk.ac.manchester.spirvproto.runner;
 
 import org.apache.commons.cli.*;
-import uk.ac.manchester.spirvtool.lib.Disassembler;
-import uk.ac.manchester.spirvtool.lib.InvalidBinarySPIRVInputException;
+import uk.ac.manchester.spirvproto.lib.Disassembler;
+import uk.ac.manchester.spirvproto.lib.InvalidBinarySPIRVInputException;
+import uk.ac.manchester.spirvproto.lib.SPVFileReader;
 
 import java.io.File;
 import java.io.FileNotFoundException;

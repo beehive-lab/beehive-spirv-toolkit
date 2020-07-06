@@ -1,4 +1,4 @@
-package uk.ac.manchester.spirvtool.lib;
+package uk.ac.manchester.spirvproto.lib;
 
 public class SPIRVHeader {
     public final int magicNumber;

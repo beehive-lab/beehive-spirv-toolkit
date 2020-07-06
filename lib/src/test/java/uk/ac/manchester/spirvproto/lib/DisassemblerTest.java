@@ -1,4 +1,4 @@
-package uk.ac.manchester.spirvtool.lib;
+package uk.ac.manchester.spirvproto.lib;
 
 import org.junit.Test;
 import org.mockito.Mockito;

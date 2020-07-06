@@ -1,8 +1,7 @@
-package uk.ac.manchester.spirvtool.lib.grammar;
+package uk.ac.manchester.spirvproto.lib.grammar;
 
 import org.codehaus.jackson.map.ObjectMapper;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 

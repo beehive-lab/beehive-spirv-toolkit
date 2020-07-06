@@ -1,7 +1,8 @@
-package uk.ac.manchester.spirvtool.lib;
+package uk.ac.manchester.spirvproto.lib;
 
-import uk.ac.manchester.spirvtool.lib.grammar.SPIRVGrammar;
-import uk.ac.manchester.spirvtool.lib.grammar.SPIRVSpecification;
+import uk.ac.manchester.spirvproto.lib.grammar.SPIRVGrammar;
+import uk.ac.manchester.spirvproto.lib.grammar.SPIRVInstruction;
+import uk.ac.manchester.spirvproto.lib.grammar.SPIRVSpecification;
 
 import java.io.IOException;
 

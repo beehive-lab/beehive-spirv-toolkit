@@ -1,4 +1,4 @@
-package uk.ac.manchester.spirvtool.runner;
+package uk.ac.manchester.spirvproto.runner;
 
 public class Configuration {
     public final boolean debug;
