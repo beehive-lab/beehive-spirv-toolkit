@@ -17,29 +17,28 @@ public class SPVByteStreamReader implements BinaryWordStream {
     public int getNextWord() {
         byte[] bytes = new byte[4];
         try {
-            input.read(bytes);
+            int status = input.read(bytes);
+            if (status == -1) {
+                return -1;
+            }
         } catch (IOException e) {
             e.printStackTrace();
             return -1;
         }
-        int word = 0;
+        int word;
         if (littleEndian) {
-            word |= bytes[3];
-            word <<= 8;
-            word |= bytes[2];
-            word <<= 8;
-            word |= bytes[1];
-            word <<= 8;
-            word |= bytes[0];
+            word =
+                    ((0xFF & bytes[3]) << 24) |
+                    ((0xFF & bytes[2]) << 16) |
+                    ((0xFF & bytes[1]) << 8) |
+                    (0xFF & bytes[0]);
         }
         else {
-            word |= bytes[0];
-            word <<= 8;
-            word |= bytes[1];
-            word <<= 8;
-            word |= bytes[2];
-            word <<= 8;
-            word |= bytes[3];
+            word =
+                    ((0xFF & bytes[0]) << 24) |
+                    ((0xFF & bytes[1]) << 16) |
+                    ((0xFF & bytes[2]) << 8) |
+                    (0xFF & bytes[3]);
         }
         return word;
     }
