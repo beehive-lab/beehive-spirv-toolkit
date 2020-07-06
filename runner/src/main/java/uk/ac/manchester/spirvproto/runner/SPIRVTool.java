@@ -29,7 +29,7 @@ public class SPIRVTool {
 		}
 		Disassembler disasm = null;
 		try {
-			disasm = new Disassembler(wordStream);
+			disasm = new Disassembler(wordStream, System.out);
 		} catch (InvalidBinarySPIRVInputException e) {
 			if (state.debug) {
 				e.printStackTrace();
@@ -44,6 +44,7 @@ public class SPIRVTool {
 
 		System.out.println(disasm);
 		System.out.println(disasm.getHeader());
+		disasm.disassemble();
 	}
 
 	private static Configuration getArguments(String[] args) {

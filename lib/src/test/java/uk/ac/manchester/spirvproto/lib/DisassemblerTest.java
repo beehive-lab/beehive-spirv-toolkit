@@ -4,6 +4,7 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import java.io.IOException;
+import java.io.PrintStream;
 
 import static org.junit.Assert.assertEquals;
 
@@ -14,7 +15,7 @@ public class DisassemblerTest {
 		BinaryWordStream wordStream = Mockito.mock(BinaryWordStream.class);
 		Mockito.when(wordStream.getNextWord()).thenReturn(0x07230203).thenReturn(0x03022307);
 
-		Disassembler littleE = new Disassembler(wordStream);
+		Disassembler littleE = new Disassembler(wordStream, new PrintStream(System.out));
 
 		assertEquals(littleE.getHeader().magicNumber, 0x07230203);
 	}

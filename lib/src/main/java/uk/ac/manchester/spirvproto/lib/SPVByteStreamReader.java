@@ -1,26 +1,23 @@
-package uk.ac.manchester.spirvtool.runner;
+package uk.ac.manchester.spirvproto.lib;
 
-import uk.ac.manchester.spirvtool.lib.BinaryWordStream;
+import java.io.IOException;
+import java.io.InputStream;
 
-import java.io.*;
+public class SPVByteStreamReader implements BinaryWordStream {
 
-public class SPVFileReader implements BinaryWordStream {
-
-    private final BufferedInputStream inputStream;
+    private final InputStream input;
     private boolean littleEndian;
 
-    public SPVFileReader(String filename) throws FileNotFoundException {
-        inputStream = new BufferedInputStream(new FileInputStream(new File(filename)));
+    public SPVByteStreamReader(InputStream input) {
+        this.input = input;
         littleEndian = true;
     }
-
-
 
     @Override
     public int getNextWord() {
         byte[] bytes = new byte[4];
         try {
-            inputStream.read(bytes);
+            input.read(bytes);
         } catch (IOException e) {
             e.printStackTrace();
             return -1;
@@ -49,7 +46,6 @@ public class SPVFileReader implements BinaryWordStream {
 
     @Override
     public void changeEndianness() {
-        littleEndian = false;
+        littleEndian = !littleEndian;
     }
-
 }

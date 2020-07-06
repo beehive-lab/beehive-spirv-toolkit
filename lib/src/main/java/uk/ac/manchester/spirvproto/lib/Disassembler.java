@@ -5,16 +5,19 @@ import uk.ac.manchester.spirvproto.lib.grammar.SPIRVInstruction;
 import uk.ac.manchester.spirvproto.lib.grammar.SPIRVSpecification;
 
 import java.io.IOException;
+import java.io.PrintStream;
 
 public class Disassembler {
 	private final BinaryWordStream wordStream;
+	private final PrintStream output;
 	private final SPIRVHeader header;
+	private final SPIRVGrammar grammar;
 
-	public Disassembler(BinaryWordStream wordStream) throws InvalidBinarySPIRVInputException, IOException {
+	public Disassembler(BinaryWordStream wordStream, PrintStream output) throws InvalidBinarySPIRVInputException, IOException {
 		this.wordStream = wordStream;
+		this.output = output;
 
-		SPIRVGrammar grammar = SPIRVSpecification.buildSPIRVGrammar();
-		System.out.println("grammar: " + grammar.magicNumber);
+		grammar = SPIRVSpecification.buildSPIRVGrammar();
 
 		int magicNumber = wordStream.getNextWord();
 		if (magicNumber != 0x07230203) {
@@ -36,6 +39,14 @@ public class Disassembler {
 
 	public SPIRVHeader getHeader() {
 		return header;
+	}
+
+	public void disassemble() {
+		output.println("Instructions: " + grammar.instructions.length);
+		for (int i = 0; i <grammar.instructions.length; i++) {
+			SPIRVInstruction current = grammar.instructions[i];
+			output.println(current.name + ": " + current.opCode);
+		}
 	}
 
 	@Override
