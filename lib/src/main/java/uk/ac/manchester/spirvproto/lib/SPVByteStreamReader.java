@@ -14,17 +14,11 @@ public class SPVByteStreamReader implements BinaryWordStream {
     }
 
     @Override
-    public int getNextWord() {
+    public int getNextWord() throws IOException {
         byte[] bytes = new byte[4];
-        try {
-            int status = input.read(bytes);
-            if (status == -1) {
-                return -1;
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-            return -1;
-        }
+        int status = input.read(bytes);
+        if (status == -1) return -1;
+
         int word;
         if (littleEndian) {
             word =
@@ -46,5 +40,30 @@ public class SPVByteStreamReader implements BinaryWordStream {
     @Override
     public void changeEndianness() {
         littleEndian = !littleEndian;
+    }
+
+    @Override
+    public byte[] getNextWordInBytes() throws IOException {
+        return getNextWordInBytes(false);
+    }
+
+    @Override
+    public byte[] getNextWordInBytes(boolean reverse) throws IOException {
+        byte[] bytes = new byte[4];
+        int status = input.read(bytes);
+        if (status == -1) return null;
+
+        // Reorder bytes if on a little endian system
+        if ((littleEndian && !reverse) || (!littleEndian && reverse)) {
+            byte[] reversed = new byte[4];
+            reversed[0] = bytes[3];
+            reversed[1] = bytes[2];
+            reversed[2] = bytes[1];
+            reversed[3] = bytes[0];
+
+            return reversed;
+        }
+
+        return bytes;
     }
 }

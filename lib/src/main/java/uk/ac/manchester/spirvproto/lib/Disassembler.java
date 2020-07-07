@@ -1,8 +1,6 @@
 package uk.ac.manchester.spirvproto.lib;
 
-import uk.ac.manchester.spirvproto.lib.grammar.SPIRVGrammar;
-import uk.ac.manchester.spirvproto.lib.grammar.SPIRVInstruction;
-import uk.ac.manchester.spirvproto.lib.grammar.SPIRVSpecification;
+import uk.ac.manchester.spirvproto.lib.grammar.*;
 
 import java.io.IOException;
 import java.io.PrintStream;
@@ -41,19 +39,36 @@ public class Disassembler {
 		return header;
 	}
 
-	public void disassemble() {
-		while (true) {
-			int currentWord = wordStream.getNextWord();
-			if (currentWord == -1) return;
-
+	public void disassemble() throws IOException {
+		int currentWord;
+		while ((currentWord = wordStream.getNextWord()) != -1) {
 			int opcode = currentWord & 0xFFFF;
 			int wordcount = currentWord >> 16;
 			SPIRVInstruction currentInstruction = grammar.getInstructionByOpCode(opcode);
-			output.print(currentInstruction + " -");
+            int operandsLength = (currentInstruction.operands != null) ? currentInstruction.operands.length : 0;
+            output.print(currentInstruction + "(" + wordcount + ")" + "(" + operandsLength + ")" + " -");
 
-			for (int i = 0; i < wordcount - 1; i++) {
-				output.print(" " + wordStream.getNextWord());
+			int currentWordCount = 1;
+			for (int i = 0; i < operandsLength && currentWordCount < wordcount; i++) {
+			    SPIRVOperand currentOperand = currentInstruction.operands[i];
+
+                if (currentOperand.kind.equals("LiteralString")) {
+					output.print(" \"");
+					byte[] word;
+					do {
+						word = wordStream.getNextWordInBytes(true); currentWordCount++;
+						output.print(new String(word));
+						//output.print(Arrays.toString(word) + " ");
+					} while (word[word.length - 1] != 0);
+					output.print("\" ");
+				}
+                else {
+					output.print(" " + wordStream.getNextWord()); currentWordCount++;
+				}
 			}
+            for (int i = 0; i < wordcount - currentWordCount; i++) {
+                wordStream.getNextWord();
+            }
 			output.println();
 		}
 	}
