@@ -13,6 +13,9 @@ public class SPIRVGrammar {
     @JsonProperty("instructions")
     public SPIRVInstruction[] instructions;
 
+    @JsonProperty("operand_kinds")
+    public SPIRVOperandKind[] operandKinds;
+
     public SPIRVGrammar() {}
 
     public SPIRVInstruction getInstructionByOpCode(int opcode) {
@@ -23,5 +26,12 @@ public class SPIRVGrammar {
         //System.out.println("opcode: " + opcode + " index: " + index);
 
         return instructions[index];
+    }
+
+    public SPIRVOperandKind getOperandKind(String kind) {
+        for (SPIRVOperandKind operandKind : operandKinds) {
+            if (operandKind.kind.equals(kind)) return operandKind;
+        }
+        return null;
     }
 }
