@@ -4,6 +4,8 @@ import uk.ac.manchester.spirvproto.lib.grammar.*;
 
 import java.io.IOException;
 import java.io.PrintStream;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Disassembler {
 	private final BinaryWordStream wordStream;
@@ -41,45 +43,75 @@ public class Disassembler {
 
 	public void disassemble() throws IOException {
 		int currentWord;
-		while ((currentWord = wordStream.getNextWord()) != -1) {
-			int opcode = currentWord & 0xFFFF;
-			int wordcount = currentWord >> 16;
-			SPIRVInstruction currentInstruction = grammar.getInstructionByOpCode(opcode);
-            int operandsLength = (currentInstruction.operands != null) ? currentInstruction.operands.length : 0;
-            output.print(currentInstruction + "(" + wordcount + ")" + "(" + operandsLength + ")" + " -");
+		int opcode;
+		int wordcount;
+		int operandsLength;
+		int currentWordCount;
 
-			int currentWordCount = 1;
+		int result;
+		String op;
+		List<String> operands;
+
+		SPIRVInstruction currentInstruction;
+
+		while ((currentWord = wordStream.getNextWord()) != -1) {
+			opcode = currentWord & 0xFFFF;
+			wordcount = currentWord >> 16;
+			currentInstruction = grammar.getInstructionByOpCode(opcode);
+            operandsLength = (currentInstruction.operands != null) ? currentInstruction.operands.length : 0;
+            op = currentInstruction.toString();
+
+            result = -1;
+			currentWordCount = 1;
+			operands = new ArrayList<>();
 			for (int i = 0; i < operandsLength && currentWordCount < wordcount; i++) {
 			    SPIRVOperand currentOperand = currentInstruction.operands[i];
 			    SPIRVOperandKind currentOperandKind = grammar.getOperandKind(currentOperand.kind);
                 String operandCategory = grammar.getOperandKind(currentOperand.kind).category;
 
 				if (currentOperand.kind.equals("LiteralString")) {
-					output.print(" \"");
+					StringBuilder sb = new StringBuilder(" \"");
 					byte[] word;
 					do {
 						word = wordStream.getNextWordInBytes(true); currentWordCount++;
-						output.print(new String(word));
-						//output.print(Arrays.toString(word) + " ");
+						sb.append(new String(word));
 					} while (word[word.length - 1] != 0);
-					output.print("\" ");
+					sb.append("\" ");
+					operands.add(sb.toString());
+				}
+				else if (currentOperand.kind.startsWith("Id")) {
+					if (currentOperand.kind.equals("IdResult")) {
+						result = wordStream.getNextWord();
+					}
+					else {
+						operands.add(" %" + wordStream.getNextWord());
+					}
+					currentWordCount++;
 				}
 				else if (operandCategory.equals("ValueEnum")) {
                     SPIRVEnumerant enumerant = currentOperandKind.getEnumerant(wordStream.getNextWord()); currentWordCount++;
-                    output.print(" " + enumerant.name);
+                    operands.add(" " + enumerant.name);
                     if (enumerant.parameters != null) {
                         for (int j = 0; j < enumerant.parameters.length; j++) {
-                            output.print(" " + wordStream.getNextWord()); currentWordCount++;
+                            operands.add(" " + wordStream.getNextWord()); currentWordCount++;
                         }
                     }
                 }
                 else {
-					output.print(" " + wordStream.getNextWord()); currentWordCount++;
+					operands.add(" " + wordStream.getNextWord()); currentWordCount++;
 				}
 			}
             for (int i = 0; i < wordcount - currentWordCount; i++) {
-                wordStream.getNextWord();
+                operands.add(" 0x" + Integer.toHexString(wordStream.getNextWord()) + " ");
             }
+
+			if (result >= 0) {
+				output.print("%" + result + " = ");
+			}
+			output.print(op);
+			for (String operand : operands) {
+				output.print(operand);
+			}
 			output.println();
 		}
 	}
