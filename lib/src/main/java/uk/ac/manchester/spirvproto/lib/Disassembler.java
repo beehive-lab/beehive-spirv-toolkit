@@ -17,7 +17,6 @@ public class Disassembler {
 		this.wordStream = wordStream;
 		this.output = output;
 
-		grammar = SPIRVSpecification.buildSPIRVGrammar();
 
 		int magicNumber = wordStream.getNextWord();
 		if (magicNumber != 0x07230203) {
@@ -35,6 +34,8 @@ public class Disassembler {
 				wordStream.getNextWord(),
 				wordStream.getNextWord(),
 				wordStream.getNextWord());
+
+		grammar = SPIRVSpecification.buildSPIRVGrammar(header.majorVersion, header.minorVersion);
 	}
 
 	public SPIRVHeader getHeader() {

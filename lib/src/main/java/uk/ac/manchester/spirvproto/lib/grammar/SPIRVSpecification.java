@@ -7,10 +7,11 @@ import java.net.URL;
 
 public class SPIRVSpecification {
 
-    public static SPIRVGrammar buildSPIRVGrammar() throws IOException {
+    public static SPIRVGrammar buildSPIRVGrammar(int majorVersion, int minorVersion) throws IOException {
         ObjectMapper mapper = new ObjectMapper();
 
-        URL resource = SPIRVSpecification.class.getClassLoader().getResource("resources/spirv.core.grammar.json");
+        String pathToSpecs = String.format("resources/versions/%d.%d/spirv.core.grammar.json", majorVersion, minorVersion);
+        URL resource = SPIRVSpecification.class.getClassLoader().getResource(pathToSpecs);
         return mapper.readValue(resource, SPIRVGrammar.class);
     }
 }
