@@ -38,11 +38,10 @@ public class Disassembler {
 		grammar = SPIRVSpecification.buildSPIRVGrammar(header.majorVersion, header.minorVersion);
 	}
 
-	public SPIRVHeader getHeader() {
-		return header;
-	}
-
 	public void disassemble() throws IOException {
+		output.println(this);
+		output.println(this.header);
+
 		int currentWord;
 		int opcode;
 		int wordcount;
@@ -106,7 +105,18 @@ public class Disassembler {
 			byte[] word;
 			do {
 				word = wordStream.getNextWordInBytes(true); currentWordCount++;
-				sb.append(new String(word));
+				String operandShard = new String(word);
+				if (word[word.length - 1] == 0) {
+					// Remove trailing zeros
+					int index = -1;
+					for (int i = word.length - 1; i >= 0 && index < 0; i--) {
+						if (word[i] != 0) {
+							index = i;
+						}
+					}
+					operandShard = operandShard.substring(0, index + 1);
+				}
+				sb.append(operandShard);
 			} while (word[word.length - 1] != 0);
 			sb.append("\" ");
 			decodedOperands.add(sb.toString());

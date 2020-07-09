@@ -5,8 +5,7 @@ import uk.ac.manchester.spirvproto.lib.Disassembler;
 import uk.ac.manchester.spirvproto.lib.InvalidBinarySPIRVInputException;
 import uk.ac.manchester.spirvproto.lib.SPVFileReader;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
+import java.io.*;
 
 public class SPIRVTool {
 
@@ -29,7 +28,7 @@ public class SPIRVTool {
 		}
 		Disassembler disasm = null;
 		try {
-			disasm = new Disassembler(wordStream, System.out);
+			disasm = new Disassembler(wordStream, state.output);
 		} catch (InvalidBinarySPIRVInputException e) {
 			if (state.debug) {
 				e.printStackTrace();
@@ -42,8 +41,6 @@ public class SPIRVTool {
 			e.printStackTrace();
 		}
 
-		System.out.println(disasm);
-		System.out.println(disasm.getHeader());
 		try {
 			disasm.disassemble();
 		} catch (IOException e) {
@@ -60,6 +57,7 @@ public class SPIRVTool {
 		Options options = new Options();
 		options.addOption("h", "Prints this message");
 		options.addOption("d", false, "Print debug information");
+		options.addOption("o", true, "Specify and output file");
 
 		CommandLineParser parser = new DefaultParser();
 		CommandLine cmd = null;
@@ -74,7 +72,20 @@ public class SPIRVTool {
 			handleError(options);
 		}
 
-		return new Configuration(cmd.hasOption('d'), cmd.getArgs()[0]);
+		PrintStream output = null;
+		if (!cmd.hasOption('o')) {
+			output = System.out;
+		}
+		else {
+			try {
+				output = new PrintStream(cmd.getOptionValue('o'));
+			} catch (FileNotFoundException e) {
+				System.err.println("Could not find: " + cmd.getOptionValue('o'));
+				handleError(options);
+			}
+		}
+
+		return new Configuration(cmd.hasOption('d'), cmd.getArgs()[0], output);
 	}
 
 	private static void handleError(Options options) {
