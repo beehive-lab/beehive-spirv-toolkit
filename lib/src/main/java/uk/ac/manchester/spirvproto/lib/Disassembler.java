@@ -66,41 +66,23 @@ public class Disassembler {
 			operands = new ArrayList<>();
 			for (int i = 0; i < operandsLength && currentWordCount < wordcount; i++) {
 			    SPIRVOperand currentOperand = currentInstruction.operands[i];
-			    SPIRVOperandKind currentOperandKind = grammar.getOperandKind(currentOperand.kind);
-                String operandCategory = grammar.getOperandKind(currentOperand.kind).category;
+			    int operandCount = 1;
+			    // If the quantifier is * that means this is the last operand and there could be 0 or more of it
+				// It can be determined by the wordcount how many there is left
+			    if (currentOperand.quantifier == '*') {
+			    	operandCount = wordcount - currentWordCount;
+				}
 
-				if (currentOperand.kind.equals("LiteralString")) {
-					StringBuilder sb = new StringBuilder(" \"");
-					byte[] word;
-					do {
-						word = wordStream.getNextWordInBytes(true); currentWordCount++;
-						sb.append(new String(word));
-					} while (word[word.length - 1] != 0);
-					sb.append("\" ");
-					operands.add(sb.toString());
+			    if (currentOperand.kind.equals("IdResult")) {
+			    	result = wordStream.getNextWord(); currentWordCount++;
 				}
-				else if (currentOperand.kind.startsWith("Id")) {
-					if (currentOperand.kind.equals("IdResult")) {
-						result = wordStream.getNextWord();
+			    else {
+					for (int j = 0; j < operandCount; j++) {
+						currentWordCount += decodeOperand(operands, grammar.getOperandKind(currentOperand.kind));
 					}
-					else {
-						operands.add(" %" + wordStream.getNextWord());
-					}
-					currentWordCount++;
-				}
-				else if (operandCategory.equals("ValueEnum")) {
-                    SPIRVEnumerant enumerant = currentOperandKind.getEnumerant(wordStream.getNextWord()); currentWordCount++;
-                    operands.add(" " + enumerant.name);
-                    if (enumerant.parameters != null) {
-                        for (int j = 0; j < enumerant.parameters.length; j++) {
-                            operands.add(" " + wordStream.getNextWord()); currentWordCount++;
-                        }
-                    }
-                }
-                else {
-					operands.add(" " + wordStream.getNextWord()); currentWordCount++;
 				}
 			}
+
             for (int i = 0; i < wordcount - currentWordCount; i++) {
                 operands.add(" 0x" + Integer.toHexString(wordStream.getNextWord()) + " ");
             }
@@ -114,6 +96,49 @@ public class Disassembler {
 			}
 			output.println();
 		}
+	}
+
+	private int decodeOperand(List<String> decodedOperands, SPIRVOperandKind operandKind) throws IOException {
+		int currentWordCount = 0;
+		if (operandKind.kind.equals("LiteralString")) {
+			StringBuilder sb = new StringBuilder(" \"");
+			byte[] word;
+			do {
+				word = wordStream.getNextWordInBytes(true); currentWordCount++;
+				sb.append(new String(word));
+			} while (word[word.length - 1] != 0);
+			sb.append("\" ");
+			decodedOperands.add(sb.toString());
+		}
+		else if (operandKind.kind.startsWith("Id")) {
+			decodedOperands.add(" %" + wordStream.getNextWord());
+			currentWordCount++;
+		}
+		else if (operandKind.category.endsWith("Enum")) {
+			String value;
+			if (operandKind.category.startsWith("Value")) {
+				value = Integer.toString(wordStream.getNextWord());
+			}
+			else {
+				// For now it can only be a BitEnum
+				value = String.format("0x%04x", wordStream.getNextWord());
+			}
+			currentWordCount++;
+			SPIRVEnumerant enumerant = operandKind.getEnumerant(value);
+			decodedOperands.add(" " + enumerant.name);
+			if (enumerant.parameters != null) {
+				for (int j = 0; j < enumerant.parameters.length; j++) {
+					SPIRVOperandKind paramKind = grammar.getOperandKind(enumerant.parameters[j].kind);
+					currentWordCount += decodeOperand(decodedOperands, paramKind);
+				}
+			}
+		}
+		else {
+			// by now it can only a LiteralInteger or a Composite
+			// TODO: Composite type category decoding
+			decodedOperands.add(" " + wordStream.getNextWord()); currentWordCount++;
+		}
+		return currentWordCount;
 	}
 
 	@Override

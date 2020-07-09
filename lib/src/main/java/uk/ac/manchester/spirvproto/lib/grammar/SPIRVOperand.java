@@ -10,4 +10,7 @@ public class SPIRVOperand {
 
     @JsonProperty("name")
     public String name;
+
+    @JsonProperty("quantifier")
+    public char quantifier;
 }

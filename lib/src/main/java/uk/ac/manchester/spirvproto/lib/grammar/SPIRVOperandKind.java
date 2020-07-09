@@ -16,10 +16,9 @@ public class SPIRVOperandKind {
     @JsonProperty("enumerants")
     public SPIRVEnumerant[] enumerants;
 
-    public SPIRVEnumerant getEnumerant(int value) {
-        String dummy = Integer.toString(value);
+    public SPIRVEnumerant getEnumerant(String value) {
         for (SPIRVEnumerant enumerant: enumerants) {
-            if (enumerant.value.equals(dummy)) {
+            if (enumerant.value.equals(value)) {
                 return enumerant;
             }
         }
