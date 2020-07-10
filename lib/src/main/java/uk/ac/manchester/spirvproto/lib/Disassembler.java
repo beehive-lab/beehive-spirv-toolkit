@@ -39,7 +39,6 @@ public class Disassembler {
 	}
 
 	public void disassemble() throws IOException {
-		output.println(this);
 		output.println(this.header);
 
 		int currentWord;
@@ -145,7 +144,7 @@ public class Disassembler {
 			}
 		}
 		else {
-			// by now it can only a LiteralInteger or a Composite
+			// By now it can only be a LiteralInteger or a Composite
 			// TODO: Composite type category decoding
 			decodedOperands.add(" " + wordStream.getNextWord()); currentWordCount++;
 		}

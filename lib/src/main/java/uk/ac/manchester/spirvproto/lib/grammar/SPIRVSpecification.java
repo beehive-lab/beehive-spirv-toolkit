@@ -12,6 +12,10 @@ public class SPIRVSpecification {
 
         String pathToSpecs = String.format("resources/versions/%d.%d/spirv.core.grammar.json", majorVersion, minorVersion);
         URL resource = SPIRVSpecification.class.getClassLoader().getResource(pathToSpecs);
+        if (resource == null) {
+            // Fall back to unified
+            resource = SPIRVSpecification.class.getClassLoader().getResource("resources/versions/unified/spirv.core.grammar.json");
+        }
         return mapper.readValue(resource, SPIRVGrammar.class);
     }
 }
