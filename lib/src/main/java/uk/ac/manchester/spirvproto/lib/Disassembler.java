@@ -89,11 +89,20 @@ public class Disassembler {
                 operands.add(" 0x" + Integer.toHexString(wordStream.getNextWord()) + " ");
             }
 
+            int boundLength = (int) Math.log10(header.bound) + 1;
+            int opStart = 4 + boundLength;
+
 			if (result >= 0) {
 				String targetID = "%" + result;
 				if (shouldHighlight) targetID = highlighter.highlightID(targetID);
-				output.print(targetID + " = ");
+				targetID += " = ";
+				output.print(targetID);
+				opStart -= (int) Math.log10(result) + 5;
 			}
+			for (int i = 0; i < opStart; i++) {
+				output.print(" ");
+			}
+
 			output.print(op);
 			for (String operand : operands) {
 				output.print(operand);
