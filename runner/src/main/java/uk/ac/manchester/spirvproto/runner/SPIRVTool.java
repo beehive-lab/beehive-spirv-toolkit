@@ -28,7 +28,7 @@ public class SPIRVTool {
 		}
 		Disassembler disasm = null;
 		try {
-			disasm = new Disassembler(wordStream, state.output);
+			disasm = new Disassembler(wordStream, state.output, state.output.equals(System.out));
 		} catch (InvalidBinarySPIRVInputException e) {
 			if (state.debug) {
 				e.printStackTrace();
@@ -57,7 +57,7 @@ public class SPIRVTool {
 		Options options = new Options();
 		options.addOption("h", "Prints this message");
 		options.addOption("d", false, "Print debug information");
-		options.addOption("o", true, "Specify and output file");
+		options.addOption("o", true, "Specify an output file");
 
 		CommandLineParser parser = new DefaultParser();
 		CommandLine cmd = null;
@@ -89,7 +89,7 @@ public class SPIRVTool {
 	}
 
 	private static void handleError(Options options) {
-		new HelpFormatter().printHelp("spirv-tools [OPTIONS] <filename>", options);
+		new HelpFormatter().printHelp("spirv-dis [OPTIONS] <filename>", options);
 		System.exit(1);
 	}
 }

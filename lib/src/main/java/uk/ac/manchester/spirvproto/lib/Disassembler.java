@@ -12,11 +12,14 @@ public class Disassembler {
 	private final PrintStream output;
 	private final SPIRVHeader header;
 	private final SPIRVGrammar grammar;
+	private final SPIRVSyntaxHighlighter highlighter;
+	private final boolean shouldHighlight;
 
-	public Disassembler(BinaryWordStream wordStream, PrintStream output) throws InvalidBinarySPIRVInputException, IOException {
+	public Disassembler(BinaryWordStream wordStream, PrintStream output, boolean shouldHighlight) throws InvalidBinarySPIRVInputException, IOException {
 		this.wordStream = wordStream;
 		this.output = output;
-
+		this.shouldHighlight = shouldHighlight;
+		highlighter = new CLIHighlighter();
 
 		int magicNumber = wordStream.getNextWord();
 		if (magicNumber != 0x07230203) {
@@ -87,7 +90,9 @@ public class Disassembler {
             }
 
 			if (result >= 0) {
-				output.print("%" + result + " = ");
+				String targetID = "%" + result;
+				if (shouldHighlight) targetID = highlighter.highlightID(targetID);
+				output.print(targetID + " = ");
 			}
 			output.print(op);
 			for (String operand : operands) {
@@ -118,11 +123,14 @@ public class Disassembler {
 				sb.append(operandShard);
 			} while (word[word.length - 1] != 0);
 			sb.append("\" ");
-			decodedOperands.add(sb.toString());
+			String result = sb.toString();
+			if (shouldHighlight) result = highlighter.highlightString(result);
+			decodedOperands.add(result);
 		}
 		else if (operandKind.kind.startsWith("Id")) {
-			decodedOperands.add(" %" + wordStream.getNextWord());
-			currentWordCount++;
+			String result = " %" + wordStream.getNextWord(); currentWordCount++;
+			if (shouldHighlight) result = highlighter.highlightID(result);
+			decodedOperands.add(result);
 		}
 		else if (operandKind.category.endsWith("Enum")) {
 			String value;
@@ -146,7 +154,9 @@ public class Disassembler {
 		else {
 			// By now it can only be a LiteralInteger or a Composite
 			// TODO: Composite type category decoding
-			decodedOperands.add(" " + wordStream.getNextWord()); currentWordCount++;
+			String result = " " + wordStream.getNextWord(); currentWordCount++;
+			if (shouldHighlight) result = highlighter.highlightInteger(result);
+			decodedOperands.add(result);
 		}
 		return currentWordCount;
 	}

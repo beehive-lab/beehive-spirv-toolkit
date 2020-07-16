@@ -17,8 +17,8 @@ public class DisassemblerTest {
 		Mockito.when(wordStreamL.getNextWord()).thenReturn(0x07230203).thenReturn(0x00010000);
 		Mockito.when(wordStreamB.getNextWord()).thenReturn(0x03022307).thenReturn(0x00010000);
 
-		Disassembler littleE = new Disassembler(wordStreamL, new PrintStream(System.out));
-		Disassembler BigE = new Disassembler(wordStreamB, new PrintStream(System.out));
+		Disassembler littleE = new Disassembler(wordStreamL, new PrintStream(System.out), false);
+		Disassembler BigE = new Disassembler(wordStreamB, new PrintStream(System.out), false);
 
 		Mockito.verify(wordStreamL, Mockito.never()).changeEndianness();
 		Mockito.verify(wordStreamB, Mockito.times(1)).changeEndianness();
