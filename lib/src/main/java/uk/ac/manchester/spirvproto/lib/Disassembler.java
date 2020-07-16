@@ -28,7 +28,7 @@ public class Disassembler {
 				magicNumber = 0x07230203;
 			}
 			else {
-				throw new InvalidBinarySPIRVInputException();
+				throw new InvalidBinarySPIRVInputException(magicNumber);
 			}
 		}
 
@@ -41,7 +41,7 @@ public class Disassembler {
 		grammar = SPIRVSpecification.buildSPIRVGrammar(header.majorVersion, header.minorVersion);
 	}
 
-	public void disassemble() throws IOException {
+	public void disassemble() throws IOException, InvalidSPIRVOpcodeException, InvalidSPIRVOperandKindException, InvalidSPIRVEnumerantException, InvalidSPIRVWordCountException {
 		output.println(this.header);
 
 		int currentWord;
@@ -62,6 +62,8 @@ public class Disassembler {
 			currentInstruction = grammar.getInstructionByOpCode(opcode);
             operandsLength = (currentInstruction.operands != null) ? currentInstruction.operands.length : 0;
             op = currentInstruction.toString();
+
+            if (operandsLength >= wordcount) throw new InvalidSPIRVWordCountException(currentInstruction, operandsLength, wordcount);
 
             result = -1;
 			currentWordCount = 1;
@@ -111,7 +113,7 @@ public class Disassembler {
 		}
 	}
 
-	private int decodeOperand(List<String> decodedOperands, SPIRVOperandKind operandKind) throws IOException {
+	private int decodeOperand(List<String> decodedOperands, SPIRVOperandKind operandKind) throws IOException, InvalidSPIRVEnumerantException, InvalidSPIRVOperandKindException {
 		int currentWordCount = 0;
 		if (operandKind.kind.equals("LiteralString")) {
 			StringBuilder sb = new StringBuilder(" \"");
