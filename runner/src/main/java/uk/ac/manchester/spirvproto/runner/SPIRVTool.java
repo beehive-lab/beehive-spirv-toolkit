@@ -3,7 +3,11 @@ package uk.ac.manchester.spirvproto.runner;
 import org.apache.commons.cli.*;
 import uk.ac.manchester.spirvproto.lib.Disassembler;
 import uk.ac.manchester.spirvproto.lib.InvalidBinarySPIRVInputException;
+import uk.ac.manchester.spirvproto.lib.InvalidSPIRVWordCountException;
 import uk.ac.manchester.spirvproto.lib.SPVFileReader;
+import uk.ac.manchester.spirvproto.lib.grammar.InvalidSPIRVOperandKindException;
+import uk.ac.manchester.spirvproto.lib.grammar.InvalidSPIRVEnumerantException;
+import uk.ac.manchester.spirvproto.lib.grammar.InvalidSPIRVOpcodeException;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -20,15 +24,17 @@ public class SPIRVTool {
 			SPVFileReader wordStream = new SPVFileReader(state.inputFile);
 			Disassembler disasm = new Disassembler(wordStream, state.output, state.output.equals(System.out));
 			disasm.disassemble();
-		} catch (Exception e) {
+		}
+		catch (InvalidSPIRVOpcodeException | InvalidSPIRVOperandKindException | InvalidSPIRVEnumerantException | InvalidBinarySPIRVInputException | InvalidSPIRVWordCountException e) {
+			System.err.println(e.getMessage());
+			System.exit(1);
+		}
+		catch (Exception e) {
 			if (state.debug) {
 				e.printStackTrace();
 			}
 			else if (e instanceof FileNotFoundException) {
 				System.err.println("Could not find file: " + state.inputFile);
-			}
-			else if (e instanceof InvalidBinarySPIRVInputException) {
-				System.err.println("File " + state.inputFile.getName() + " is not a valid SPIR-V binary module");
 			}
 			else if (e instanceof IOException) {
 				System.err.println("Error reading file: " + state.inputFile.getName());

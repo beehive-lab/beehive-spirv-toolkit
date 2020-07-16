@@ -18,20 +18,22 @@ public class SPIRVGrammar {
 
     public SPIRVGrammar() {}
 
-    public SPIRVInstruction getInstructionByOpCode(int opcode) {
+    public SPIRVInstruction getInstructionByOpCode(int opcode) throws InvalidSPIRVOpcodeException {
         // Unfortunately any non-custom binary search implementation needs a dummy object
         SPIRVInstruction dummy = new SPIRVInstruction();
         dummy.opCode = opcode;
         int index = Arrays.binarySearch(instructions, dummy);
-        //System.out.println("opcode: " + opcode + " index: " + index);
+
+        if (index < 0 || index >= instructions.length) throw new InvalidSPIRVOpcodeException(opcode);
 
         return instructions[index];
     }
 
-    public SPIRVOperandKind getOperandKind(String kind) {
+    public SPIRVOperandKind getOperandKind(String kind) throws InvalidSPIRVOperandKindException {
         for (SPIRVOperandKind operandKind : operandKinds) {
             if (operandKind.kind.equals(kind)) return operandKind;
         }
-        return null;
+
+        throw new InvalidSPIRVOperandKindException(kind);
     }
 }

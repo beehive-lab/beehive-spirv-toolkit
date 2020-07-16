@@ -28,7 +28,7 @@ public class Disassembler {
 				magicNumber = 0x07230203;
 			}
 			else {
-				throw new InvalidBinarySPIRVInputException();
+				throw new InvalidBinarySPIRVInputException(magicNumber);
 			}
 		}
 
@@ -41,7 +41,7 @@ public class Disassembler {
 		grammar = SPIRVSpecification.buildSPIRVGrammar(header.majorVersion, header.minorVersion);
 	}
 
-	public void disassemble() throws IOException {
+	public void disassemble() throws IOException, InvalidSPIRVOpcodeException, InvalidSPIRVOperandKindException, InvalidSPIRVEnumerantException, InvalidSPIRVWordCountException {
 		output.println(this.header);
 
 		int currentWord;
@@ -63,6 +63,8 @@ public class Disassembler {
             operandsLength = (currentInstruction.operands != null) ? currentInstruction.operands.length : 0;
             op = currentInstruction.toString();
 
+
+
             result = -1;
 			currentWordCount = 1;
 			operands = new ArrayList<>();
@@ -75,6 +77,9 @@ public class Disassembler {
 			    	operandCount = wordcount - currentWordCount;
 				}
 
+			    // This needs to be updated to account for optional operands
+			    //if (operandCount >= wordcount) throw new InvalidSPIRVWordCountException(currentInstruction, operandsLength, wordcount);
+
 			    if (currentOperand.kind.equals("IdResult")) {
 			    	result = wordStream.getNextWord(); currentWordCount++;
 				}
@@ -85,9 +90,8 @@ public class Disassembler {
 				}
 			}
 
-            for (int i = 0; i < wordcount - currentWordCount; i++) {
-                operands.add(" 0x" + Integer.toHexString(wordStream.getNextWord()) + " ");
-            }
+			//TODO better message and custom exception
+            if (wordcount > currentWordCount) throw new RuntimeException("There are operands that were not decoded");
 
             int boundLength = (int) Math.log10(header.bound) + 1;
             int opStart = 4 + boundLength;
@@ -111,7 +115,7 @@ public class Disassembler {
 		}
 	}
 
-	private int decodeOperand(List<String> decodedOperands, SPIRVOperandKind operandKind) throws IOException {
+	private int decodeOperand(List<String> decodedOperands, SPIRVOperandKind operandKind) throws IOException, InvalidSPIRVEnumerantException, InvalidSPIRVOperandKindException {
 		int currentWordCount = 0;
 		if (operandKind.kind.equals("LiteralString")) {
 			StringBuilder sb = new StringBuilder(" \"");
