@@ -2,7 +2,7 @@
 # Will needto be updated for the fututre
 
 build:
-	gcc -lOpenCL -lm vector_add_il.c -o vector_add_il.bin
+	gcc vector_add_il.c -lm -o vector_add_il.bin -lOpenCL
 	clang -cc1 -triple spir vector_add.cl -O0 -finclude-default-header -emit-llvm-bc -o vector_add.bc
 	llvm-spirv vector_add.bc -o vector_add.spv
 
