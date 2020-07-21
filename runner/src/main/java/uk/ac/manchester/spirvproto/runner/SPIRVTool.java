@@ -79,7 +79,7 @@ public class SPIRVTool {
 	}
 
 	private static void handleError(Options options) {
-		new HelpFormatter().printHelp("spirv-dis [OPTIONS] <filename>", options);
+		new HelpFormatter().printHelp("spirv-proto [OPTIONS] <filename>", options);
 		System.exit(1);
 	}
 }
