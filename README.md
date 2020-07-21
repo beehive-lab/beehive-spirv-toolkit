@@ -44,13 +44,18 @@ $ java -jar dist/spirv-proto.jar examples/vector_add.spv
 ```
 
 ## Creating SPIR-V modules for testing
-This is a compiled version of what the Khronos Group recommends. The original can be found [here](https://www.khronos.org/blog/offline-compilation-of-opencl-kernels-into-spir-v-using-open-source-tooling)
-There are some example kernels provided in the examples directory.
+This is a compiled version of what the Khronos Group recommends. The original can be found [here](https://www.khronos.org/blog/offline-compilation-of-opencl-kernels-into-spir-v-using-open-source-tooling).
+ There are some example kernels provided in the examples directory.
 
 Tools needed:
 
 - clang (To install: `$ sudo apt-get install clang`)
 - llvm-spirv (See build instructions [here](https://github.com/KhronosGroup/SPIRV-LLVM) )
+
+Go into the examples folder:
+```bash
+$ cd examples
+```
 
 First the kernel (.cl file) needs to be compiled to LLVM IR:
 ```bash 
@@ -76,7 +81,7 @@ $ make run
 ```
 OR
 ```bash
-$ ./vector_add_il.bin ./vestor_add.spv
+$ ./vector_add_il.bin ./vector_add.spv
 ```
 
 This requires at least one device with a driver that supports OpenCL 2.1 or higher (Intel Graphics or the experimental Intel CPU driver) and an OpenCL ICD Loader that supports OpenCL 2.1 or higher. 

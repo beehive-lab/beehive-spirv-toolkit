@@ -63,13 +63,18 @@ public class Disassembler {
             operandsLength = (currentInstruction.operands != null) ? currentInstruction.operands.length : 0;
             op = currentInstruction.toString();
 
-
+			// Calculate required operand count
+			int requiredOperandCount = 0;
+			for (SPIRVOperand operand : currentInstruction.operands) {
+				if (operand.quantifier != '*' && operand.quantifier != '?') requiredOperandCount++;
+			}
 
             result = -1;
 			currentWordCount = 1;
+			int decodedOperands = 0;
 			operands = new ArrayList<>();
-			for (int i = 0; i < operandsLength && currentWordCount < wordcount; i++) {
-			    SPIRVOperand currentOperand = currentInstruction.operands[i];
+			for (; decodedOperands < operandsLength && currentWordCount < wordcount; decodedOperands++) {
+			    SPIRVOperand currentOperand = currentInstruction.operands[decodedOperands];
 			    int operandCount = 1;
 			    // If the quantifier is * that means this is the last operand and there could be 0 or more of it
 				// It can be determined by the wordcount how many there is left
@@ -89,6 +94,8 @@ public class Disassembler {
 					}
 				}
 			}
+
+			if (decodedOperands < requiredOperandCount) throw new InvalidSPIRVWordCountException(currentInstruction, requiredOperandCount, wordcount);
 
 			//TODO better message and custom exception
             if (wordcount > currentWordCount) throw new RuntimeException("There are operands that were not decoded");

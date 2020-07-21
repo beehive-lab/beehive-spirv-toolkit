@@ -13,16 +13,16 @@ The header occupies the first 5 slots of a SPIR-V binary module. The data contai
 1. Magic number : Identifies a SPIR-V module and helps determining endianness.
 2. SPIR-V Version: The version of the SPIR-V specification this module adheres to.
 3. Generator ID: Magic number for the tool that generated this SPIR-V module. Is allowed to be 0, or alternatively can be registered with the Khronos Group [here](https://github.com/KhronosGroup/SPIRV-Headers)
-4. Bound: All IDs for nodes are below this number (should as small as possible)
+4. Bound: All IDs for nodes are below this number (should be as small as possible)
 5. Schema: Instruction schema (if needed). Usually 0.
 
 ### Instructions
 
 Here instruction means a node that consists of one operation and zero or more operands, each having zero or more parameters.
 
-####Operations
+#### Operations
 
-Each instruction starts with a slot that encodes the opcode and the length of the instruction in number of slots. The lower 16 bits contains the opcode, while the remaining higher 16 bits contains the length. This is needed in case of quantified operands and helps traversing a module without decoding fully.
+Each instruction starts with a slot that encodes the opcode and the length of the instruction in number of slots. The lower 16 bits contains the opcode, while the remaining higher 16 bits contains the length. This is needed in case of quantified operands and helps traversing a module without decoding all instructions.
 
 #### Operands
 
