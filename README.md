@@ -30,6 +30,7 @@ This should create 3 jars. One will be in `spirv-proto/lib/dist` and contains al
 spirv-proto [OPTIONS] <filename>
  -d         Print debug information
  -h         Prints this message
+ -n         Inline names of nodes where possible
  -o <arg>   Specify an output file
 ```
 

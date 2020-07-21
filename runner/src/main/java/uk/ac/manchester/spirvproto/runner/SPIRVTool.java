@@ -22,7 +22,7 @@ public class SPIRVTool {
 
 		try {
 			SPVFileReader wordStream = new SPVFileReader(state.inputFile);
-			Disassembler disasm = new Disassembler(wordStream, state.output, state.output.equals(System.out));
+			Disassembler disasm = new Disassembler(wordStream, state.output, state.output.equals(System.out), state.inlineNames);
 			disasm.disassemble();
 		}
 		catch (InvalidSPIRVOpcodeException | InvalidSPIRVOperandKindException | InvalidSPIRVEnumerantException | InvalidBinarySPIRVInputException | InvalidSPIRVWordCountException e) {
@@ -47,6 +47,7 @@ public class SPIRVTool {
 		Options options = new Options();
 		options.addOption("h", "Prints this message");
 		options.addOption("d", false, "Print debug information");
+		options.addOption("n", false, "Inline names of nodes where possible");
 		options.addOption("o", true, "Specify an output file");
 
 		CommandLineParser parser = new DefaultParser();
@@ -75,7 +76,7 @@ public class SPIRVTool {
 			}
 		}
 
-		return new Configuration(cmd.hasOption('d'), cmd.getArgs()[0], output);
+		return new Configuration(cmd.hasOption('d'), cmd.hasOption('n'), cmd.getArgs()[0], output);
 	}
 
 	private static void handleError(Options options) {

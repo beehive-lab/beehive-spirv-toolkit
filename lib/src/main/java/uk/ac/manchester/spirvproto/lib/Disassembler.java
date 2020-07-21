@@ -5,7 +5,11 @@ import uk.ac.manchester.spirvproto.lib.grammar.*;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Disassembler {
 	private final BinaryWordStream wordStream;
@@ -14,11 +18,15 @@ public class Disassembler {
 	private final SPIRVGrammar grammar;
 	private final SPIRVSyntaxHighlighter highlighter;
 	private final boolean shouldHighlight;
+	private final boolean shouldInlineNames;
+	private final Map<String, String> idToNameMap;
+	private final Pattern stringPattern = Pattern.compile(".*?\"(.*?)\".*");
 
-	public Disassembler(BinaryWordStream wordStream, PrintStream output, boolean shouldHighlight) throws InvalidBinarySPIRVInputException, IOException {
+	public Disassembler(BinaryWordStream wordStream, PrintStream output, boolean shouldHighlight, boolean shouldInlineNames) throws InvalidBinarySPIRVInputException, IOException {
 		this.wordStream = wordStream;
 		this.output = output;
 		this.shouldHighlight = shouldHighlight;
+		this.shouldInlineNames = shouldInlineNames;
 		highlighter = new CLIHighlighter();
 
 		int magicNumber = wordStream.getNextWord();
@@ -38,6 +46,7 @@ public class Disassembler {
 				wordStream.getNextWord(),
 				wordStream.getNextWord());
 
+		idToNameMap = new HashMap<>(header.bound);
 		grammar = SPIRVSpecification.buildSPIRVGrammar(header.majorVersion, header.minorVersion);
 	}
 
@@ -65,8 +74,10 @@ public class Disassembler {
 
 			// Calculate required operand count
 			int requiredOperandCount = 0;
-			for (SPIRVOperand operand : currentInstruction.operands) {
-				if (operand.quantifier != '*' && operand.quantifier != '?') requiredOperandCount++;
+			if (currentInstruction.operands != null) {
+				for (SPIRVOperand operand : currentInstruction.operands) {
+					if (operand.quantifier != '*' && operand.quantifier != '?') requiredOperandCount++;
+				}
 			}
 
             result = -1;
@@ -74,7 +85,9 @@ public class Disassembler {
 			int decodedOperands = 0;
 			operands = new ArrayList<>();
 			for (; decodedOperands < operandsLength && currentWordCount < wordcount; decodedOperands++) {
-			    SPIRVOperand currentOperand = currentInstruction.operands[decodedOperands];
+			    SPIRVOperand currentOperand = currentInstruction.operands != null ? currentInstruction.operands[decodedOperands] : null;
+			    if (currentOperand == null) continue;
+
 			    int operandCount = 1;
 			    // If the quantifier is * that means this is the last operand and there could be 0 or more of it
 				// It can be determined by the wordcount how many there is left
@@ -106,6 +119,11 @@ public class Disassembler {
 			if (result >= 0) {
 				String targetID = "%" + result;
 				if (shouldHighlight) targetID = highlighter.highlightID(targetID);
+				if (shouldInlineNames) {
+					if (idToNameMap.containsKey(targetID)) {
+						targetID = idToNameMap.get(targetID);
+					}
+				}
 				targetID += " = ";
 				output.print(targetID);
 				opStart -= (int) Math.log10(result) + 5;
@@ -116,16 +134,28 @@ public class Disassembler {
 
 			output.print(op);
 			for (String operand : operands) {
-				output.print(operand);
+				output.print(" " + operand);
 			}
 			output.println();
+			processSpecialOps(op, operands);
+		}
+	}
+
+	private void processSpecialOps(String op, List<String> operands) {
+		if (op.equals("OpName")) {
+			Matcher m = stringPattern.matcher(operands.get(1));
+			if (m.find()) {
+				String name = m.group(1);
+				if (shouldHighlight) name = highlighter.highlightID("%" + name);
+				idToNameMap.put(operands.get(0), name);
+			}
 		}
 	}
 
 	private int decodeOperand(List<String> decodedOperands, SPIRVOperandKind operandKind) throws IOException, InvalidSPIRVEnumerantException, InvalidSPIRVOperandKindException {
 		int currentWordCount = 0;
 		if (operandKind.kind.equals("LiteralString")) {
-			StringBuilder sb = new StringBuilder(" \"");
+			StringBuilder sb = new StringBuilder("\"");
 			byte[] word;
 			do {
 				word = wordStream.getNextWordInBytes(true); currentWordCount++;
@@ -142,14 +172,19 @@ public class Disassembler {
 				}
 				sb.append(operandShard);
 			} while (word[word.length - 1] != 0);
-			sb.append("\" ");
+			sb.append("\"");
 			String result = sb.toString();
 			if (shouldHighlight) result = highlighter.highlightString(result);
 			decodedOperands.add(result);
 		}
 		else if (operandKind.kind.startsWith("Id")) {
-			String result = " %" + wordStream.getNextWord(); currentWordCount++;
+			String result = "%" + wordStream.getNextWord(); currentWordCount++;
 			if (shouldHighlight) result = highlighter.highlightID(result);
+			if (shouldInlineNames) {
+				if (idToNameMap.containsKey(result)) {
+					result = idToNameMap.get(result);
+				}
+			}
 			decodedOperands.add(result);
 		}
 		else if (operandKind.category.endsWith("Enum")) {
