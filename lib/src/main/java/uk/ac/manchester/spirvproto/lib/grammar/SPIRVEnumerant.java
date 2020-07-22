@@ -16,6 +16,18 @@ public class SPIRVEnumerant implements Comparable<SPIRVEnumerant>{
 
     @Override
     public int compareTo(SPIRVEnumerant o) {
-        return this.value.compareTo(o.value);
+        return this.getValue().compareTo(o.getValue());
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getValue() {
+        return value;
+    }
+
+    public SPIRVOperandParameter[] getParameters() {
+        return parameters;
     }
 }

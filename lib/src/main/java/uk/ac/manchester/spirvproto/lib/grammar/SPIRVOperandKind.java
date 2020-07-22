@@ -15,12 +15,24 @@ public class SPIRVOperandKind {
     public SPIRVEnumerant[] enumerants;
 
     public SPIRVEnumerant getEnumerant(String value) throws InvalidSPIRVEnumerantException {
-        for (SPIRVEnumerant enumerant: enumerants) {
-            if (enumerant.value.equals(value)) {
+        for (SPIRVEnumerant enumerant: getEnumerants()) {
+            if (enumerant.getValue().equals(value)) {
                 return enumerant;
             }
         }
 
-        throw new InvalidSPIRVEnumerantException(kind, value);
+        throw new InvalidSPIRVEnumerantException(getKind(), value);
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public String getKind() {
+        return kind;
+    }
+
+    public SPIRVEnumerant[] getEnumerants() {
+        return enumerants;
     }
 }

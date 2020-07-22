@@ -11,7 +11,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class Disassembler {
+public class Disassembler implements SPIRVTool {
 	private final BinaryWordStream wordStream;
 	private final PrintStream output;
 	private final SPIRVHeader header;
@@ -154,7 +154,7 @@ public class Disassembler {
 
 	private int decodeOperand(List<String> decodedOperands, SPIRVOperandKind operandKind) throws IOException, InvalidSPIRVEnumerantException, InvalidSPIRVOperandKindException {
 		int currentWordCount = 0;
-		if (operandKind.kind.equals("LiteralString")) {
+		if (operandKind.getKind().equals("LiteralString")) {
 			StringBuilder sb = new StringBuilder("\"");
 			byte[] word;
 			do {
@@ -177,7 +177,7 @@ public class Disassembler {
 			if (shouldHighlight) result = highlighter.highlightString(result);
 			decodedOperands.add(result);
 		}
-		else if (operandKind.kind.startsWith("Id")) {
+		else if (operandKind.getKind().startsWith("Id")) {
 			String result = "%" + wordStream.getNextWord(); currentWordCount++;
 			if (shouldHighlight) result = highlighter.highlightID(result);
 			if (shouldInlineNames) {
@@ -187,9 +187,9 @@ public class Disassembler {
 			}
 			decodedOperands.add(result);
 		}
-		else if (operandKind.category.endsWith("Enum")) {
+		else if (operandKind.getCategory().endsWith("Enum")) {
 			String value;
-			if (operandKind.category.startsWith("Value")) {
+			if (operandKind.getCategory().startsWith("Value")) {
 				value = Integer.toString(wordStream.getNextWord());
 			}
 			else {
@@ -198,10 +198,10 @@ public class Disassembler {
 			}
 			currentWordCount++;
 			SPIRVEnumerant enumerant = operandKind.getEnumerant(value);
-			decodedOperands.add(" " + enumerant.name);
-			if (enumerant.parameters != null) {
-				for (int j = 0; j < enumerant.parameters.length; j++) {
-					SPIRVOperandKind paramKind = grammar.getOperandKind(enumerant.parameters[j].kind);
+			decodedOperands.add(" " + enumerant.getName());
+			if (enumerant.getParameters() != null) {
+				for (int j = 0; j < enumerant.getParameters().length; j++) {
+					SPIRVOperandKind paramKind = grammar.getOperandKind(enumerant.getParameters()[j].kind);
 					currentWordCount += decodeOperand(decodedOperands, paramKind);
 				}
 			}
@@ -219,5 +219,10 @@ public class Disassembler {
 	@Override
 	public String toString() {
 		return "SPIR-V Disassembler";
+	}
+
+	@Override
+	public void run() throws Exception {
+		disassemble();
 	}
 }

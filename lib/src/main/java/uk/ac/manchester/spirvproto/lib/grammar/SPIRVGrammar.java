@@ -31,7 +31,7 @@ public class SPIRVGrammar {
 
     public SPIRVOperandKind getOperandKind(String kind) throws InvalidSPIRVOperandKindException {
         for (SPIRVOperandKind operandKind : operandKinds) {
-            if (operandKind.kind.equals(kind)) return operandKind;
+            if (operandKind.getKind().equals(kind)) return operandKind;
         }
 
         throw new InvalidSPIRVOperandKindException(kind);
