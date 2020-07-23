@@ -14,7 +14,7 @@ public class SPIRV${name} extends SPIRVInstruction {
     </#if>
 
     public SPIRV${name}(<#if operands??><#list  operands as operand>SPIRV${operand.kind} ${operand.name}<#sep>, </#list></#if>) {
-        super(${opCode?string.computer}, <#if operands??><#list  operands as operand>${operand.name}.getWordCount()<#sep> + </#list></#if>);
+        super(${opCode?string.computer}, <#if operands??><#list  operands as operand>${operand.name}.getWordCount()<#sep> + </#list><#else>1</#if>);
         <#if operands??>
         <#list operands as operand>
         this.${operand.name} = ${operand.name};

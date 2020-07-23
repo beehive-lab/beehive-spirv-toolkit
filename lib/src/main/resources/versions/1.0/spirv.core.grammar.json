@@ -140,7 +140,7 @@
         { "kind" : "ExecutionModel" },
         { "kind" : "IdRef",                              "name" : "'Entry Point'" },
         { "kind" : "LiteralString",                      "name" : "'Name'" },
-        { "kind" : "IdRef",          "quantifier" : "*", "name" : "'Interface'" }
+        { "kind" : "IdRef",          "quantifier" : "*", "name" : "'Interfaces'" }
       ]
     },
     {
@@ -2277,7 +2277,7 @@
       "opcode" : 251,
       "operands" : [
         { "kind" : "IdRef",                                       "name" : "'Selector'" },
-        { "kind" : "IdRef",                                       "name" : "'Default'" },
+        { "kind" : "IdRef",                                       "name" : "'DefaultNode'" },
         { "kind" : "PairLiteralIntegerIdRef", "quantifier" : "*", "name" : "'Target'" }
       ]
     },

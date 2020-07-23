@@ -69,7 +69,7 @@ public class Generator implements SPIRVTool {
                     if (operand.name == null) {
                         operand.name = uncapFirst(operand.kind);
                     } else {
-                        operand.name = uncapFirst(operand.name.replace("'", "").replace(" ", ""));
+                        operand.name = uncapFirst(operand.name.replaceAll("[ '~.,+\n]", ""));
                     }
                 }
             }
