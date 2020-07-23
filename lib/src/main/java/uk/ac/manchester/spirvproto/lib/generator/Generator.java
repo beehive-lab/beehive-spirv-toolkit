@@ -4,10 +4,7 @@ import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateExceptionHandler;
 import uk.ac.manchester.spirvproto.lib.SPIRVTool;
-import uk.ac.manchester.spirvproto.lib.grammar.SPIRVGrammar;
-import uk.ac.manchester.spirvproto.lib.grammar.SPIRVInstruction;
-import uk.ac.manchester.spirvproto.lib.grammar.SPIRVOperandKind;
-import uk.ac.manchester.spirvproto.lib.grammar.SPIRVSpecification;
+import uk.ac.manchester.spirvproto.lib.grammar.*;
 
 import java.io.*;
 import java.nio.file.Path;
@@ -66,6 +63,16 @@ public class Generator implements SPIRVTool {
         for (SPIRVInstruction instruction : grammar.instructions) {
             out = createWriter(instruction.name, instructionsDir);
 
+            // Clean up operands
+            if (instruction.operands != null) {
+                for (SPIRVOperand operand : instruction.operands) {
+                    if (operand.name == null) {
+                        operand.name = uncapFirst(operand.kind);
+                    } else {
+                        operand.name = uncapFirst(operand.name.replace("'", "").replace(" ", ""));
+                    }
+                }
+            }
             instructionTemplate.process(instruction, out);
 
             out.flush();
@@ -78,6 +85,10 @@ public class Generator implements SPIRVTool {
         File newClass = new File(directory, filename);
         if (!newClass.exists() && !newClass.createNewFile()) throw new Exception("Could not create file: " + newClass);
         return new FileWriter(newClass);
+    }
+
+    private String uncapFirst(String value) {
+        return value.substring(0, 1).toLowerCase() + value.substring(1);
     }
 
     @Override

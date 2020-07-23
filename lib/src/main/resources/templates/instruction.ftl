@@ -9,15 +9,15 @@ import java.nio.ByteBuffer;
 public class SPIRV${name} extends SPIRVInstruction {
     <#if operands??>
     <#list operands as operand>
-    private final SPIRV${operand.kind} <#if operand.name??>${operand.name?replace("'", "")?replace(" ", "")?uncap_first}<#else>${operand.kind?uncap_first}</#if>;
+    private final SPIRV${operand.kind} ${operand.name};
     </#list>
     </#if>
 
-    public SPIRV${name}(<#if operands??><#list  operands as operand>SPIRV${operand.kind} <#if operand.name??>${operand.name?replace("'", "")?replace(" ", "")?uncap_first}<#else>${operand.kind?uncap_first}</#if><#sep>, </#list></#if>) {
-        super(${opCode?string.computer}, <#if operands??><#list  operands as operand><#if operand.name??>${operand.name?replace("'", "")?replace(" ", "")?uncap_first}<#else>${operand.kind?uncap_first}</#if>.getWordCount()<#sep> + </#list></#if>);
+    public SPIRV${name}(<#if operands??><#list  operands as operand>SPIRV${operand.kind} ${operand.name}<#sep>, </#list></#if>) {
+        super(${opCode?string.computer}, <#if operands??><#list  operands as operand>${operand.name}.getWordCount()<#sep> + </#list></#if>);
         <#if operands??>
         <#list operands as operand>
-        this.<#if operand.name??>${operand.name?replace("'", "")?replace(" ", "")?uncap_first}<#else>${operand.kind?uncap_first}</#if> = <#if operand.name??>${operand.name?replace("'", "")?replace(" ", "")?uncap_first}<#else>${operand.kind?uncap_first}</#if>;
+        this.${operand.name} = ${operand.name};
         </#list>
         </#if>
     }
@@ -26,7 +26,7 @@ public class SPIRV${name} extends SPIRVInstruction {
     protected void writeOperands(ByteBuffer output) {
     <#if operands??>
     <#list operands as operand>
-        <#if operand.name??>${operand.name?replace("'", "")?replace(" ", "")?uncap_first}<#else>${operand.kind?uncap_first}</#if>.write(output);
+        ${operand.name}.write(output);
     </#list>
     </#if>
     }
