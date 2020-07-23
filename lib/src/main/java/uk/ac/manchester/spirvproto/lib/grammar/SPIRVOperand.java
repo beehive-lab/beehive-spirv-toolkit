@@ -13,4 +13,16 @@ public class SPIRVOperand {
 
     @JsonProperty("quantifier")
     public char quantifier;
+
+    public String getKind() {
+        return kind;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public char getQuantifier() {
+        return quantifier;
+    }
 }

@@ -69,14 +69,14 @@ public class Disassembler implements SPIRVTool {
 			opcode = currentWord & 0xFFFF;
 			wordcount = currentWord >> 16;
 			currentInstruction = grammar.getInstructionByOpCode(opcode);
-            operandsLength = (currentInstruction.operands != null) ? currentInstruction.operands.length : 0;
+            operandsLength = (currentInstruction.getOperands() != null) ? currentInstruction.getOperands().length : 0;
             op = currentInstruction.toString();
 
 			// Calculate required operand count
 			int requiredOperandCount = 0;
-			if (currentInstruction.operands != null) {
-				for (SPIRVOperand operand : currentInstruction.operands) {
-					if (operand.quantifier != '*' && operand.quantifier != '?') requiredOperandCount++;
+			if (currentInstruction.getOperands() != null) {
+				for (SPIRVOperand operand : currentInstruction.getOperands()) {
+					if (operand.getQuantifier() != '*' && operand.getQuantifier() != '?') requiredOperandCount++;
 				}
 			}
 
@@ -85,25 +85,25 @@ public class Disassembler implements SPIRVTool {
 			int decodedOperands = 0;
 			operands = new ArrayList<>();
 			for (; decodedOperands < operandsLength && currentWordCount < wordcount; decodedOperands++) {
-			    SPIRVOperand currentOperand = currentInstruction.operands != null ? currentInstruction.operands[decodedOperands] : null;
+			    SPIRVOperand currentOperand = currentInstruction.getOperands() != null ? currentInstruction.getOperands()[decodedOperands] : null;
 			    if (currentOperand == null) continue;
 
 			    int operandCount = 1;
 			    // If the quantifier is * that means this is the last operand and there could be 0 or more of it
 				// It can be determined by the wordcount how many there is left
-			    if (currentOperand.quantifier == '*') {
+			    if (currentOperand.getQuantifier() == '*') {
 			    	operandCount = wordcount - currentWordCount;
 				}
 
 			    // This needs to be updated to account for optional operands
 			    //if (operandCount >= wordcount) throw new InvalidSPIRVWordCountException(currentInstruction, operandsLength, wordcount);
 
-			    if (currentOperand.kind.equals("IdResult")) {
+			    if (currentOperand.getKind().equals("IdResult")) {
 			    	result = wordStream.getNextWord(); currentWordCount++;
 				}
 			    else {
 					for (int j = 0; j < operandCount; j++) {
-						currentWordCount += decodeOperand(operands, grammar.getOperandKind(currentOperand.kind));
+						currentWordCount += decodeOperand(operands, grammar.getOperandKind(currentOperand.getKind()));
 					}
 				}
 			}

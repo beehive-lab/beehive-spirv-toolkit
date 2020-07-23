@@ -5,12 +5,13 @@ import freemarker.template.Template;
 import freemarker.template.TemplateExceptionHandler;
 import uk.ac.manchester.spirvproto.lib.SPIRVTool;
 import uk.ac.manchester.spirvproto.lib.grammar.SPIRVGrammar;
+import uk.ac.manchester.spirvproto.lib.grammar.SPIRVInstruction;
 import uk.ac.manchester.spirvproto.lib.grammar.SPIRVOperandKind;
 import uk.ac.manchester.spirvproto.lib.grammar.SPIRVSpecification;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.Writer;
+import java.io.*;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 public class Generator implements SPIRVTool {
     private final Configuration config;
@@ -31,7 +32,9 @@ public class Generator implements SPIRVTool {
 
         grammar = SPIRVSpecification.buildSPIRVGrammar(1, 0);
 
-        instructionsDir = new File(System.getProperty("user.dir"), path);
+        Path instructionsDirPath = Paths.get(path);
+        if (!instructionsDirPath.isAbsolute()) instructionsDirPath = Paths.get(System.getProperty("user.dir"), path);
+        instructionsDir = instructionsDirPath.toFile();
         if (!instructionsDir.exists()) {
             if (!instructionsDir.mkdir()) throw new Exception("Could not create " + instructionsDir);
         }
@@ -44,15 +47,13 @@ public class Generator implements SPIRVTool {
     }
 
     public void generate() throws Exception {
-        Template enumOperand = config.getTemplate("operand-enum.ftlh");
-        Template idOperand = config.getTemplate("operand-id.ftlh");
+        Template enumOperand = config.getTemplate("operand-enum.ftl");
+        Template idOperand = config.getTemplate("operand-id.ftl");
+        Writer out;
         for (SPIRVOperandKind operandKind : grammar.operandKinds) {
             if (operandKind.category.equals("Literal") || operandKind.category.equals("Composite")) continue;
 
-            String filename = "SPIRV" + operandKind.kind + ".java";
-            File newClass = new File(operandsDir, filename);
-            if (!newClass.exists() && !newClass.createNewFile()) throw new Exception("Could not create file: " + newClass);
-            Writer out = new FileWriter(newClass);
+            out = createWriter(operandKind.kind, operandsDir);
 
             Template templateToUse = operandKind.category.equals("Id") ? idOperand : enumOperand;
 
@@ -60,6 +61,23 @@ public class Generator implements SPIRVTool {
             out.flush();
             out.close();
         }
+
+        Template instructionTemplate = config.getTemplate("instruction.ftl");
+        for (SPIRVInstruction instruction : grammar.instructions) {
+            out = createWriter(instruction.name, instructionsDir);
+
+            instructionTemplate.process(instruction, out);
+
+            out.flush();
+            out.close();
+        }
+    }
+
+    private FileWriter createWriter(String name, File directory) throws Exception {
+        String filename = "SPIRV" + name + ".java";
+        File newClass = new File(directory, filename);
+        if (!newClass.exists() && !newClass.createNewFile()) throw new Exception("Could not create file: " + newClass);
+        return new FileWriter(newClass);
     }
 
     @Override

@@ -16,11 +16,23 @@ public class SPIRVInstruction implements Comparable<SPIRVInstruction> {
 
     @Override
     public int compareTo(SPIRVInstruction o) {
-        return this.opCode - o.opCode;
+        return this.getOpCode() - o.getOpCode();
     }
 
     @Override
     public String toString() {
+        return getName();
+    }
+
+    public String getName() {
         return name;
+    }
+
+    public int getOpCode() {
+        return opCode;
+    }
+
+    public SPIRVOperand[] getOperands() {
+        return operands;
     }
 }
