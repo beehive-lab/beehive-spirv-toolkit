@@ -49,7 +49,7 @@ public class Generator implements SPIRVTool {
         for (SPIRVOperandKind operandKind : grammar.operandKinds) {
             if (operandKind.category.equals("Literal") || operandKind.category.equals("Composite")) continue;
 
-            String filename = operandKind.kind + ".java";
+            String filename = "SPIRV" + operandKind.kind + ".java";
             File newClass = new File(operandsDir, filename);
             if (!newClass.exists() && !newClass.createNewFile()) throw new Exception("Could not create file: " + newClass);
             Writer out = new FileWriter(newClass);

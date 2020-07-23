@@ -8516,17 +8516,17 @@
       "kind" : "Dim",
       "enumerants" : [
         {
-          "enumerant" : "1D",
+          "enumerant" : "oneD",
           "value" : 0,
           "capabilities" : [ "Sampled1D", "Image1D" ]
         },
         {
-          "enumerant" : "2D",
+          "enumerant" : "twoD",
           "value" : 1,
           "capabilities" : [ "Shader", "Kernel", "ImageMSArray" ]
         },
         {
-          "enumerant" : "3D",
+          "enumerant" : "threeD",
           "value" : 2
         },
         {

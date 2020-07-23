@@ -4,18 +4,15 @@ import javax.annotation.Generated;
 import java.nio.ByteBuffer;
 
 @Generated("beehive-lab.spirv-proto.generator")
-public class SPIRV${kind} extends SPIRVEnum {
-<#list enumerants as enum>
-    public static SPIRV${kind} ${enum.name} = new SPIRV${kind}(${enum.value});
-</#list>
-    public static EmptySPIRV${kind} Empty = new EmptySPIRV${kind}();
+public class SPIRVIdResult extends SPIRVID {
+    public static EmptySPIRVIdResult Empty = new EmptySPIRVIdResult();
 
-    protected SPIRV${kind}(int value) {
-        super(value);
+    public SPIRVIdResult(int id) {
+        super(id);
     }
 
-    public static class EmptySPIRV${kind} extends SPIRV${kind} {
-        protected EmptySPIRV${kind}() {
+    public static class EmptySPIRVIdResult extends SPIRVIdResult {
+        protected EmptySPIRVIdResult() {
             super(-1);
         }
 
