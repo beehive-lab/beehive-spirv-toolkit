@@ -9,11 +9,15 @@ import java.nio.ByteBuffer;
 public class SPIRV${name} extends SPIRVInstruction {
     <#if operands??>
     <#list operands as operand>
+    <#if operand.quantifier == '*'>
+    private final SPIRVMultipleOperands<SPIRV${operand.kind}> ${operand.name};
+    <#else>
     private final SPIRV${operand.kind} ${operand.name};
+    </#if>
     </#list>
     </#if>
 
-    public SPIRV${name}(<#if operands??><#list  operands as operand>SPIRV${operand.kind} ${operand.name}<#sep>, </#list></#if>) {
+    public SPIRV${name}(<#if operands??><#list  operands as operand><#if operand.quantifier == '*'>SPIRVMultipleOperands<</#if>SPIRV${operand.kind}<#if operand.quantifier == '*'>></#if> ${operand.name}<#sep>, </#list></#if>) {
         super(${opCode?string.computer}, <#if operands??><#list  operands as operand>${operand.name}.getWordCount()<#sep> + </#list><#else>1</#if>);
         <#if operands??>
         <#list operands as operand>
