@@ -11,6 +11,9 @@ public class SPIRVOperandKind {
     @JsonProperty("kind")
     public String kind;
 
+    @JsonProperty("bases")
+    public String[] bases;
+
     @JsonProperty("enumerants")
     public SPIRVEnumerant[] enumerants;
 
@@ -34,5 +37,9 @@ public class SPIRVOperandKind {
 
     public SPIRVEnumerant[] getEnumerants() {
         return enumerants;
+    }
+
+    public String[] getBases() {
+        return bases;
     }
 }

@@ -46,13 +46,17 @@ public class Generator implements SPIRVTool {
     public void generate() throws Exception {
         Template enumOperand = config.getTemplate("operand-enum.ftl");
         Template idOperand = config.getTemplate("operand-id.ftl");
+        Template compositeOperand = config.getTemplate("operand-composite.ftl");
         Writer out;
         for (SPIRVOperandKind operandKind : grammar.operandKinds) {
-            if (operandKind.category.equals("Literal") || operandKind.category.equals("Composite")) continue;
+            if (operandKind.category.equals("Literal")) continue;
 
             out = createWriter(operandKind.kind, operandsDir);
 
-            Template templateToUse = operandKind.category.equals("Id") ? idOperand : enumOperand;
+            //Template templateToUse = operandKind.category.equals("Id") ? idOperand : enumOperand;
+            Template templateToUse = enumOperand;
+            if (operandKind.category.equals("Id")) templateToUse = idOperand;
+            if (operandKind.category.equals("Composite")) templateToUse = compositeOperand;
 
             templateToUse.process(operandKind, out);
             out.flush();
