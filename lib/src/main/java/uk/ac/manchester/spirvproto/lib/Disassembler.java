@@ -198,7 +198,7 @@ public class Disassembler implements SPIRVTool {
 			}
 			currentWordCount++;
 			SPIRVEnumerant enumerant = operandKind.getEnumerant(value);
-			decodedOperands.add(" " + enumerant.getName());
+			decodedOperands.add(enumerant.getName());
 			if (enumerant.getParameters() != null) {
 				for (int j = 0; j < enumerant.getParameters().length; j++) {
 					SPIRVOperandKind paramKind = grammar.getOperandKind(enumerant.getParameters()[j].kind);
@@ -209,7 +209,7 @@ public class Disassembler implements SPIRVTool {
 		else {
 			// By now it can only be a LiteralInteger or a Composite
 			// TODO: Composite type category decoding
-			String result = " " + wordStream.getNextWord(); currentWordCount++;
+			String result = Integer.toString(wordStream.getNextWord()); currentWordCount++;
 			if (shouldHighlight) result = highlighter.highlightInteger(result);
 			decodedOperands.add(result);
 		}
