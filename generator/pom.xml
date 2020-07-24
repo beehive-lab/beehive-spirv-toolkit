@@ -3,19 +3,26 @@
   <modelVersion>4.0.0</modelVersion>
   <dependencies>
     <dependency>
-      <groupId>org.codehaus.jackson</groupId>
-      <artifactId>jackson-mapper-asl</artifactId>
-      <version>1.9.2</version>
+      <groupId>org.freemarker</groupId>
+      <artifactId>freemarker</artifactId>
+      <version>2.3.29</version>
+    </dependency>
+
+    <dependency>
+      <groupId>beehive-lab</groupId>
+      <artifactId>spirv-lib</artifactId>
+      <version>1.0-SNAPSHOT</version>
     </dependency>
   </dependencies>
-  <parent>
-      <artifactId>spirv-proto</artifactId>
-      <groupId>beehive-lab</groupId>
-      <version>1.0-SNAPSHOT</version>
-    </parent>
 
-  <artifactId>spirv-lib</artifactId>
-  <name>lib</name>
+  <parent>
+    <artifactId>spirv-proto</artifactId>
+    <groupId>beehive-lab</groupId>
+    <version>1.0-SNAPSHOT</version>
+  </parent>
+
+  <artifactId>spirv-generator</artifactId>
+  <name>generator</name>
   <version>1.0-SNAPSHOT</version>
 
   <build>
@@ -26,7 +33,7 @@
         <version>3.0.2</version>
         <configuration>
           <outputDirectory>${project.build.outputDirectory}/resources</outputDirectory>
-      </configuration>
+        </configuration>
       </plugin>
 
     </plugins>

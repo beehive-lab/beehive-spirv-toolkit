@@ -1,16 +1,12 @@
 package uk.ac.manchester.spirvproto.runner;
 
 import org.apache.commons.cli.*;
+import uk.ac.manchester.spirvproto.generator.Generator;
 import uk.ac.manchester.spirvproto.lib.Disassembler;
-import uk.ac.manchester.spirvproto.lib.InvalidBinarySPIRVInputException;
 import uk.ac.manchester.spirvproto.lib.SPIRVTool;
 import uk.ac.manchester.spirvproto.lib.SPVFileReader;
-import uk.ac.manchester.spirvproto.lib.generator.Generator;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.io.PrintStream;
-import java.net.URISyntaxException;
 
 public class SPIRVToolRunner {
 

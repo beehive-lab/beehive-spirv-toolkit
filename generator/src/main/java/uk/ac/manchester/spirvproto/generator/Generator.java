@@ -1,4 +1,4 @@
-package uk.ac.manchester.spirvproto.lib.generator;
+package uk.ac.manchester.spirvproto.generator;
 
 import freemarker.template.Configuration;
 import freemarker.template.Template;

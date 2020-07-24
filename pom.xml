@@ -84,6 +84,7 @@
   </build>
   
   <modules>
+    <module>generator</module>
     <module>runner</module>
     <module>lib</module>
   </modules>
