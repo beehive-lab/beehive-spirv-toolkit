@@ -111,11 +111,23 @@ public class Generator implements SPIRVTool {
     }
 
     private String sanitize(String value) {
-        return value.replaceAll("[- '~.,+<>\n]", "");
+        String[] words = value.split("[- '~.,+<>\n]+");
+        StringBuilder sb = new StringBuilder(value.length());
+        for (String word : words) {
+            if (!word.isEmpty()) {
+                sb.append(capFirst(word));
+            }
+        }
+
+        return sb.toString();
     }
 
     private String uncapFirst(String value) {
         return value.substring(0, 1).toLowerCase() + value.substring(1);
+    }
+
+    private String capFirst(String value) {
+        return value.substring(0, 1).toUpperCase() + value.substring(1);
     }
 
     @Override
