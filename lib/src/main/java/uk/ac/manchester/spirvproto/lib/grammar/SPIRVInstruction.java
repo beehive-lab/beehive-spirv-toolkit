@@ -35,4 +35,18 @@ public class SPIRVInstruction implements Comparable<SPIRVInstruction> {
     public SPIRVOperand[] getOperands() {
         return operands;
     }
+
+    public int getRequiredOperandCount() {
+        int requiredOperandCount = 0;
+        if (operands != null) {
+            for (SPIRVOperand operand : operands) {
+                if (operand.getQuantifier() != '*' && operand.getQuantifier() != '?') requiredOperandCount++;
+            }
+        }
+        return requiredOperandCount;
+    }
+
+    public int getOperandCount() {
+        return (operands != null) ? operands.length : 0;
+    }
 }

@@ -1,4 +1,4 @@
-package uk.ac.manchester.spirvproto.lib;
+package uk.ac.manchester.spirvproto.lib.disassembler;
 
 import java.io.IOException;
 import java.io.InputStream;

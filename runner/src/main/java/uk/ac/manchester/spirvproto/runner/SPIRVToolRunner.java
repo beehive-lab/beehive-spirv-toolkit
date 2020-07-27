@@ -2,9 +2,9 @@ package uk.ac.manchester.spirvproto.runner;
 
 import org.apache.commons.cli.*;
 import uk.ac.manchester.spirvproto.generator.Generator;
-import uk.ac.manchester.spirvproto.lib.Disassembler;
 import uk.ac.manchester.spirvproto.lib.SPIRVTool;
-import uk.ac.manchester.spirvproto.lib.SPVFileReader;
+import uk.ac.manchester.spirvproto.lib.disassembler.Disassembler;
+import uk.ac.manchester.spirvproto.lib.disassembler.SPVFileReader;
 
 import java.io.PrintStream;
 
@@ -33,7 +33,7 @@ public class SPIRVToolRunner {
 		Options options = new Options();
 		options.addOption("h", "help", false,"Prints this message");
 		options.addOption("d", "debug", false, "Print debug information");
-		options.addOption("n", "name", false, "Inline names of nodes where possible");
+		options.addOption("n", "inline-names", false, "Inline names of nodes where possible");
 
 		options.addOption("o", "out", true, "Specify an output file");
 		options.addOption("t", "tool", true, "Select tool: gen | dis[default]");

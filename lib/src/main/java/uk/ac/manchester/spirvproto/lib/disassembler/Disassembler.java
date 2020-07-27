@@ -1,15 +1,13 @@
-package uk.ac.manchester.spirvproto.lib;
+package uk.ac.manchester.spirvproto.lib.disassembler;
 
+import uk.ac.manchester.spirvproto.lib.SPIRVHeader;
+import uk.ac.manchester.spirvproto.lib.SPIRVTool;
 import uk.ac.manchester.spirvproto.lib.grammar.*;
 
 import java.io.IOException;
 import java.io.PrintStream;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class Disassembler implements SPIRVTool {
 	private final BinaryWordStream wordStream;
@@ -20,7 +18,6 @@ public class Disassembler implements SPIRVTool {
 	private final boolean shouldHighlight;
 	private final boolean shouldInlineNames;
 	private final Map<String, String> idToNameMap;
-	private final Pattern stringPattern = Pattern.compile(".*?\"(.*?)\".*");
 
 	public Disassembler(BinaryWordStream wordStream, PrintStream output, boolean shouldHighlight, boolean shouldInlineNames) throws InvalidBinarySPIRVInputException, IOException {
 		this.wordStream = wordStream;
@@ -56,55 +53,32 @@ public class Disassembler implements SPIRVTool {
 		int currentWord;
 		int opcode;
 		int wordcount;
-		int operandsLength;
 		int currentWordCount;
-
-		int result;
-		String op;
-		List<String> operands;
-
+		int requiredOperandCount;
+		SPIRVDecodedInstruction instruction;
 		SPIRVInstruction currentInstruction;
 
 		while ((currentWord = wordStream.getNextWord()) != -1) {
 			opcode = currentWord & 0xFFFF;
 			wordcount = currentWord >> 16;
 			currentInstruction = grammar.getInstructionByOpCode(opcode);
-            operandsLength = (currentInstruction.getOperands() != null) ? currentInstruction.getOperands().length : 0;
-            op = currentInstruction.toString();
+			requiredOperandCount = currentInstruction.getRequiredOperandCount();
+			instruction = new SPIRVDecodedInstruction(currentInstruction.toString(), requiredOperandCount);
 
-			// Calculate required operand count
-			int requiredOperandCount = 0;
-			if (currentInstruction.getOperands() != null) {
-				for (SPIRVOperand operand : currentInstruction.getOperands()) {
-					if (operand.getQuantifier() != '*' && operand.getQuantifier() != '?') requiredOperandCount++;
-				}
-			}
-
-            result = -1;
 			currentWordCount = 1;
 			int decodedOperands = 0;
-			operands = new ArrayList<>();
-			for (; decodedOperands < operandsLength && currentWordCount < wordcount; decodedOperands++) {
-			    SPIRVOperand currentOperand = currentInstruction.getOperands() != null ? currentInstruction.getOperands()[decodedOperands] : null;
-			    if (currentOperand == null) continue;
+			for (; decodedOperands < currentInstruction.getOperandCount() && currentWordCount < wordcount; decodedOperands++) {
+			    SPIRVOperand currentOperand = currentInstruction.getOperands()[decodedOperands];
 
-			    int operandCount = 1;
 			    // If the quantifier is * that means this is the last operand and there could be 0 or more of it
 				// It can be determined by the wordcount how many there is left
-			    if (currentOperand.getQuantifier() == '*') {
+				int operandCount = 1;
+				if (currentOperand.getQuantifier() == '*') {
 			    	operandCount = wordcount - currentWordCount;
 				}
 
-			    // This needs to be updated to account for optional operands
-			    //if (operandCount >= wordcount) throw new InvalidSPIRVWordCountException(currentInstruction, operandsLength, wordcount);
-
-			    if (currentOperand.getKind().equals("IdResult")) {
-			    	result = wordStream.getNextWord(); currentWordCount++;
-				}
-			    else {
-					for (int j = 0; j < operandCount; j++) {
-						currentWordCount += decodeOperand(operands, grammar.getOperandKind(currentOperand.getKind()));
-					}
+				for (int j = 0; j < operandCount; j++) {
+					currentWordCount += decodeOperand(instruction, grammar.getOperandKind(currentOperand.getKind()));
 				}
 			}
 
@@ -113,46 +87,54 @@ public class Disassembler implements SPIRVTool {
 			//TODO better message and custom exception
             if (wordcount > currentWordCount) throw new RuntimeException("There are operands that were not decoded");
 
-            int boundLength = (int) Math.log10(header.bound) + 1;
-            int opStart = 4 + boundLength;
-
-			if (result >= 0) {
-				String targetID = "%" + result;
-				if (shouldHighlight) targetID = highlighter.highlightID(targetID);
-				if (shouldInlineNames) {
-					if (idToNameMap.containsKey(targetID)) {
-						targetID = idToNameMap.get(targetID);
-					}
-				}
-				targetID += " = ";
-				output.print(targetID);
-				opStart -= (int) Math.log10(result) + 5;
-			}
-			for (int i = 0; i < opStart; i++) {
-				output.print(" ");
-			}
-
-			output.print(op);
-			for (String operand : operands) {
-				output.print(" " + operand);
-			}
-			output.println();
-			processSpecialOps(op, operands);
+			processSpecialOps(instruction);
+			printInstruction(instruction);
 		}
 	}
 
-	private void processSpecialOps(String op, List<String> operands) {
-		if (op.equals("OpName")) {
-			Matcher m = stringPattern.matcher(operands.get(1));
-			if (m.find()) {
-				String name = m.group(1);
-				if (shouldHighlight) name = highlighter.highlightID("%" + name);
-				idToNameMap.put(operands.get(0), name);
-			}
+	private void printInstruction(SPIRVDecodedInstruction instruction) {
+		int boundLength = (int) Math.log10(header.bound) + 1;
+		int opStart = 4 + boundLength;
+
+		SPIRVDecodedOperand result = instruction.result;
+		if (result != null) {
+			opStart -= result.operand.length() + 3;
+			printOperand(result);
+			output.print(" = ");
+		}
+
+		for (int i = 0; i < opStart; i++) {
+			output.print(" ");
+		}
+
+		output.print(instruction.operationName);
+		for (SPIRVDecodedOperand operand : instruction.operands) {
+			output.print(" ");
+			printOperand(operand);
+		}
+		output.println();
+	}
+
+	private void printOperand(SPIRVDecodedOperand op) {
+		String toPrint;
+		if (shouldHighlight) {
+			toPrint = highlighter.highlight(op);
+		}
+		else {
+			toPrint = op.operand;
+		}
+		output.print(toPrint);
+	}
+
+	private void processSpecialOps(SPIRVDecodedInstruction instruction) {
+		if (instruction.operationName.equals("OpName")) {
+			String name = instruction.operands.get(1).operand;
+			name = "%" + name.substring(1, name.length() - 1);
+			idToNameMap.put(instruction.operands.get(0).operand, name);
 		}
 	}
 
-	private int decodeOperand(List<String> decodedOperands, SPIRVOperandKind operandKind) throws IOException, InvalidSPIRVEnumerantException, InvalidSPIRVOperandKindException {
+	private int decodeOperand(SPIRVDecodedInstruction instruction, SPIRVOperandKind operandKind) throws IOException, InvalidSPIRVEnumerantException, InvalidSPIRVOperandKindException {
 		int currentWordCount = 0;
 		if (operandKind.getKind().equals("LiteralString")) {
 			StringBuilder sb = new StringBuilder("\"");
@@ -174,18 +156,21 @@ public class Disassembler implements SPIRVTool {
 			} while (word[word.length - 1] != 0);
 			sb.append("\"");
 			String result = sb.toString();
-			if (shouldHighlight) result = highlighter.highlightString(result);
-			decodedOperands.add(result);
+			instruction.operands.add(new SPIRVDecodedOperand(result, SPIRVOperandCategory.LiteralString));
 		}
 		else if (operandKind.getKind().startsWith("Id")) {
 			String result = "%" + wordStream.getNextWord(); currentWordCount++;
-			if (shouldHighlight) result = highlighter.highlightID(result);
 			if (shouldInlineNames) {
 				if (idToNameMap.containsKey(result)) {
 					result = idToNameMap.get(result);
 				}
 			}
-			decodedOperands.add(result);
+			SPIRVDecodedOperand id = new SPIRVDecodedOperand(result, SPIRVOperandCategory.ID);
+			if (operandKind.getKind().equals("IdResult")) {
+				instruction.setResult(id);
+			} else {
+				instruction.operands.add(id);
+			}
 		}
 		else if (operandKind.getCategory().endsWith("Enum")) {
 			String value;
@@ -198,20 +183,21 @@ public class Disassembler implements SPIRVTool {
 			}
 			currentWordCount++;
 			SPIRVEnumerant enumerant = operandKind.getEnumerant(value);
-			decodedOperands.add(enumerant.getName());
+			instruction.operands.add(new SPIRVDecodedOperand(enumerant.getName(), SPIRVOperandCategory.Enum));
 			if (enumerant.getParameters() != null) {
 				for (int j = 0; j < enumerant.getParameters().length; j++) {
 					SPIRVOperandKind paramKind = grammar.getOperandKind(enumerant.getParameters()[j].getKind());
-					currentWordCount += decodeOperand(decodedOperands, paramKind);
+					currentWordCount += decodeOperand(instruction, paramKind);
 				}
 			}
 		}
+		else if (operandKind.getCategory().equals("Composite")) {
+			throw new RuntimeException("Composite operand decoding is not implemented yet");
+		}
 		else {
-			// By now it can only be a LiteralInteger or a Composite
-			// TODO: Composite type category decoding
+			// By now it can only be a Literal(Integer)
 			String result = Integer.toString(wordStream.getNextWord()); currentWordCount++;
-			if (shouldHighlight) result = highlighter.highlightInteger(result);
-			decodedOperands.add(result);
+			instruction.operands.add(new SPIRVDecodedOperand(result, SPIRVOperandCategory.LiteralInteger));
 		}
 		return currentWordCount;
 	}

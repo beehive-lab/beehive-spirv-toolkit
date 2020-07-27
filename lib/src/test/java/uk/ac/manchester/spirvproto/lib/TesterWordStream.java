@@ -1,5 +1,7 @@
 package uk.ac.manchester.spirvproto.lib;
 
+import uk.ac.manchester.spirvproto.lib.disassembler.BinaryWordStream;
+
 public class TesterWordStream implements BinaryWordStream {
     private final int[] words;
     private int position;

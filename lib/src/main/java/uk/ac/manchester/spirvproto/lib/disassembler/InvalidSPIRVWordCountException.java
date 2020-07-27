@@ -1,4 +1,4 @@
-package uk.ac.manchester.spirvproto.lib;
+package uk.ac.manchester.spirvproto.lib.disassembler;
 
 import uk.ac.manchester.spirvproto.lib.grammar.SPIRVInstruction;
 

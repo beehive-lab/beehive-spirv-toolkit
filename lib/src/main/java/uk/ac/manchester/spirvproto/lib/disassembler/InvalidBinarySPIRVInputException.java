@@ -1,4 +1,4 @@
-package uk.ac.manchester.spirvproto.lib;
+package uk.ac.manchester.spirvproto.lib.disassembler;
 
 public class InvalidBinarySPIRVInputException extends Exception {
     public InvalidBinarySPIRVInputException(int magicNumber) {
