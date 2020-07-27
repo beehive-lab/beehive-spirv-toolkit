@@ -28,10 +28,11 @@ This should create 3 jars. One will be in `spirv-proto/lib/dist` and contains al
 ## Usage
 ```bash
 spirv-proto [OPTIONS] <filename>
- -d         Print debug information
- -h         Prints this message
- -n         Inline names of nodes where possible
- -o <arg>   Specify an output file
+ -d,--debug        Print debug information
+ -h,--help         Prints this message
+ -n,--name         Inline names of nodes where possible
+ -o,--out <arg>    Specify an output file
+ -t,--tool <arg>   Select tool: gen | dis[default]
 ```
 
 To run the disassembler on the included example file:
@@ -39,7 +40,7 @@ To run the disassembler on the included example file:
 $ ./spirv-proto examples/vector_add.spv
 ```
 
-Alternatively you could run the generated jar file:
+Alternatively you could run the generated jar file directly:
 ```bash
 $ java -jar dist/spirv-proto.jar examples/vector_add.spv
 ```
