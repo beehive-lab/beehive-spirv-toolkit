@@ -7,4 +7,15 @@ import org.codehaus.jackson.annotate.JsonProperty;
 public class SPIRVOperandParameter {
     @JsonProperty("kind")
     public String kind;
+
+    @JsonProperty("name")
+    public String name;
+
+    public String getKind() {
+        return kind;
+    }
+
+    public String getName() {
+        return name;
+    }
 }

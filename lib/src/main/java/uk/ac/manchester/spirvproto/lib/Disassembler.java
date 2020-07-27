@@ -201,7 +201,7 @@ public class Disassembler implements SPIRVTool {
 			decodedOperands.add(enumerant.getName());
 			if (enumerant.getParameters() != null) {
 				for (int j = 0; j < enumerant.getParameters().length; j++) {
-					SPIRVOperandKind paramKind = grammar.getOperandKind(enumerant.getParameters()[j].kind);
+					SPIRVOperandKind paramKind = grammar.getOperandKind(enumerant.getParameters()[j].getKind());
 					currentWordCount += decodeOperand(decodedOperands, paramKind);
 				}
 			}

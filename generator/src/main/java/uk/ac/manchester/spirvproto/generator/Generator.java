@@ -52,6 +52,23 @@ public class Generator implements SPIRVTool {
         for (SPIRVOperandKind operandKind : grammar.operandKinds) {
             if (operandKind.kind.equals("LiteralInteger") || operandKind.kind.equals("LiteralString")) continue;
 
+            // Clean up parameter names
+            if (operandKind.enumerants != null) {
+                for (SPIRVEnumerant enumerant : operandKind.enumerants) {
+                    if (enumerant.parameters != null) {
+                        for (int i = 0; i < enumerant.parameters.length; i++) {
+                            SPIRVOperandParameter param = enumerant.parameters[i];
+                            if (param.name == null || param.name.isEmpty()) {
+                                param.name = "parameter" + i;
+                            }
+                            else {
+                                param.name = uncapFirst(sanitize(param.name));
+                            }
+                        }
+                    }
+                }
+            }
+
             out = createWriter(operandKind.kind, operandsDir);
 
             //Template templateToUse = operandKind.category.equals("Id") ? idOperand : enumOperand;
@@ -75,7 +92,7 @@ public class Generator implements SPIRVTool {
                     if (operand.name == null) {
                         operand.name = uncapFirst(operand.kind);
                     } else {
-                        operand.name = uncapFirst(operand.name.replaceAll("[ '~.,+\n]", ""));
+                        operand.name = uncapFirst(sanitize(operand.name));
                     }
                 }
             }
@@ -91,6 +108,10 @@ public class Generator implements SPIRVTool {
         File newClass = new File(directory, filename);
         if (!newClass.exists() && !newClass.createNewFile()) throw new Exception("Could not create file: " + newClass);
         return new FileWriter(newClass);
+    }
+
+    private String sanitize(String value) {
+        return value.replaceAll("[- '~.,+<>\n]", "");
     }
 
     private String uncapFirst(String value) {
