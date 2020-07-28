@@ -5,5 +5,6 @@ public enum SPIRVOperandCategory {
     ID,
     Result,
     LiteralInteger,
-    Enum
+    Enum,
+    Token
 }

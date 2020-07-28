@@ -70,16 +70,9 @@ public class Disassembler implements SPIRVTool {
 			for (; decodedOperands < currentInstruction.getOperandCount() && currentWordCount < wordcount; decodedOperands++) {
 			    SPIRVOperand currentOperand = currentInstruction.getOperands()[decodedOperands];
 
-			    // If the quantifier is * that means this is the last operand and there could be 0 or more of it
-				// It can be determined by the wordcount how many there is left
-				int operandCount = 1;
-				if (currentOperand.getQuantifier() == '*') {
-			    	operandCount = wordcount - currentWordCount;
-				}
-
-				for (int j = 0; j < operandCount; j++) {
+			    do {
 					currentWordCount += decodeOperand(instruction, grammar.getOperandKind(currentOperand.getKind()));
-				}
+				} while (currentOperand.getQuantifier() == '*' && currentWordCount < wordcount);
 			}
 
 			if (decodedOperands < requiredOperandCount) throw new InvalidSPIRVWordCountException(currentInstruction, requiredOperandCount, wordcount);
@@ -192,7 +185,14 @@ public class Disassembler implements SPIRVTool {
 			}
 		}
 		else if (operandKind.getCategory().equals("Composite")) {
-			throw new RuntimeException("Composite operand decoding is not implemented yet");
+			String[] bases = operandKind.getBases();
+			instruction.operands.add(new SPIRVDecodedOperand("{", SPIRVOperandCategory.Token));
+			for (String base : bases) {
+				SPIRVOperandKind member = new SPIRVOperandKind();
+				member.kind = base;
+				currentWordCount += decodeOperand(instruction, member);
+			}
+			instruction.operands.add(new SPIRVDecodedOperand("}", SPIRVOperandCategory.Token));
 		}
 		else {
 			// By now it can only be a Literal(Integer)
