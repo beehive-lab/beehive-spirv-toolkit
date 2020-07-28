@@ -6,7 +6,9 @@ import uk.ac.manchester.spirvproto.lib.grammar.*;
 
 import java.io.IOException;
 import java.io.PrintStream;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class Disassembler implements SPIRVTool {
@@ -18,6 +20,7 @@ public class Disassembler implements SPIRVTool {
 	private final boolean shouldHighlight;
 	private final boolean shouldInlineNames;
 	private final Map<String, String> idToNameMap;
+	private final Map<String, Integer> idToTypeMap;
 
 	public Disassembler(BinaryWordStream wordStream, PrintStream output, boolean shouldHighlight, boolean shouldInlineNames) throws InvalidBinarySPIRVInputException, IOException {
 		this.wordStream = wordStream;
@@ -44,6 +47,7 @@ public class Disassembler implements SPIRVTool {
 				wordStream.getNextWord());
 
 		idToNameMap = new HashMap<>(header.bound);
+		idToTypeMap = new HashMap<>(header.bound);
 		grammar = SPIRVSpecification.buildSPIRVGrammar(header.majorVersion, header.minorVersion);
 	}
 
@@ -125,6 +129,11 @@ public class Disassembler implements SPIRVTool {
 			name = "%" + name.substring(1, name.length() - 1);
 			idToNameMap.put(instruction.operands.get(0).operand, name);
 		}
+		else if (instruction.operationName.equals("OpTypeInt") | instruction.operationName.equals("OpTypeFloat")) {
+			int widthInWords = Integer.parseInt(instruction.operands.get(0).operand) / 32;
+			if (widthInWords <= 0) widthInWords = 1;
+			idToTypeMap.put(instruction.result.operand, widthInWords);
+		}
 	}
 
 	private int decodeOperand(SPIRVDecodedInstruction instruction, SPIRVOperandKind operandKind) throws IOException, InvalidSPIRVEnumerantException, InvalidSPIRVOperandKindException {
@@ -151,7 +160,14 @@ public class Disassembler implements SPIRVTool {
 			String result = sb.toString();
 			instruction.operands.add(new SPIRVDecodedOperand(result, SPIRVOperandCategory.LiteralString));
 		}
-		else if (operandKind.getKind().startsWith("Id")) {
+		else if (operandKind.getKind().equals("LiteralContextDependentNumber")) {
+			int width = idToTypeMap.get(instruction.operands.get(instruction.operands.size() - 1).operand);
+			currentWordCount += width;
+			for (int i = 0; i < width; i++) {
+				instruction.operands.add(new SPIRVDecodedOperand(Integer.toString(wordStream.getNextWord()), SPIRVOperandCategory.LiteralInteger));
+			}
+		}
+		else if (operandKind.getCategory().equals("Id")) {
 			String result = "%" + wordStream.getNextWord(); currentWordCount++;
 			if (shouldInlineNames) {
 				if (idToNameMap.containsKey(result)) {
@@ -166,21 +182,30 @@ public class Disassembler implements SPIRVTool {
 			}
 		}
 		else if (operandKind.getCategory().endsWith("Enum")) {
-			String value;
+			SPIRVEnumerant[] values;
 			if (operandKind.getCategory().startsWith("Value")) {
-				value = Integer.toString(wordStream.getNextWord());
+				values = new SPIRVEnumerant[1];
+				values[0] = operandKind.getEnumerant(Integer.toString(wordStream.getNextWord()));
 			}
 			else {
 				// For now it can only be a BitEnum
-				value = String.format("0x%04x", wordStream.getNextWord());
+				int value = wordStream.getNextWord();
+				List<SPIRVEnumerant> flags = new ArrayList<>(1);
+				for (SPIRVEnumerant enumerant : operandKind.getEnumerants()) {
+				    int mask = Integer.decode(enumerant.getValue());
+				    if ((mask & value) > 0) flags.add(enumerant);
+				}
+				//value = String.format("0x%04x", wordStream.getNextWord());
+				values = flags.toArray(new SPIRVEnumerant[0]);
 			}
 			currentWordCount++;
-			SPIRVEnumerant enumerant = operandKind.getEnumerant(value);
-			instruction.operands.add(new SPIRVDecodedOperand(enumerant.getName(), SPIRVOperandCategory.Enum));
-			if (enumerant.getParameters() != null) {
-				for (int j = 0; j < enumerant.getParameters().length; j++) {
-					SPIRVOperandKind paramKind = grammar.getOperandKind(enumerant.getParameters()[j].getKind());
-					currentWordCount += decodeOperand(instruction, paramKind);
+			for (SPIRVEnumerant enumerant : values) {
+				instruction.operands.add(new SPIRVDecodedOperand(enumerant.getName(), SPIRVOperandCategory.Enum));
+				if (enumerant.getParameters() != null) {
+					for (int j = 0; j < enumerant.getParameters().length; j++) {
+						SPIRVOperandKind paramKind = grammar.getOperandKind(enumerant.getParameters()[j].getKind());
+						currentWordCount += decodeOperand(instruction, paramKind);
+					}
 				}
 			}
 		}
@@ -190,6 +215,9 @@ public class Disassembler implements SPIRVTool {
 			for (String base : bases) {
 				SPIRVOperandKind member = new SPIRVOperandKind();
 				member.kind = base;
+				if (base.startsWith("Literal")) member.category = "Literal";
+				else if (base.startsWith("Id")) member.category = "Id";
+
 				currentWordCount += decodeOperand(instruction, member);
 			}
 			instruction.operands.add(new SPIRVDecodedOperand("}", SPIRVOperandCategory.Token));
