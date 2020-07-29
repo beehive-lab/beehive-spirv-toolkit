@@ -2,6 +2,8 @@ package uk.ac.manchester.spirvproto.lib.disassembler;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 
 public class SPVByteStreamReader implements BinaryWordStream {
 
@@ -18,23 +20,10 @@ public class SPVByteStreamReader implements BinaryWordStream {
         byte[] bytes = new byte[4];
         int status = input.read(bytes);
         if (status == -1) return -1;
-
-        int word;
-        if (littleEndian) {
-            word =
-                    ((0xFF & bytes[3]) << 24) |
-                    ((0xFF & bytes[2]) << 16) |
-                    ((0xFF & bytes[1]) << 8) |
-                    (0xFF & bytes[0]);
-        }
-        else {
-            word =
-                    ((0xFF & bytes[0]) << 24) |
-                    ((0xFF & bytes[1]) << 16) |
-                    ((0xFF & bytes[2]) << 8) |
-                    (0xFF & bytes[3]);
-        }
-        return word;
+        return ByteBuffer
+                .wrap(bytes)
+                .order(littleEndian ? ByteOrder.LITTLE_ENDIAN : ByteOrder.BIG_ENDIAN)
+                .getInt();
     }
 
     @Override

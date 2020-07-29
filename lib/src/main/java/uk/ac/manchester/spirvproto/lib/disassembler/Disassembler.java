@@ -24,7 +24,11 @@ public class Disassembler implements SPIRVTool {
 	private final Map<String, String> idToNameMap;
 	private final Map<String, SPIRVNumberFormat> idToTypeMap;
 
-	public Disassembler(BinaryWordStream wordStream, PrintStream output, boolean shouldHighlight, boolean shouldInlineNames) throws InvalidBinarySPIRVInputException, IOException {
+	public Disassembler(BinaryWordStream wordStream,
+						PrintStream output,
+						boolean shouldHighlight,
+						boolean shouldInlineNames) throws InvalidBinarySPIRVInputException, IOException {
+
 		this.wordStream = wordStream;
 		this.output = output;
 		this.shouldHighlight = shouldHighlight;
@@ -49,8 +53,9 @@ public class Disassembler implements SPIRVTool {
 				wordStream.getNextWord());
 
 		idToNameMap = new HashMap<>(header.bound);
-		idToTypeMap = new HashMap<String, SPIRVNumberFormat>(header.bound);
-		grammar = SPIRVSpecification.buildSPIRVGrammar(header.majorVersion, header.minorVersion);
+		idToTypeMap = new HashMap<>(header.bound);
+		grammar = SPIRVSpecification
+				.buildSPIRVGrammar(header.majorVersion, header.minorVersion);
 	}
 
 	public void disassemble() throws IOException, InvalidSPIRVOpcodeException, InvalidSPIRVOperandKindException, InvalidSPIRVEnumerantException, InvalidSPIRVWordCountException {
@@ -69,22 +74,32 @@ public class Disassembler implements SPIRVTool {
 			wordcount = currentWord >> 16;
 			currentInstruction = grammar.getInstructionByOpCode(opcode);
 			requiredOperandCount = currentInstruction.getRequiredOperandCount();
-			instruction = new SPIRVDecodedInstruction(currentInstruction.toString(), requiredOperandCount);
+			instruction = new SPIRVDecodedInstruction(
+					currentInstruction.toString(), requiredOperandCount);
 
 			currentWordCount = 1;
 			int decodedOperands = 0;
-			for (; decodedOperands < currentInstruction.getOperandCount() && currentWordCount < wordcount; decodedOperands++) {
+			for (; (decodedOperands < currentInstruction.getOperandCount()) && (currentWordCount < wordcount); decodedOperands++) {
 			    SPIRVOperand currentOperand = currentInstruction.getOperands()[decodedOperands];
 
 			    do {
-					currentWordCount += decodeOperand(instruction, grammar.getOperandKind(currentOperand.getKind()));
+					currentWordCount += decodeOperand(instruction,
+							grammar.getOperandKind(currentOperand.getKind()));
+
 				} while (currentOperand.getQuantifier() == '*' && currentWordCount < wordcount);
 			}
 
-			if (decodedOperands < requiredOperandCount) throw new InvalidSPIRVWordCountException(currentInstruction, requiredOperandCount, wordcount);
+			if (decodedOperands < requiredOperandCount) {
+				throw new InvalidSPIRVWordCountException(
+						currentInstruction,
+						requiredOperandCount,
+						wordcount);
+			}
 
 			//TODO better message and custom exception
-            if (wordcount > currentWordCount) throw new RuntimeException("There are operands that were not decoded");
+            if (wordcount > currentWordCount) {
+				throw new RuntimeException("There are operands that were not decoded");
+			}
 
 			processSpecialOps(instruction);
 			printInstruction(instruction);
@@ -132,14 +147,21 @@ public class Disassembler implements SPIRVTool {
 			name = "%" + name.substring(1, name.length() - 1);
 			idToNameMap.put(instruction.operands.get(0).operand, name);
 		}
-		else if (instruction.operationName.equals("OpTypeInt") | (isFloating = instruction.operationName.equals("OpTypeFloat"))) {
-			int widthInWords = Integer.parseInt(instruction.operands.get(0).operand) / 32;
+		else if (instruction.operationName.equals("OpTypeInt")
+				| (isFloating = instruction.operationName.equals("OpTypeFloat"))) {
+
+			int widthInWords = Integer
+					.parseInt(instruction.operands.get(0).operand) / 32;
+
 			if (widthInWords <= 0) widthInWords = 1;
-			idToTypeMap.put(instruction.result.operand, new SPIRVNumberFormat(widthInWords, isFloating));
+
+			idToTypeMap.put(instruction.result.operand,
+					new SPIRVNumberFormat(widthInWords, isFloating));
 		}
 	}
 
 	private int decodeOperand(SPIRVDecodedInstruction instruction, SPIRVOperandKind operandKind) throws IOException, InvalidSPIRVEnumerantException, InvalidSPIRVOperandKindException {
+		List<SPIRVDecodedOperand> operands = instruction.operands;
 		int currentWordCount = 0;
 		if (operandKind.getKind().equals("LiteralString")) {
 			StringBuilder sb = new StringBuilder("\"");
@@ -161,25 +183,37 @@ public class Disassembler implements SPIRVTool {
 			} while (word[word.length - 1] != 0);
 			sb.append("\"");
 			String result = sb.toString();
-			instruction.operands.add(new SPIRVDecodedOperand(result, SPIRVOperandCategory.LiteralString));
+			operands.add(new SPIRVDecodedOperand(
+										result,
+										SPIRVOperandCategory.LiteralString));
 		}
 		else if (operandKind.getKind().equals("LiteralContextDependentNumber")) {
-			SPIRVNumberFormat format = idToTypeMap.get(instruction.operands.get(instruction.operands.size() - 1).operand);
+			String lastID = operands.get(operands.size() - 1).operand;
+			SPIRVNumberFormat format = idToTypeMap.get(lastID);
 			currentWordCount += format.width;
 			byte[] bytes = new byte[format.width * 4];
 			for (int i = format.width - 1; i >= 0; i--) {
-				System.arraycopy(wordStream.getNextWordInBytes(), 0, bytes, i*4,4);
+				System.arraycopy(
+						wordStream.getNextWordInBytes(),
+						0,
+						bytes,
+						i*4,
+						4);
 			}
 			String number;
 			if (format.isFloating){
-				if (format.width == 1) number = decodeFloat(bytes);
-				else if (format.width == 2) number = decodeDouble(bytes);
-				else throw new RuntimeException("Floating point numbers are not supported with width: " + format.width * 4);
+				switch (format.width) {
+					case 1: number = decodeFloat(bytes); break;
+					case 2: number = decodeDouble(bytes); break;
+					default:
+						throw new RuntimeException("Floating point numbers are not supported with width: " + format.width * 4);
+				}
 			}
 			else {
 				number = new BigInteger(bytes).toString();
 			}
-			instruction.operands.add(new SPIRVDecodedOperand(number, SPIRVOperandCategory.LiteralNumber));
+			operands.add(
+				new SPIRVDecodedOperand(number, SPIRVOperandCategory.LiteralNumber));
 		}
 		else if (operandKind.getCategory().equals("Id")) {
 			String result = "%" + wordStream.getNextWord(); currentWordCount++;
@@ -188,18 +222,21 @@ public class Disassembler implements SPIRVTool {
 					result = idToNameMap.get(result);
 				}
 			}
-			SPIRVDecodedOperand id = new SPIRVDecodedOperand(result, SPIRVOperandCategory.ID);
+			SPIRVDecodedOperand id = new SPIRVDecodedOperand(
+											result,
+											SPIRVOperandCategory.ID);
 			if (operandKind.getKind().equals("IdResult")) {
 				instruction.setResult(id);
 			} else {
-				instruction.operands.add(id);
+				operands.add(id);
 			}
 		}
 		else if (operandKind.getCategory().endsWith("Enum")) {
 			SPIRVEnumerant[] values;
 			if (operandKind.getCategory().startsWith("Value")) {
 				values = new SPIRVEnumerant[1];
-				values[0] = operandKind.getEnumerant(Integer.toString(wordStream.getNextWord()));
+				values[0] = operandKind
+						.getEnumerant(Integer.toString(wordStream.getNextWord()));
 			}
 			else {
 				// For now it can only be a BitEnum
@@ -214,10 +251,15 @@ public class Disassembler implements SPIRVTool {
 			}
 			currentWordCount++;
 			for (SPIRVEnumerant enumerant : values) {
-				instruction.operands.add(new SPIRVDecodedOperand(enumerant.getName(), SPIRVOperandCategory.Enum));
+				operands.add(new SPIRVDecodedOperand(
+								enumerant.getName(),
+								SPIRVOperandCategory.Enum));
+
 				if (enumerant.getParameters() != null) {
 					for (int j = 0; j < enumerant.getParameters().length; j++) {
-						SPIRVOperandKind paramKind = grammar.getOperandKind(enumerant.getParameters()[j].getKind());
+						SPIRVOperandKind paramKind = grammar.getOperandKind(
+								enumerant.getParameters()[j].getKind());
+
 						currentWordCount += decodeOperand(instruction, paramKind);
 					}
 				}
@@ -225,7 +267,7 @@ public class Disassembler implements SPIRVTool {
 		}
 		else if (operandKind.getCategory().equals("Composite")) {
 			String[] bases = operandKind.getBases();
-			instruction.operands.add(new SPIRVDecodedOperand("{", SPIRVOperandCategory.Token));
+			operands.add(new SPIRVDecodedOperand("{", SPIRVOperandCategory.Token));
 			for (String base : bases) {
 				SPIRVOperandKind member = new SPIRVOperandKind();
 				member.kind = base;
@@ -234,12 +276,15 @@ public class Disassembler implements SPIRVTool {
 
 				currentWordCount += decodeOperand(instruction, member);
 			}
-			instruction.operands.add(new SPIRVDecodedOperand("}", SPIRVOperandCategory.Token));
+			operands.add(new SPIRVDecodedOperand("}", SPIRVOperandCategory.Token));
 		}
 		else {
 			// By now it can only be a Literal(Integer)
-			String result = Integer.toString(wordStream.getNextWord()); currentWordCount++;
-			instruction.operands.add(new SPIRVDecodedOperand(result, SPIRVOperandCategory.LiteralNumber));
+			String result = Integer.toString(wordStream.getNextWord());
+			currentWordCount++;
+			operands.add(new SPIRVDecodedOperand(
+								result,
+								SPIRVOperandCategory.LiteralNumber));
 		}
 		return currentWordCount;
 	}
