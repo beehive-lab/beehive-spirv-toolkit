@@ -6,6 +6,8 @@ import uk.ac.manchester.spirvproto.lib.grammar.*;
 
 import java.io.IOException;
 import java.io.PrintStream;
+import java.math.BigInteger;
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -20,7 +22,7 @@ public class Disassembler implements SPIRVTool {
 	private final boolean shouldHighlight;
 	private final boolean shouldInlineNames;
 	private final Map<String, String> idToNameMap;
-	private final Map<String, Integer> idToTypeMap;
+	private final Map<String, SPIRVNumberFormat> idToTypeMap;
 
 	public Disassembler(BinaryWordStream wordStream, PrintStream output, boolean shouldHighlight, boolean shouldInlineNames) throws InvalidBinarySPIRVInputException, IOException {
 		this.wordStream = wordStream;
@@ -47,7 +49,7 @@ public class Disassembler implements SPIRVTool {
 				wordStream.getNextWord());
 
 		idToNameMap = new HashMap<>(header.bound);
-		idToTypeMap = new HashMap<>(header.bound);
+		idToTypeMap = new HashMap<String, SPIRVNumberFormat>(header.bound);
 		grammar = SPIRVSpecification.buildSPIRVGrammar(header.majorVersion, header.minorVersion);
 	}
 
@@ -124,15 +126,16 @@ public class Disassembler implements SPIRVTool {
 	}
 
 	private void processSpecialOps(SPIRVDecodedInstruction instruction) {
+		boolean isFloating;
 		if (instruction.operationName.equals("OpName")) {
 			String name = instruction.operands.get(1).operand;
 			name = "%" + name.substring(1, name.length() - 1);
 			idToNameMap.put(instruction.operands.get(0).operand, name);
 		}
-		else if (instruction.operationName.equals("OpTypeInt") | instruction.operationName.equals("OpTypeFloat")) {
+		else if (instruction.operationName.equals("OpTypeInt") | (isFloating = instruction.operationName.equals("OpTypeFloat"))) {
 			int widthInWords = Integer.parseInt(instruction.operands.get(0).operand) / 32;
 			if (widthInWords <= 0) widthInWords = 1;
-			idToTypeMap.put(instruction.result.operand, widthInWords);
+			idToTypeMap.put(instruction.result.operand, new SPIRVNumberFormat(widthInWords, isFloating));
 		}
 	}
 
@@ -161,11 +164,22 @@ public class Disassembler implements SPIRVTool {
 			instruction.operands.add(new SPIRVDecodedOperand(result, SPIRVOperandCategory.LiteralString));
 		}
 		else if (operandKind.getKind().equals("LiteralContextDependentNumber")) {
-			int width = idToTypeMap.get(instruction.operands.get(instruction.operands.size() - 1).operand);
-			currentWordCount += width;
-			for (int i = 0; i < width; i++) {
-				instruction.operands.add(new SPIRVDecodedOperand(Integer.toString(wordStream.getNextWord()), SPIRVOperandCategory.LiteralInteger));
+			SPIRVNumberFormat format = idToTypeMap.get(instruction.operands.get(instruction.operands.size() - 1).operand);
+			currentWordCount += format.width;
+			byte[] bytes = new byte[format.width * 4];
+			for (int i = format.width - 1; i >= 0; i--) {
+				System.arraycopy(wordStream.getNextWordInBytes(), 0, bytes, i*4,4);
 			}
+			String number;
+			if (format.isFloating){
+				if (format.width == 1) number = decodeFloat(bytes);
+				else if (format.width == 2) number = decodeDouble(bytes);
+				else throw new RuntimeException("Floating point numbers are not supported with width: " + format.width * 4);
+			}
+			else {
+				number = new BigInteger(bytes).toString();
+			}
+			instruction.operands.add(new SPIRVDecodedOperand(number, SPIRVOperandCategory.LiteralNumber));
 		}
 		else if (operandKind.getCategory().equals("Id")) {
 			String result = "%" + wordStream.getNextWord(); currentWordCount++;
@@ -225,9 +239,17 @@ public class Disassembler implements SPIRVTool {
 		else {
 			// By now it can only be a Literal(Integer)
 			String result = Integer.toString(wordStream.getNextWord()); currentWordCount++;
-			instruction.operands.add(new SPIRVDecodedOperand(result, SPIRVOperandCategory.LiteralInteger));
+			instruction.operands.add(new SPIRVDecodedOperand(result, SPIRVOperandCategory.LiteralNumber));
 		}
 		return currentWordCount;
+	}
+
+	private String decodeFloat(byte[] word) {
+		return Float.toString(Float.intBitsToFloat(ByteBuffer.wrap(word).getInt()));
+	}
+
+	private String decodeDouble(byte[] words) {
+		return Double.toString(Double.longBitsToDouble(ByteBuffer.wrap(words).getLong()));
 	}
 
 	@Override

@@ -26,7 +26,7 @@ public class CLIHighlighter implements SPIRVSyntaxHighlighter {
             case ID: return highlightID(op.operand);
 
             case LiteralString: return highlightString(op.operand);
-            case LiteralInteger: return highlightInteger(op.operand);
+            case LiteralNumber: return highlightInteger(op.operand);
             case Enum:
             default: return op.operand;
         }

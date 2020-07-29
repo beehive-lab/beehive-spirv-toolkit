@@ -4,7 +4,7 @@ public enum SPIRVOperandCategory {
     LiteralString,
     ID,
     Result,
-    LiteralInteger,
+    LiteralNumber,
     Enum,
     Token
 }
