@@ -245,17 +245,16 @@ public class Disassembler implements SPIRVTool {
 				List<SPIRVEnumerant> flags = new ArrayList<>(1);
 				for (SPIRVEnumerant enumerant : operandKind.getEnumerants()) {
 				    int mask = Integer.decode(enumerant.getValue());
-				    if ((mask & value) > 0) flags.add(enumerant);
+				    if ((mask & value) > 0 || mask == value) flags.add(enumerant);
 				}
 				//value = String.format("0x%04x", wordStream.getNextWord());
 				values = flags.toArray(new SPIRVEnumerant[0]);
 			}
 			currentWordCount++;
-			for (SPIRVEnumerant enumerant : values) {
-				operands.add(new SPIRVDecodedOperand(
-								enumerant.getName(),
-								SPIRVOperandCategory.Enum));
+			String operand = Arrays.stream(values).map(spirvEnumerant -> spirvEnumerant.name).collect(Collectors.joining("|"));
 
+			operands.add(new SPIRVDecodedOperand(operand, SPIRVOperandCategory.Enum));
+			for (SPIRVEnumerant enumerant : values) {
 				if (enumerant.getParameters() != null) {
 					for (int j = 0; j < enumerant.getParameters().length; j++) {
 						SPIRVOperandKind paramKind = grammar.getOperandKind(
