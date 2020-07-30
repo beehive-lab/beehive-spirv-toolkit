@@ -6,6 +6,7 @@ import uk.ac.manchester.spirvproto.lib.SPIRVTool;
 import uk.ac.manchester.spirvproto.lib.disassembler.Disassembler;
 import uk.ac.manchester.spirvproto.lib.disassembler.SPVFileReader;
 
+import java.io.File;
 import java.io.PrintStream;
 
 public class SPIRVToolRunner {
@@ -35,7 +36,7 @@ public class SPIRVToolRunner {
 		options.addOption("d", "debug", false, "Print debug information");
 		options.addOption("n", "inline-names", false, "Inline names of nodes where possible");
 
-		options.addOption("o", "out", true, "Specify an output file");
+		options.addOption("o", "out", true, "Specify an output file/directory");
 		options.addOption("t", "tool", true, "Select tool: gen | dis[default]");
 
 		CommandLineParser parser = new DefaultParser();
@@ -50,7 +51,7 @@ public class SPIRVToolRunner {
 		if (cmd.getArgs().length != 1 || cmd.hasOption('h')) {
 			handleError(options);
 		}
-		String inputFile = cmd.getArgs()[0];
+		File inputFile = new File(cmd.getArgs()[0]);
 
 		boolean debug = cmd.hasOption('d');
 		boolean inlineNames = cmd.hasOption('n');
@@ -60,7 +61,11 @@ public class SPIRVToolRunner {
 			output = System.out;
 		}
 		else {
-			output = new PrintStream(cmd.getOptionValue('o'));
+			File outputFile = new File(cmd.getOptionValue('o'));
+			if (outputFile.isDirectory()) {
+				outputFile = new File(outputFile, inputFile.getName() + ".dis");
+			}
+			output = new PrintStream(outputFile);
 		}
 
 		String tool = cmd.getOptionValue('t', "dis");
@@ -77,7 +82,7 @@ public class SPIRVToolRunner {
 	}
 
 	private static void handleError(Options options) {
-		new HelpFormatter().printHelp("spirv-proto [OPTIONS] <filename>", options);
+		new HelpFormatter().printHelp("spirv-proto [OPTIONS] <filepath>", options);
 		System.exit(1);
 	}
 }

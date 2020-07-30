@@ -16,7 +16,7 @@ public class Generator implements SPIRVTool {
     private final File operandsDir;
     private final File instructionsDir;
 
-    public Generator(String path) throws Exception {
+    public Generator(File path) throws Exception {
         Configuration cfg = new Configuration(Configuration.VERSION_2_3_29);
         cfg.setClassForTemplateLoading(Generator.class, "/resources/templates");
         cfg.setDefaultEncoding("UTF-8");
@@ -24,14 +24,11 @@ public class Generator implements SPIRVTool {
         cfg.setLogTemplateExceptions(false);
         cfg.setWrapUncheckedExceptions(true);
         cfg.setFallbackOnNullLoopVariable(false);
-
         config = cfg;
 
         grammar = SPIRVSpecification.buildSPIRVGrammar(1, 0);
 
-        Path instructionsDirPath = Paths.get(path);
-        if (!instructionsDirPath.isAbsolute()) instructionsDirPath = Paths.get(System.getProperty("user.dir"), path);
-        instructionsDir = instructionsDirPath.toFile();
+        instructionsDir = path;
         if (!instructionsDir.exists()) {
             if (!instructionsDir.mkdir()) throw new Exception("Could not create " + instructionsDir);
         }
