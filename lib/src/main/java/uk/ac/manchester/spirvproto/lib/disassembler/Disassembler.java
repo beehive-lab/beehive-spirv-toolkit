@@ -8,10 +8,8 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class Disassembler implements SPIRVTool {
 	private final BinaryWordStream wordStream;
@@ -57,7 +55,7 @@ public class Disassembler implements SPIRVTool {
 	}
 
 	public void disassemble() throws IOException, InvalidSPIRVOpcodeException, InvalidSPIRVOperandKindException, InvalidSPIRVEnumerantException, InvalidSPIRVWordCountException {
-		output.println(this.header);
+		if (!options.noHeader) output.println(this.header);
 
 		int currentWord;
 		int opcode;

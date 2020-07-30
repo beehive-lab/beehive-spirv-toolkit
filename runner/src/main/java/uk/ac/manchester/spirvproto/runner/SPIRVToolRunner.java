@@ -38,6 +38,8 @@ public class SPIRVToolRunner {
 		options.addOption("n", "inline-names", false, "Inline names of nodes where possible");
 		options.addOption("i", "no-indent", false, "Turn off indentation");
 		options.addOption("g", "no-grouping", false, "Do not group composites together");
+		options.addOption("e", "no-header", false, "Do not print the header");
+		options.addOption("c", "no-color", false, "Do not use coloured output");
 
 		options.addOption("o", "out", true, "Specify an output file/directory");
 		options.addOption("t", "tool", true, "Select tool: gen | dis[default]");
@@ -76,10 +78,11 @@ public class SPIRVToolRunner {
 		else {
 			SPVFileReader reader = new SPVFileReader(inputFile);
 			SPIRVDisassemblerOptions disassemblerOptions = new SPIRVDisassemblerOptions(
-					output != null && output.equals(System.out),
+					(output != null && output.equals(System.out)) && (!cmd.hasOption('c')),
 					cmd.hasOption('n'),
 					cmd.hasOption('i'),
-					cmd.hasOption('g')
+					cmd.hasOption('g'),
+					cmd.hasOption('e')
 			);
 			spirvTool = new Disassembler(reader, output, disassemblerOptions);
 		}
