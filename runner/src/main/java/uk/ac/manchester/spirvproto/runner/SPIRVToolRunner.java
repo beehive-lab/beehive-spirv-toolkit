@@ -4,6 +4,7 @@ import org.apache.commons.cli.*;
 import uk.ac.manchester.spirvproto.generator.Generator;
 import uk.ac.manchester.spirvproto.lib.SPIRVTool;
 import uk.ac.manchester.spirvproto.lib.disassembler.Disassembler;
+import uk.ac.manchester.spirvproto.lib.disassembler.SPIRVDisassemblerOptions;
 import uk.ac.manchester.spirvproto.lib.disassembler.SPVFileReader;
 
 import java.io.File;
@@ -35,6 +36,8 @@ public class SPIRVToolRunner {
 		options.addOption("h", "help", false,"Prints this message");
 		options.addOption("d", "debug", false, "Print debug information");
 		options.addOption("n", "inline-names", false, "Inline names of nodes where possible");
+		options.addOption("i", "no-indent", false, "Turn off indentation");
+		options.addOption("g", "no-grouping", false, "Do not group composites together");
 
 		options.addOption("o", "out", true, "Specify an output file/directory");
 		options.addOption("t", "tool", true, "Select tool: gen | dis[default]");
@@ -52,9 +55,6 @@ public class SPIRVToolRunner {
 			handleError(options);
 		}
 		File inputFile = new File(cmd.getArgs()[0]);
-
-		boolean debug = cmd.hasOption('d');
-		boolean inlineNames = cmd.hasOption('n');
 
 		PrintStream output;
 		if (!cmd.hasOption('o')) {
@@ -75,10 +75,16 @@ public class SPIRVToolRunner {
 		}
 		else {
 			SPVFileReader reader = new SPVFileReader(inputFile);
-			spirvTool = new Disassembler(reader, output, output != null && output.equals(System.out), inlineNames);
+			SPIRVDisassemblerOptions disassemblerOptions = new SPIRVDisassemblerOptions(
+					output != null && output.equals(System.out),
+					cmd.hasOption('n'),
+					cmd.hasOption('i'),
+					cmd.hasOption('g')
+			);
+			spirvTool = new Disassembler(reader, output, disassemblerOptions);
 		}
 
-		return new Configuration(debug, spirvTool);
+		return new Configuration(cmd.hasOption('d'), spirvTool);
 	}
 
 	private static void handleError(Options options) {

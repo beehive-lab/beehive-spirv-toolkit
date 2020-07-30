@@ -19,20 +19,18 @@ public class Disassembler implements SPIRVTool {
 	private final SPIRVHeader header;
 	private final SPIRVGrammar grammar;
 	private final SPIRVSyntaxHighlighter highlighter;
-	private final boolean shouldHighlight;
-	private final boolean shouldInlineNames;
+
 	private final Map<String, String> idToNameMap;
 	private final Map<String, SPIRVNumberFormat> idToTypeMap;
+	private final SPIRVDisassemblerOptions options;
 
 	public Disassembler(BinaryWordStream wordStream,
 						PrintStream output,
-						boolean shouldHighlight,
-						boolean shouldInlineNames) throws InvalidBinarySPIRVInputException, IOException {
+						SPIRVDisassemblerOptions options) throws InvalidBinarySPIRVInputException, IOException {
 
 		this.wordStream = wordStream;
 		this.output = output;
-		this.shouldHighlight = shouldHighlight;
-		this.shouldInlineNames = shouldInlineNames;
+		this.options = options;
 		highlighter = new CLIHighlighter();
 
 		int magicNumber = wordStream.getNextWord();
@@ -108,7 +106,7 @@ public class Disassembler implements SPIRVTool {
 
 	private void printInstruction(SPIRVDecodedInstruction instruction) {
 		int boundLength = (int) Math.log10(header.bound) + 1;
-		int opStart = 4 + boundLength;
+		int opStart = options.turnOffIndent ? 0 : 4 + boundLength;
 
 		SPIRVDecodedOperand result = instruction.result;
 		if (result != null) {
@@ -131,7 +129,7 @@ public class Disassembler implements SPIRVTool {
 
 	private void printOperand(SPIRVDecodedOperand op) {
 		String toPrint;
-		if (shouldHighlight) {
+		if (options.shouldHighlight) {
 			toPrint = highlighter.highlight(op);
 		}
 		else {
@@ -217,7 +215,7 @@ public class Disassembler implements SPIRVTool {
 		}
 		else if (operandKind.getCategory().equals("Id")) {
 			String result = "%" + wordStream.getNextWord(); currentWordCount++;
-			if (shouldInlineNames) {
+			if (options.shouldInlineNames) {
 				if (idToNameMap.containsKey(result)) {
 					result = idToNameMap.get(result);
 				}
@@ -267,7 +265,9 @@ public class Disassembler implements SPIRVTool {
 		}
 		else if (operandKind.getCategory().equals("Composite")) {
 			String[] bases = operandKind.getBases();
-			operands.add(new SPIRVDecodedOperand("{", SPIRVOperandCategory.Token));
+			if (!options.turnOffGrouping) {
+				operands.add(new SPIRVDecodedOperand("{", SPIRVOperandCategory.Token));
+			}
 			for (String base : bases) {
 				SPIRVOperandKind member = new SPIRVOperandKind();
 				member.kind = base;
@@ -276,7 +276,9 @@ public class Disassembler implements SPIRVTool {
 
 				currentWordCount += decodeOperand(instruction, member);
 			}
-			operands.add(new SPIRVDecodedOperand("}", SPIRVOperandCategory.Token));
+			if (!options.turnOffGrouping) {
+				operands.add(new SPIRVDecodedOperand("}", SPIRVOperandCategory.Token));
+			}
 		}
 		else {
 			// By now it can only be a Literal(Integer)
