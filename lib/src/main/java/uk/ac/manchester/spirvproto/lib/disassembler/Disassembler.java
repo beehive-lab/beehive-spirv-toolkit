@@ -151,8 +151,13 @@ public class Disassembler implements SPIRVTool {
 
 			if (widthInWords <= 0) widthInWords = 1;
 
+			boolean isSigned = true;
+			if (instruction.operationName.equals("OpTypeInt")) {
+				isSigned = Boolean.parseBoolean(instruction.operands.get(instruction.operands.size() - 1).operand);
+			}
+
 			idToTypeMap.put(instruction.result.operand,
-					new SPIRVNumberFormat(widthInWords, isFloating));
+					new SPIRVNumberFormat(widthInWords, isFloating, isSigned));
 		}
 	}
 
@@ -206,7 +211,7 @@ public class Disassembler implements SPIRVTool {
 				}
 			}
 			else {
-				number = new BigInteger(bytes).toString();
+				number = new BigInteger(format.isSigned ? 0 : 1, bytes).toString();
 			}
 			operands.add(
 				new SPIRVDecodedOperand(number, SPIRVOperandCategory.LiteralNumber));
@@ -290,11 +295,13 @@ public class Disassembler implements SPIRVTool {
 	}
 
 	private String decodeFloat(byte[] word) {
-		return Float.toString(Float.intBitsToFloat(ByteBuffer.wrap(word).getInt()));
+		float value = Float.intBitsToFloat(ByteBuffer.wrap(word).getInt());
+		return (value == (int) value) ? Integer.toString((int)value) : Float.toString(value);
 	}
 
 	private String decodeDouble(byte[] words) {
-		return Double.toString(Double.longBitsToDouble(ByteBuffer.wrap(words).getLong()));
+		double value = Double.longBitsToDouble(ByteBuffer.wrap(words).getLong());
+		return (value == (long) value) ? Long.toString((long)value) : Double.toString(value);
 	}
 
 	@Override
