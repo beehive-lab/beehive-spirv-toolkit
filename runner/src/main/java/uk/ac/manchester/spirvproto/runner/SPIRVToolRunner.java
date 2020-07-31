@@ -20,8 +20,8 @@ public class SPIRVToolRunner {
 			state.tool.run();
 		}
 		catch (Exception e) {
+			System.err.println(e.getMessage());
 			if (state == null || state.debug) {
-				//System.err.println(e.getMessage());
 				e.printStackTrace(System.err);
 			}
 			else {
