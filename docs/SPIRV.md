@@ -1,5 +1,5 @@
 # The SPIR-V binary module
-SPIR-V is a low level IR for representing GPU programs (shaders and kernels). It represents a Control Flow Graph with all necessary information for a compiler backend to be able to compile into GPU programs.
+SPIR-V is a low level IR for representing GPU programs (shaders and kernels). It represents a Control Flow Graph in SSA format with all necessary information for a compiler backend to be able to compile into GPU programs.
 
 ## Format
 A SPIR-V module consists of a stream of 32 bit integers, from here on called slots. A module has two parts:
@@ -41,8 +41,31 @@ Some operands can be quantified with either '?' (0 or one) or '*' (0 or more). T
 Some operands have parameters. These behave the same as operands except that parameters are never quantified.
 
 
-## Mandatory Instructions
+## Layout
 
+The specification of SPIR-V describes a strict order of operations: 
 
+1.  [Required] Capabilities: All `OpCapability` instructions.
+2.  [Optional] Extensions: All `OpExtensions`
+3.  [Optional] External imports: All `OpExtInstImport` (for example opencl.std for built-ins)
+4.  [Required] Memory Model: One `OpMemoryModel` instruction 
+5.  [Required] Entry points: One or more `OpEntryPoint` instructions (unless the Linkage capability is used)
+6.  [Optional] Execution Mode: All `OpExecutionMode` or `OpExecutionModeId` instructions
+7.  [Optional] Debug instructions: These instructions grouped together as follows:
+     1. `OpString`, `OpSourceExtension`, `OpSource`, `OpSourceContinued`
+     2. `OpName` and `OpMemberName`
+     3. `OpModuleProcessed`
+8.  [Optional] Annotations: ALl decorations instructions (`OpDecorate`, `OpMemberDecorate`, `OpGroupDecorate`, `OpGroupMemberDecorate`, `OpGroupDecoration`)
+9.  [Optional] Type and global variable declarations, constants, : All `OpType{...}`, `OpVariable` with storage class other than Function and `OpConstant` instructions
+10. [Optional] Function declarations (no body): In a function declaration the following is required:
+     1. Function declaration `OpFunction`
+     2. All parameters using `OpFunctionParameter`
+     3. Function end using `OpFunctionEnd`
+ 11. [Optional] Function definitions (with body): The only difference to a function declaration is that there is a list of blocks after the function parameters
 
-## Common Instructions
+#### Blocks
+- Blocks always exist in a function
+- Blocks start with an `OpLabel` instruction
+- Blocks end with a termination instruction (Branch instructions(`OpBranch`, `OpBranchConditional`, `OpSwitch`, `OpReturn`, `OpReturnValue`), `OpKill`, `OpUnreachable`)
+- `OpVariable` instructions must have Function as storage class
+- All `OpVariable` instructions in a function must be the first instructions in the first block of that function (except for `OpPhi`, which cannot be in the first block)
