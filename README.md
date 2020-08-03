@@ -27,12 +27,16 @@ This should create 3 jars. One will be in `spirv-proto/lib/dist` and contains al
 
 ## Usage
 ```bash
-spirv-proto [OPTIONS] <filename>
- -d,--debug        Print debug information
- -h,--help         Prints this message
- -n,--name         Inline names of nodes where possible
- -o,--out <arg>    Specify an output file
- -t,--tool <arg>   Select tool: gen | dis[default]
+spirv-proto [OPTIONS] <filepath>
+ -c,--no-color       Do not use coloured output
+ -d,--debug          Print debug information
+ -e,--no-header      Do not print the header
+ -g,--no-grouping    Do not group composites together
+ -h,--help           Prints this message
+ -i,--no-indent      Turn off indentation
+ -n,--inline-names   Inline names of nodes where possible
+ -o,--out <arg>      Specify an output file/directory
+ -t,--tool <arg>     Select tool: gen | dis[default]
 ```
 
 To run the disassembler on the included example file:
