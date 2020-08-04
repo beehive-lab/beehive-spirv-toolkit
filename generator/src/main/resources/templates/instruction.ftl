@@ -6,7 +6,7 @@ import javax.annotation.Generated;
 import java.nio.ByteBuffer;
 
 @Generated("beehive-lab.spirv-proto.generator")
-public class SPIRV${name} extends SPIRVInstruction {
+public class SPIRV${name} extends ${superClass} {
     <#if operands??>
     <#list operands as operand>
     <#if operand.quantifier == '*'>

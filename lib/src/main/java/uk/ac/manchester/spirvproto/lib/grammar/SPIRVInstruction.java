@@ -14,6 +14,8 @@ public class SPIRVInstruction implements Comparable<SPIRVInstruction> {
     @JsonProperty("operands")
     public SPIRVOperand[] operands;
 
+    public String superClass;
+
     @Override
     public int compareTo(SPIRVInstruction o) {
         return this.getOpCode() - o.getOpCode();
@@ -48,5 +50,9 @@ public class SPIRVInstruction implements Comparable<SPIRVInstruction> {
 
     public int getOperandCount() {
         return (operands != null) ? operands.length : 0;
+    }
+
+    public String getSuperClass() {
+        return superClass;
     }
 }
