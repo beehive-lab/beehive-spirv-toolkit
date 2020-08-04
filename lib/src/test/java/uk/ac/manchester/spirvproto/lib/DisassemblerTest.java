@@ -7,6 +7,7 @@ import uk.ac.manchester.spirvproto.lib.disassembler.*;
 import uk.ac.manchester.spirvproto.lib.grammar.InvalidSPIRVEnumerantException;
 import uk.ac.manchester.spirvproto.lib.grammar.InvalidSPIRVOpcodeException;
 import uk.ac.manchester.spirvproto.lib.grammar.InvalidSPIRVOperandKindException;
+import uk.ac.manchester.spirvproto.lib.grammar.SPIRVUnsupportedExternalImport;
 
 import java.io.IOException;
 import java.io.PrintStream;
@@ -46,7 +47,7 @@ public class DisassemblerTest {
 	}
 
 	@Test(expected = InvalidSPIRVOpcodeException.class)
-	public void testWrongOpCode() throws IOException, InvalidBinarySPIRVInputException, InvalidSPIRVWordCountException, InvalidSPIRVEnumerantException, InvalidSPIRVOpcodeException, InvalidSPIRVOperandKindException {
+	public void testWrongOpCode() throws IOException, InvalidBinarySPIRVInputException, InvalidSPIRVWordCountException, InvalidSPIRVEnumerantException, InvalidSPIRVOpcodeException, InvalidSPIRVOperandKindException, SPIRVUnsupportedExternalImport {
 		BinaryWordStream ws = new TesterWordStream(new int[] {3211, 4});
 		Disassembler disasm = new Disassembler(ws, outStream, options);
 
@@ -54,7 +55,7 @@ public class DisassemblerTest {
 	}
 
 	@Test(expected = InvalidSPIRVEnumerantException.class)
-	public void testWrongEnumerant() throws IOException, InvalidBinarySPIRVInputException, InvalidSPIRVWordCountException, InvalidSPIRVEnumerantException, InvalidSPIRVOpcodeException, InvalidSPIRVOperandKindException {
+	public void testWrongEnumerant() throws IOException, InvalidBinarySPIRVInputException, InvalidSPIRVWordCountException, InvalidSPIRVEnumerantException, InvalidSPIRVOpcodeException, InvalidSPIRVOperandKindException, SPIRVUnsupportedExternalImport {
 		BinaryWordStream ws = new TesterWordStream(new int[]{0x00020011, 3211});
 		Disassembler disasm = new Disassembler(ws, outStream, options);
 
@@ -62,7 +63,7 @@ public class DisassemblerTest {
 	}
 
 	@Test(expected = InvalidSPIRVWordCountException.class)
-	public void testWrongWordCount() throws IOException, InvalidBinarySPIRVInputException, InvalidSPIRVWordCountException, InvalidSPIRVEnumerantException, InvalidSPIRVOpcodeException, InvalidSPIRVOperandKindException {
+	public void testWrongWordCount() throws IOException, InvalidBinarySPIRVInputException, InvalidSPIRVWordCountException, InvalidSPIRVEnumerantException, InvalidSPIRVOpcodeException, InvalidSPIRVOperandKindException, SPIRVUnsupportedExternalImport {
 		BinaryWordStream ws = new TesterWordStream(new int[] {0x00010011, 0});
 		Disassembler disassembler = new Disassembler(ws, outStream, options);
 

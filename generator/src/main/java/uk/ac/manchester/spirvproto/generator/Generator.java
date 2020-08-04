@@ -6,15 +6,18 @@ import freemarker.template.TemplateExceptionHandler;
 import uk.ac.manchester.spirvproto.lib.SPIRVTool;
 import uk.ac.manchester.spirvproto.lib.grammar.*;
 
-import java.io.*;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.Writer;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Generator implements SPIRVTool {
     private final Configuration config;
     private final SPIRVGrammar grammar;
     private final File operandsDir;
     private final File instructionsDir;
+    private final SPIRVInstructionSuperClassMapping superClasses;
 
     public Generator(File path) throws Exception {
         Configuration cfg = new Configuration(Configuration.VERSION_2_3_29);
@@ -26,7 +29,7 @@ public class Generator implements SPIRVTool {
         cfg.setFallbackOnNullLoopVariable(false);
         config = cfg;
 
-        grammar = SPIRVSpecification.buildSPIRVGrammar(1, 0);
+        grammar = SPIRVSpecification.buildSPIRVGrammar(0, 0);
 
         instructionsDir = path;
         if (!instructionsDir.exists()) {
@@ -38,6 +41,7 @@ public class Generator implements SPIRVTool {
         if (!operandsDir.exists()) {
             if (!operandsDir.mkdir()) throw new Exception("Could not create: " + operandsDir);
         }
+        superClasses = new SPIRVInstructionSuperClassMapping();
     }
 
     public void generate() throws Exception {
@@ -85,14 +89,30 @@ public class Generator implements SPIRVTool {
 
             // Clean up operands
             if (instruction.operands != null) {
-                for (SPIRVOperand operand : instruction.operands) {
+                Map<String, MutableInt> nameCount = new HashMap<>();
+                for (int i = 0; i < instruction.operands.length; i++) {
+                    SPIRVOperand operand = instruction.operands[i];
                     if (operand.name == null) {
                         operand.name = uncapFirst(operand.kind);
+                        if (!nameCount.containsKey(operand.name)) {
+                            nameCount.put(operand.name, new MutableInt(0));
+                        } else {
+                            MutableInt count = nameCount.get(operand.name);
+                            int index = count.increment() + 1;
+                            operand.name += Integer.toString(index);
+                        }
                     } else {
                         operand.name = uncapFirst(sanitize(operand.name));
                     }
+                    operand.name = "_" + operand.name;
                 }
             }
+            String superClass;
+            if ((superClass = superClasses.get(instruction.name)) == null) {
+                superClass = "SPIRVInstruction";
+            }
+            instruction.superClass = superClass;
+
             instructionTemplate.process(instruction, out);
 
             out.flush();
