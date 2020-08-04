@@ -46,7 +46,7 @@ Some operands have parameters. These behave the same as operands except that par
 The specification of SPIR-V describes a strict order of operations: 
 
 1.  [Required] Capabilities: All `OpCapability` instructions.
-2.  [Optional] Extensions: All `OpExtensions`
+2.  [Optional] Extensions: All `OpExtension`
 3.  [Optional] External imports: All `OpExtInstImport` (for example opencl.std for built-ins)
 4.  [Required] Memory Model: One `OpMemoryModel` instruction 
 5.  [Required] Entry points: One or more `OpEntryPoint` instructions (unless the Linkage capability is used)
@@ -55,7 +55,7 @@ The specification of SPIR-V describes a strict order of operations:
      1. `OpString`, `OpSourceExtension`, `OpSource`, `OpSourceContinued`
      2. `OpName` and `OpMemberName`
      3. `OpModuleProcessed`
-8.  [Optional] Annotations: ALl decorations instructions (`OpDecorate`, `OpMemberDecorate`, `OpGroupDecorate`, `OpGroupMemberDecorate`, `OpGroupDecoration`)
+8.  [Optional] Annotations: All decorations instructions (`OpDecorate`, `OpMemberDecorate`, `OpGroupDecorate`, `OpGroupMemberDecorate`, `OpDecorationGroup`)
 9.  [Optional] Type and global variable declarations, constants, : All `OpType{...}`, `OpVariable` with storage class other than Function and `OpConstant` instructions
 10. [Optional] Function declarations (no body): In a function declaration the following is required:
      1. Function declaration `OpFunction`
@@ -67,5 +67,5 @@ The specification of SPIR-V describes a strict order of operations:
 - Blocks always exist in a function
 - Blocks start with an `OpLabel` instruction
 - Blocks end with a termination instruction (Branch instructions(`OpBranch`, `OpBranchConditional`, `OpSwitch`, `OpReturn`, `OpReturnValue`), `OpKill`, `OpUnreachable`)
-- `OpVariable` instructions must have Function as storage class
+- `OpVariable` instructions inside a block must have Function as storage class
 - All `OpVariable` instructions in a function must be the first instructions in the first block of that function (except for `OpPhi`, which cannot be in the first block)
