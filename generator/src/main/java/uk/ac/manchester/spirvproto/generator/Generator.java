@@ -3,8 +3,7 @@ package uk.ac.manchester.spirvproto.generator;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateExceptionHandler;
-import uk.ac.manchester.spirvproto.lib.SPIRVTool;
-import uk.ac.manchester.spirvproto.lib.grammar.*;
+import uk.ac.manchester.spirvproto.generator.grammar.*;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -12,7 +11,7 @@ import java.io.Writer;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Generator implements SPIRVTool {
+public class Generator {
     private final Configuration config;
     private final SPIRVGrammar grammar;
     private final File operandsDir;
@@ -145,10 +144,5 @@ public class Generator implements SPIRVTool {
 
     private String capFirst(String value) {
         return value.substring(0, 1).toUpperCase() + value.substring(1);
-    }
-
-    @Override
-    public void run() throws Exception {
-        generate();
     }
 }

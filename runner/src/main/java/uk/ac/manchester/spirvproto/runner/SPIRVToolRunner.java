@@ -1,7 +1,6 @@
 package uk.ac.manchester.spirvproto.runner;
 
 import org.apache.commons.cli.*;
-import uk.ac.manchester.spirvproto.generator.Generator;
 import uk.ac.manchester.spirvproto.lib.SPIRVTool;
 import uk.ac.manchester.spirvproto.lib.disassembler.Disassembler;
 import uk.ac.manchester.spirvproto.lib.disassembler.SPIRVDisassemblerOptions;
@@ -42,7 +41,6 @@ public class SPIRVToolRunner {
 		options.addOption("c", "no-color", false, "Do not use coloured output");
 
 		options.addOption("o", "out", true, "Specify an output file/directory");
-		options.addOption("t", "tool", true, "Select tool: gen | dis[default]");
 
 		CommandLineParser parser = new DefaultParser();
 		CommandLine cmd = null;
@@ -72,20 +70,15 @@ public class SPIRVToolRunner {
 
 		String tool = cmd.getOptionValue('t', "dis");
 		SPIRVTool spirvTool;
-		if (tool.equals("gen")) {
-			spirvTool = new Generator(inputFile);
-		}
-		else {
-			SPVFileReader reader = new SPVFileReader(inputFile);
-			SPIRVDisassemblerOptions disassemblerOptions = new SPIRVDisassemblerOptions(
-					(output != null && output.equals(System.out)) && (!cmd.hasOption('c')),
-					cmd.hasOption('n'),
-					cmd.hasOption('i'),
-					cmd.hasOption('g'),
-					cmd.hasOption('e')
-			);
-			spirvTool = new Disassembler(reader, output, disassemblerOptions);
-		}
+		SPVFileReader reader = new SPVFileReader(inputFile);
+		SPIRVDisassemblerOptions disassemblerOptions = new SPIRVDisassemblerOptions(
+				(output != null && output.equals(System.out)) && (!cmd.hasOption('c')),
+				cmd.hasOption('n'),
+				cmd.hasOption('i'),
+				cmd.hasOption('g'),
+				cmd.hasOption('e')
+		);
+		spirvTool = new Disassembler(reader, output, disassemblerOptions);
 
 		return new Configuration(cmd.hasOption('d'), spirvTool);
 	}
