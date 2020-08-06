@@ -1,6 +1,9 @@
 package uk.ac.manchester.spirvproto.lib.assembler;
 
 import uk.ac.manchester.spirvproto.lib.instructions.*;
+import uk.ac.manchester.spirvproto.lib.instructions.operands.SPIRVFunctionControl;
+import uk.ac.manchester.spirvproto.lib.instructions.operands.SPIRVIdRef;
+import uk.ac.manchester.spirvproto.lib.instructions.operands.SPIRVIdResultType;
 
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
@@ -10,7 +13,7 @@ public class SPIRVModule {
     private final List<SPIRVCapabilityInst> capabilities;
     private final List<SPIRVExtensionInst> extensions;
     private final List<SPIRVImportInst> imports;
-    private SPIRVMemoryModelInst memoryModel;
+    private final SPIRVMemoryModelInst memoryModel;
     private final List<SPIRVEntryPointInst> entryPoints;
     private final List<SPIRVExecutionModeInst> executionModes;
     private final SPIRVDebugInstructions debugInstructions;
@@ -21,10 +24,11 @@ public class SPIRVModule {
     private final List<SPIRVFunctionDeclaration> functionDeclarations;
     private final List<SPIRVFunctionDefinition> functionDefinitions;
 
-    public SPIRVModule() {
+    public SPIRVModule(SPIRVMemoryModelInst memoryModel) {
         capabilities = new ArrayList<>();
         extensions = new ArrayList<>();
         imports = new ArrayList<>();
+        this.memoryModel = memoryModel;
         entryPoints = new ArrayList<>();
         executionModes = new ArrayList<>();
         debugInstructions = new SPIRVDebugInstructions();
@@ -40,7 +44,6 @@ public class SPIRVModule {
         if (instruction instanceof SPIRVCapabilityInst) capabilities.add((SPIRVCapabilityInst) instruction);
         else if (instruction instanceof SPIRVExtensionInst) extensions.add((SPIRVExtensionInst) instruction);
         else if (instruction instanceof SPIRVImportInst) imports.add((SPIRVImportInst) instruction);
-        else if (instruction instanceof SPIRVMemoryModelInst) memoryModel = (SPIRVMemoryModelInst) instruction;
         else if (instruction instanceof SPIRVEntryPointInst) entryPoints.add((SPIRVEntryPointInst) instruction);
         else if (instruction instanceof SPIRVExecutionModeInst) executionModes.add((SPIRVExecutionModeInst) instruction);
         else if (instruction instanceof SPIRVDebugInst) debugInstructions.add((SPIRVDebugInst) instruction);
@@ -52,14 +55,14 @@ public class SPIRVModule {
         else throw new IllegalArgumentException("Instruction: " + instruction.getClass().getName() + " is not a valid global instruction");
     }
 
-    public SPIRVFunctionDeclaration createFunctionDeclaration() {
-        SPIRVFunctionDeclaration declaration = new SPIRVFunctionDeclaration();
+    public SPIRVFunctionDeclaration createFunctionDeclaration(SPIRVIdResultType returnType, SPIRVIdRef funcType, SPIRVFunctionControl control, SPIRVFunctionParameterInst... params) {
+        SPIRVFunctionDeclaration declaration = new SPIRVFunctionDeclaration(returnType, funcType, control, params);
         functionDeclarations.add(declaration);
         return declaration;
     }
 
-    public SPIRVFunctionDefinition createFunctionDefinition() {
-        SPIRVFunctionDefinition definition = new SPIRVFunctionDefinition();
+    public SPIRVFunctionDefinition createFunctionDefinition(SPIRVIdResultType returnType, SPIRVIdRef funcType, SPIRVFunctionControl control, SPIRVFunctionParameterInst... params) {
+        SPIRVFunctionDefinition definition = new SPIRVFunctionDefinition(returnType, funcType, control, params);
         functionDefinitions.add(definition);
         return definition;
     }

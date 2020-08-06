@@ -2,10 +2,10 @@ package uk.ac.manchester.spirvproto.lib.instructions.operands;
 
 import java.nio.ByteBuffer;
 
-public class SPIRVID implements SPIRVOperand {
+public class SPIRVId implements SPIRVOperand {
     private final int id;
 
-    public SPIRVID(int id) {
+    public SPIRVId(int id) {
         this.id = id;
     }
 
