@@ -4,7 +4,7 @@ import javax.annotation.Generated;
 import java.nio.ByteBuffer;
 
 @Generated("beehive-lab.spirv-proto.generator")
-public class SPIRV${kind} extends SPIRVID {
+public class SPIRV${kind} extends SPIRVId {
     public static EmptySPIRV${kind} Empty = new EmptySPIRV${kind}();
 
     public SPIRV${kind}(int id) {
