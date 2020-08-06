@@ -1,31 +1,35 @@
 # SPIR-V Prototype
 
-This is a prototype witten in java to disassemble and assemble SPIR-V binary modules.
+This is a prototype written in Java to disassemble and assemble SPIR-V binary modules.
 More information on the format of SPIR-V can be found [here](docs/SPIRV.md).
 
 ## Build
 
 Dependencies:
 
-- java
-- mvn
+- Java
+- Maven
 
 Clone the repository:
+
 ```bash
 $ git clone https://github.com/beehive-lab/spirv-proto.git
 ```
+
 Go to the root folder:
 ```bash
 $ cd spirv-proto
 ```
+
 Run maven build:
 ```bash
-$ mvn package
+$ mvn clean package
 ```
  
-This should create 3 jars. One will be in `spirv-proto/lib/dist` and contains all the classes necessary to assemble and disassemble SPIR-V modules. Another will be in `spirv-proto/runner/dist` containing a standalone application that can use the aforemanetioned library. The last one will be in `spirv-proto/dist` containing both jars.
+This should create 3 Jar files: the first one is located in `spirv-proto/lib/dist` and contains all the classes necessary to assemble and disassemble SPIR-V modules.  The second jar-file is located in `spirv-proto/runner/dist` and it contains a standalone application that can use the aforementioned library. The last one is in `spirv-proto/dist`, and it contains both jars.
 
 ## Usage
+
 ```bash
 spirv-proto [OPTIONS] <filepath>
  -c,--no-color       Do not use coloured output
@@ -39,17 +43,20 @@ spirv-proto [OPTIONS] <filepath>
  -t,--tool <arg>     Select tool: gen | dis[default]
 ```
 
-To run the disassembler on the included example file:
+To run the disassembler:
+
 ```bash
 $ ./spirv-proto examples/vector_add.spv
 ```
 
-Alternatively you could run the generated jar file directly:
+Alternatively, you can run the dissablembler using the provided jar-file:
+
 ```bash
 $ java -jar dist/spirv-proto.jar examples/vector_add.spv
 ```
 
 ## Creating SPIR-V modules for testing
+
 This is a compiled version of what the Khronos Group recommends. The original can be found [here](https://www.khronos.org/blog/offline-compilation-of-opencl-kernels-into-spir-v-using-open-source-tooling).
  There are some example kernels provided in the examples directory.
 
@@ -59,11 +66,12 @@ Tools needed:
 - llvm-spirv (See build instructions [here](https://github.com/KhronosGroup/SPIRV-LLVM) )
 
 Go into the examples folder:
+
 ```bash
 $ cd examples
 ```
 
-First the kernel (.cl file) needs to be compiled to LLVM IR:
+First, the kernel (.cl file) needs to be compiled to LLVM IR:
 ```bash 
 $ clang -cc1 -triple spir vector_add.cl -O0 -finclude-default-header -emit-llvm-bc -o vector_add.bc
 ```
@@ -77,6 +85,7 @@ Now there is at least one SPIR-V module available.
 
 An OpenCL program can then read this module using `clCreateProgramWithIL();`
 Such an application is provided in the examples folder and can be compiled with make (this should also create a SPIR-V module):
+
 ```bash
 $ make build
 ```
