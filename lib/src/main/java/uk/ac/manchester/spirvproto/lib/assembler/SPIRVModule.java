@@ -2,8 +2,7 @@ package uk.ac.manchester.spirvproto.lib.assembler;
 
 import uk.ac.manchester.spirvproto.lib.instructions.*;
 import uk.ac.manchester.spirvproto.lib.instructions.operands.SPIRVFunctionControl;
-import uk.ac.manchester.spirvproto.lib.instructions.operands.SPIRVIdRef;
-import uk.ac.manchester.spirvproto.lib.instructions.operands.SPIRVIdResultType;
+import uk.ac.manchester.spirvproto.lib.instructions.operands.SPIRVId;
 
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
@@ -55,13 +54,13 @@ public class SPIRVModule {
         else throw new IllegalArgumentException("Instruction: " + instruction.getClass().getName() + " is not a valid global instruction");
     }
 
-    public SPIRVFunctionDeclaration createFunctionDeclaration(SPIRVIdResultType returnType, SPIRVIdRef funcType, SPIRVFunctionControl control, SPIRVFunctionParameterInst... params) {
+    public SPIRVFunctionDeclaration createFunctionDeclaration(SPIRVId returnType, SPIRVId funcType, SPIRVFunctionControl control, SPIRVFunctionParameterInst... params) {
         SPIRVFunctionDeclaration declaration = new SPIRVFunctionDeclaration(returnType, funcType, control, params);
         functionDeclarations.add(declaration);
         return declaration;
     }
 
-    public SPIRVFunctionDefinition createFunctionDefinition(SPIRVIdResultType returnType, SPIRVIdRef funcType, SPIRVFunctionControl control, SPIRVFunctionParameterInst... params) {
+    public SPIRVFunctionDefinition createFunctionDefinition(SPIRVId returnType, SPIRVId funcType, SPIRVFunctionControl control, SPIRVFunctionParameterInst... params) {
         SPIRVFunctionDefinition definition = new SPIRVFunctionDefinition(returnType, funcType, control, params);
         functionDefinitions.add(definition);
         return definition;

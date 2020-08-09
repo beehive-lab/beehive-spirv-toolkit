@@ -2,11 +2,9 @@ package uk.ac.manchester.spirvproto.lib.assembler;
 
 import uk.ac.manchester.spirvproto.lib.instructions.*;
 import uk.ac.manchester.spirvproto.lib.instructions.operands.SPIRVFunctionControl;
-import uk.ac.manchester.spirvproto.lib.instructions.operands.SPIRVIdRef;
-import uk.ac.manchester.spirvproto.lib.instructions.operands.SPIRVIdResultType;
+import uk.ac.manchester.spirvproto.lib.instructions.operands.SPIRVId;
 
 import java.nio.ByteBuffer;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -15,7 +13,7 @@ public class SPIRVFunctionDeclaration {
     protected List<SPIRVFunctionParameterInst> parameters;
     protected SPIRVFunctionEndInst end;
 
-    public SPIRVFunctionDeclaration(SPIRVIdResultType resultType, SPIRVIdRef funcType, SPIRVFunctionControl control, SPIRVFunctionParameterInst... params) {
+    public SPIRVFunctionDeclaration(SPIRVId resultType, SPIRVId funcType, SPIRVFunctionControl control, SPIRVFunctionParameterInst... params) {
         functionDeclaration = new SPIRVOpFunction(resultType, null, control, funcType);
         parameters = Arrays.asList(params);
         end = new SPIRVOpFunctionEnd();

@@ -2,8 +2,7 @@ package uk.ac.manchester.spirvproto.lib.assembler;
 
 import uk.ac.manchester.spirvproto.lib.instructions.SPIRVFunctionParameterInst;
 import uk.ac.manchester.spirvproto.lib.instructions.operands.SPIRVFunctionControl;
-import uk.ac.manchester.spirvproto.lib.instructions.operands.SPIRVIdRef;
-import uk.ac.manchester.spirvproto.lib.instructions.operands.SPIRVIdResultType;
+import uk.ac.manchester.spirvproto.lib.instructions.operands.SPIRVId;
 
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
@@ -12,7 +11,7 @@ import java.util.List;
 public class SPIRVFunctionDefinition extends SPIRVFunctionDeclaration {
     private final List<SPIRVBlock> blocks;
 
-    public SPIRVFunctionDefinition(SPIRVIdResultType resultType, SPIRVIdRef funcType, SPIRVFunctionControl control, SPIRVFunctionParameterInst... params) {
+    public SPIRVFunctionDefinition(SPIRVId resultType, SPIRVId funcType, SPIRVFunctionControl control, SPIRVFunctionParameterInst... params) {
         super(resultType, funcType, control, params);
         blocks = new ArrayList<>();
     }

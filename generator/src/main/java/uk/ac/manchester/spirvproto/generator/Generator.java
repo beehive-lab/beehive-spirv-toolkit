@@ -45,12 +45,18 @@ public class Generator {
 
     public void generate() throws Exception {
         Template enumOperand = config.getTemplate("operand-enum.ftl");
-        Template idOperand = config.getTemplate("operand-id.ftl");
         Template compositeOperand = config.getTemplate("operand-composite.ftl");
         Template literalOperand = config.getTemplate("operand-literal.ftl");
         Writer out;
+        boolean isLiteralInt;
+        boolean isLiteralString;
+        boolean isId;
         for (SPIRVOperandKind operandKind : grammar.operandKinds) {
-            if (operandKind.kind.equals("LiteralInteger") || operandKind.kind.equals("LiteralString")) continue;
+            // These operands are ignored
+            isLiteralInt = operandKind.kind.equals("LiteralInteger");
+            isLiteralString = operandKind.kind.equals("LiteralString");
+            isId = operandKind.category.equals("Id");
+            if (isId || isLiteralInt || isLiteralString) continue;
 
             // Clean up parameter names
             if (operandKind.enumerants != null) {
@@ -64,16 +70,21 @@ public class Generator {
                             else {
                                 param.name = uncapFirst(sanitize(param.name));
                             }
+                            if (param.kind.startsWith("Id")) param.kind = "Id";
                         }
                     }
                 }
             }
 
+            if (operandKind.bases != null) {
+                for (int i = 0; i < operandKind.bases.length; i++) {
+                    if (operandKind.bases[i].startsWith("Id")) operandKind.bases[i] = "Id";
+                }
+            }
+
             out = createWriter(operandKind.kind, operandsDir);
 
-            //Template templateToUse = operandKind.category.equals("Id") ? idOperand : enumOperand;
             Template templateToUse = enumOperand;
-            if (operandKind.category.equals("Id")) templateToUse = idOperand;
             if (operandKind.category.equals("Composite")) templateToUse = compositeOperand;
             if (operandKind.category.equals("Literal")) templateToUse = literalOperand;
 
@@ -89,8 +100,7 @@ public class Generator {
             // Clean up operands
             if (instruction.operands != null) {
                 Map<String, MutableInt> nameCount = new HashMap<>();
-                for (int i = 0; i < instruction.operands.length; i++) {
-                    SPIRVOperand operand = instruction.operands[i];
+                for (SPIRVOperand operand : instruction.operands) {
                     if (operand.name == null) {
                         operand.name = uncapFirst(operand.kind);
                         if (!nameCount.containsKey(operand.name)) {
@@ -104,6 +114,7 @@ public class Generator {
                         operand.name = uncapFirst(sanitize(operand.name));
                     }
                     operand.name = "_" + operand.name;
+                    if (operand.kind.startsWith("Id")) operand.kind = "Id";
                 }
             }
             String superClass;
