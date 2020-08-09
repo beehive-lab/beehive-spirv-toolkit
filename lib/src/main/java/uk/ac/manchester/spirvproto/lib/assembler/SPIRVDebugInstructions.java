@@ -22,4 +22,13 @@ public class SPIRVDebugInstructions {
         else if (instruction instanceof SPIRVModuleProcessedInst) modules.add((SPIRVModuleProcessedInst) instruction);
         else throw new IllegalArgumentException("Instruction: " + instruction.getClass().getName() + " is not a valid debug instruction");
     }
+
+    public int getWordCount() {
+        int wordCount = 0;
+        wordCount += sourceInstructions.stream().mapToInt(SPIRVInstruction::getWordCount).sum();
+        wordCount += nameInstructions.stream().mapToInt(SPIRVInstruction::getWordCount).sum();
+        wordCount += modules.stream().mapToInt(SPIRVInstruction::getWordCount).sum();
+
+        return wordCount;
+    }
 }

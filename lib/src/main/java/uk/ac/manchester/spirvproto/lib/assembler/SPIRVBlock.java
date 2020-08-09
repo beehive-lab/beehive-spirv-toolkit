@@ -28,4 +28,11 @@ public class SPIRVBlock {
         instructions.forEach(i -> i.write(output));
         end.write(output);
     }
+
+    public int getWordCount() {
+        int wordCount = label.getWordCount() + end.getWordCount();
+        wordCount += instructions.stream().mapToInt(SPIRVInstruction::getWordCount).sum();
+
+        return wordCount;
+    }
 }

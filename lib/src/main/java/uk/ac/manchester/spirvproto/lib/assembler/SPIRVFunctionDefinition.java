@@ -23,6 +23,11 @@ public class SPIRVFunctionDefinition extends SPIRVFunctionDeclaration {
     }
 
     @Override
+    public int getWordCount() {
+        return super.getWordCount() + blocks.stream().mapToInt(SPIRVBlock::getWordCount).sum();
+    }
+
+    @Override
     public void write(ByteBuffer output) {
         functionDeclaration.write(output);
         parameters.forEach(p -> p.write(output));

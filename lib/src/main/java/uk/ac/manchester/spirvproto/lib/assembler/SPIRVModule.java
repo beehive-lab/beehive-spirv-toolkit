@@ -7,6 +7,7 @@ import uk.ac.manchester.spirvproto.lib.instructions.operands.SPIRVId;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.ToIntFunction;
 
 public class SPIRVModule {
     private final List<SPIRVCapabilityInst> capabilities;
@@ -82,6 +83,34 @@ public class SPIRVModule {
         }
 
         return new SPIRVModuleWriter();
+    }
+
+    public int getByteCount() {
+        int wordCount = memoryModel.getWordCount();
+        wordCount += sumLists(SPIRVInstruction::getWordCount,
+                capabilities,
+                extensions,
+                imports,
+                entryPoints,
+                executionModes,
+                annotations,
+                types,
+                constants,
+                globals);
+        wordCount += sumLists(SPIRVFunctionDeclaration::getWordCount, functionDeclarations, functionDefinitions);
+        wordCount += debugInstructions.getWordCount();
+        wordCount += 5; // for the header
+
+        return wordCount * 4;
+    }
+
+    @SafeVarargs
+    private final <T> int sumLists(ToIntFunction<T> mapper, List<? extends T>... lists) {
+        int wordCount = 0;
+        for (List<? extends T> list : lists) {
+            wordCount += list.stream().mapToInt(mapper).sum();
+        }
+        return wordCount;
     }
 
     public class SPIRVModuleWriter {

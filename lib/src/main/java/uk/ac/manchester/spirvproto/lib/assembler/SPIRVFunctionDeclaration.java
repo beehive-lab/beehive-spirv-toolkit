@@ -24,4 +24,11 @@ public class SPIRVFunctionDeclaration {
         parameters.forEach(p -> p.write(output));
         end.write(output);
     }
+
+    public int getWordCount() {
+        int wordCount = functionDeclaration.getWordCount() + end.getWordCount();
+        wordCount += parameters.stream().mapToInt(SPIRVInstruction::getWordCount).sum();
+
+        return wordCount;
+    }
 }

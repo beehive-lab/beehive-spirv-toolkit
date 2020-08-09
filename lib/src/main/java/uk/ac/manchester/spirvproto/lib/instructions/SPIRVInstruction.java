@@ -11,6 +11,10 @@ public abstract class SPIRVInstruction {
         this.wordCount = wordCount;
     }
 
+    public int getWordCount() {
+        return wordCount;
+    }
+
     public void write(ByteBuffer output) {
         int operation = (wordCount << 16) & (opCode);
         output.putInt(operation);
