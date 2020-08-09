@@ -11,13 +11,15 @@ public class SPIRV${name} extends ${superClass} {
     <#list operands as operand>
     <#if operand.quantifier == '*'>
     private final SPIRVMultipleOperands<SPIRV${operand.kind}> ${operand.name};
+    <#elseif operand.quantifier == '?'>
+    private final SPIRVOptionalOperand<SPIRV${operand.kind}> ${operand.name};
     <#else>
     private final SPIRV${operand.kind} ${operand.name};
     </#if>
     </#list>
     </#if>
 
-    public SPIRV${name}(<#if operands??><#list  operands as operand><#if operand.quantifier == '*'>SPIRVMultipleOperands<</#if>SPIRV${operand.kind}<#if operand.quantifier == '*'>></#if> ${operand.name}<#sep>, </#list></#if>) {
+    public SPIRV${name}(<#if operands??><#list  operands as operand><#if operand.quantifier == '*'>SPIRVMultipleOperands<<#elseif operand.quantifier == '?'>SPIRVOptionalOperand<</#if>SPIRV${operand.kind}<#if operand.quantifier == '*' || operand.quantifier == '?'>></#if> ${operand.name}<#sep>, </#list></#if>) {
         super(${opCode?string.computer}, <#if operands??><#list  operands as operand>${operand.name}.getWordCount()<#sep> + </#list><#else>1</#if>);
         <#if operands??>
         <#list operands as operand>
