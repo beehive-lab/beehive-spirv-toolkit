@@ -13,8 +13,8 @@ public class SPIRVFunctionDeclaration {
     protected List<SPIRVFunctionParameterInst> parameters;
     protected SPIRVFunctionEndInst end;
 
-    public SPIRVFunctionDeclaration(SPIRVId resultType, SPIRVId funcType, SPIRVFunctionControl control, SPIRVFunctionParameterInst... params) {
-        functionDeclaration = new SPIRVOpFunction(resultType, null, control, funcType);
+    public SPIRVFunctionDeclaration(SPIRVId resultType, SPIRVId funcType, SPIRVId result, SPIRVFunctionControl control, SPIRVFunctionParameterInst... params) {
+        functionDeclaration = new SPIRVOpFunction(resultType, result, control, funcType);
         parameters = Arrays.asList(params);
         end = new SPIRVOpFunctionEnd();
     }

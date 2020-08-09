@@ -3,12 +3,19 @@ package uk.ac.manchester.spirvproto.lib.assembler;
 import uk.ac.manchester.spirvproto.lib.instructions.*;
 
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
 import java.util.List;
 
 public class SPIRVDebugInstructions {
-    private List<SPIRVSourceInst> sourceInstructions;
-    private List<SPIRVNameInst> nameInstructions;
-    private List<SPIRVModuleProcessedInst> modules;
+    private final List<SPIRVSourceInst> sourceInstructions;
+    private final List<SPIRVNameInst> nameInstructions;
+    private final List<SPIRVModuleProcessedInst> modules;
+
+    public SPIRVDebugInstructions() {
+        sourceInstructions = new ArrayList<>();
+        nameInstructions = new ArrayList<>();
+        modules = new ArrayList<>();
+    }
 
     public void write(ByteBuffer output) {
         sourceInstructions.forEach(s -> s.write(output));

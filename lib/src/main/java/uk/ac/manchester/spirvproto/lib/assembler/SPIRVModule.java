@@ -1,5 +1,6 @@
 package uk.ac.manchester.spirvproto.lib.assembler;
 
+import uk.ac.manchester.spirvproto.lib.SPIRVHeader;
 import uk.ac.manchester.spirvproto.lib.instructions.*;
 import uk.ac.manchester.spirvproto.lib.instructions.operands.SPIRVFunctionControl;
 import uk.ac.manchester.spirvproto.lib.instructions.operands.SPIRVId;
@@ -55,14 +56,14 @@ public class SPIRVModule {
         else throw new IllegalArgumentException("Instruction: " + instruction.getClass().getName() + " is not a valid global instruction");
     }
 
-    public SPIRVFunctionDeclaration createFunctionDeclaration(SPIRVId returnType, SPIRVId funcType, SPIRVFunctionControl control, SPIRVFunctionParameterInst... params) {
-        SPIRVFunctionDeclaration declaration = new SPIRVFunctionDeclaration(returnType, funcType, control, params);
+    public SPIRVFunctionDeclaration createFunctionDeclaration(SPIRVId returnType, SPIRVId funcType, SPIRVId result, SPIRVFunctionControl control, SPIRVFunctionParameterInst... params) {
+        SPIRVFunctionDeclaration declaration = new SPIRVFunctionDeclaration(returnType, funcType, result, control, params);
         functionDeclarations.add(declaration);
         return declaration;
     }
 
-    public SPIRVFunctionDefinition createFunctionDefinition(SPIRVId returnType, SPIRVId funcType, SPIRVFunctionControl control, SPIRVFunctionParameterInst... params) {
-        SPIRVFunctionDefinition definition = new SPIRVFunctionDefinition(returnType, funcType, control, params);
+    public SPIRVFunctionDefinition createFunctionDefinition(SPIRVId returnType, SPIRVId funcType, SPIRVId result, SPIRVFunctionControl control, SPIRVFunctionParameterInst... params) {
+        SPIRVFunctionDefinition definition = new SPIRVFunctionDefinition(returnType, funcType, result, control, params);
         functionDefinitions.add(definition);
         return definition;
     }
@@ -117,6 +118,7 @@ public class SPIRVModule {
         protected SPIRVModuleWriter() { }
 
         public void write(ByteBuffer output) {
+            new SPIRVHeader(0x07230203, 0x00010200, 0, 12, 0).write(output);
             capabilities.forEach(c -> c.write(output));
             extensions.forEach(e -> e.write(output));
             imports.forEach(i -> i.write(output));

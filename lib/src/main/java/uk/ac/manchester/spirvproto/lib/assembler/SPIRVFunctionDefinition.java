@@ -11,8 +11,8 @@ import java.util.List;
 public class SPIRVFunctionDefinition extends SPIRVFunctionDeclaration {
     private final List<SPIRVBlock> blocks;
 
-    public SPIRVFunctionDefinition(SPIRVId resultType, SPIRVId funcType, SPIRVFunctionControl control, SPIRVFunctionParameterInst... params) {
-        super(resultType, funcType, control, params);
+    public SPIRVFunctionDefinition(SPIRVId resultType, SPIRVId funcType, SPIRVId result, SPIRVFunctionControl control, SPIRVFunctionParameterInst... params) {
+        super(resultType, funcType, result, control, params);
         blocks = new ArrayList<>();
     }
 

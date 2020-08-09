@@ -16,7 +16,7 @@ public abstract class SPIRVInstruction {
     }
 
     public void write(ByteBuffer output) {
-        int operation = (wordCount << 16) & (opCode);
+        int operation = (wordCount << 16) | (opCode);
         output.putInt(operation);
         writeOperands(output);
     }

@@ -1,5 +1,7 @@
 package uk.ac.manchester.spirvproto.lib;
 
+import java.nio.ByteBuffer;
+
 public class SPIRVHeader {
     public final int magicNumber;
     public final int majorVersion;
@@ -27,5 +29,18 @@ public class SPIRVHeader {
                 String.format("; Generator ID: %d\n", genMagicNumber) +
                 String.format("; Bound: %d\n", bound) +
                 String.format("; Schema: %d\n", schema);
+    }
+
+    public void write(ByteBuffer output) {
+        output.putInt(magicNumber);
+
+        output.put((byte) 0);
+        output.put((byte) majorVersion);
+        output.put((byte) minorVersion);
+        output.put((byte) 0);
+
+        output.putInt(genMagicNumber);
+        output.putInt(bound);
+        output.putInt(schema);
     }
 }
