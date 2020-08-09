@@ -7,4 +7,6 @@ public interface BinaryWordStream {
     void changeEndianness();
     byte[] getNextWordInBytes() throws IOException;
     byte[] getNextWordInBytes(boolean reverse) throws IOException;
+
+    boolean isLittleEndian();
 }

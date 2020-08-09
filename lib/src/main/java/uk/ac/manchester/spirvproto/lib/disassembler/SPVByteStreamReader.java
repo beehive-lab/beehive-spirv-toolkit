@@ -43,7 +43,7 @@ public class SPVByteStreamReader implements BinaryWordStream {
         if (status == -1) return null;
 
         // Reorder bytes if on a little endian system
-        if ((littleEndian && !reverse) || (!littleEndian && reverse)) {
+        if (reverse) {
             byte[] reversed = new byte[4];
             reversed[0] = bytes[3];
             reversed[1] = bytes[2];
@@ -54,5 +54,10 @@ public class SPVByteStreamReader implements BinaryWordStream {
         }
 
         return bytes;
+    }
+
+    @Override
+    public boolean isLittleEndian() {
+        return littleEndian;
     }
 }

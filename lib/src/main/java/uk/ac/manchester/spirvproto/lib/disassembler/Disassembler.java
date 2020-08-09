@@ -94,13 +94,13 @@ public class Disassembler implements SPIRVTool {
 						wordcount);
 			}
 
-			//TODO better message and custom exception
-            if (wordcount > currentWordCount) {
-				throw new RuntimeException("There are operands that were not decoded");
-			}
-
 			processSpecialOps(instruction);
 			printInstruction(instruction);
+			//TODO better message and custom exception
+
+			if (wordcount > currentWordCount) {
+				throw new RuntimeException("There are operands that were not decoded");
+			}
 		}
 	}
 
@@ -173,7 +173,7 @@ public class Disassembler implements SPIRVTool {
 			StringBuilder sb = new StringBuilder("\"");
 			byte[] word;
 			do {
-				word = wordStream.getNextWordInBytes(true); currentWordCount++;
+				word = wordStream.getNextWordInBytes(); currentWordCount++;
 				String operandShard = new String(word);
 				if (word[word.length - 1] == 0) {
 					// Remove trailing zeros
