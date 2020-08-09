@@ -44,4 +44,9 @@ public class TesterWordStream implements BinaryWordStream {
 
         return bytes;
     }
+
+    @Override
+    public boolean isLittleEndian() {
+        return false;
+    }
 }
