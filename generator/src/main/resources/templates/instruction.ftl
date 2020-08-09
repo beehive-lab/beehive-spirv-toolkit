@@ -20,7 +20,7 @@ public class SPIRV${name} extends ${superClass} {
     </#if>
 
     public SPIRV${name}(<#if operands??><#list  operands as operand><#if operand.quantifier == '*'>SPIRVMultipleOperands<<#elseif operand.quantifier == '?'>SPIRVOptionalOperand<</#if>SPIRV${operand.kind}<#if operand.quantifier == '*' || operand.quantifier == '?'>></#if> ${operand.name}<#sep>, </#list></#if>) {
-        super(${opCode?string.computer}, <#if operands??><#list  operands as operand>${operand.name}.getWordCount()<#sep> + </#list><#else>1</#if>);
+        super(${opCode?string.computer}, <#if operands??><#list  operands as operand>${operand.name}.getWordCount() + </#list></#if>1);
         <#if operands??>
         <#list operands as operand>
         this.${operand.name} = ${operand.name};
