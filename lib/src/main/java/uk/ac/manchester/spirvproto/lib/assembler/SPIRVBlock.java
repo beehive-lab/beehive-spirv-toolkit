@@ -14,13 +14,14 @@ public class SPIRVBlock {
     private final List<SPIRVInstruction> instructions;
     private SPIRVTerminationInst end;
 
-    public SPIRVBlock() {
-        label = new SPIRVOpLabel(null);
+    public SPIRVBlock(SPIRVIdGenerator idGen) {
+        label = new SPIRVOpLabel(idGen.getNextId());
         instructions = new ArrayList<>();
     }
 
     public void addInstruction(SPIRVInstruction instruction) {
-        instructions.add(instruction);
+        if (instruction instanceof SPIRVTerminationInst) end = (SPIRVTerminationInst) instruction;
+        else instructions.add(instruction);
     }
 
     public void write(ByteBuffer output) {

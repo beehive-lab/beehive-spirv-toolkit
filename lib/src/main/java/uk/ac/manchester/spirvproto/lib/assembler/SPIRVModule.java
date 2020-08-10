@@ -25,6 +25,8 @@ public class SPIRVModule {
     private final List<SPIRVFunctionDeclaration> functionDeclarations;
     private final List<SPIRVFunctionDefinition> functionDefinitions;
 
+    private final SPIRVIdGenerator idGen;
+
     public SPIRVModule(SPIRVMemoryModelInst memoryModel) {
         capabilities = new ArrayList<>();
         extensions = new ArrayList<>();
@@ -39,6 +41,8 @@ public class SPIRVModule {
         globals = new ArrayList<>();
         functionDeclarations = new ArrayList<>();
         functionDefinitions = new ArrayList<>();
+
+        idGen = new SPIRVIdGenerator();
     }
 
     public void add(SPIRVInstruction instruction) {
@@ -63,7 +67,7 @@ public class SPIRVModule {
     }
 
     public SPIRVFunctionDefinition createFunctionDefinition(SPIRVId returnType, SPIRVId funcType, SPIRVId result, SPIRVFunctionControl control, SPIRVFunctionParameterInst... params) {
-        SPIRVFunctionDefinition definition = new SPIRVFunctionDefinition(returnType, funcType, result, control, params);
+        SPIRVFunctionDefinition definition = new SPIRVFunctionDefinition(returnType, funcType, result, control, idGen, params);
         functionDefinitions.add(definition);
         return definition;
     }
@@ -114,11 +118,15 @@ public class SPIRVModule {
         return wordCount;
     }
 
+    public SPIRVId getNextId() {
+        return idGen.getNextId();
+    }
+
     public class SPIRVModuleWriter {
         protected SPIRVModuleWriter() { }
 
         public void write(ByteBuffer output) {
-            new SPIRVHeader(0x07230203, 0x00010200, 0, 12, 0).write(output);
+            new SPIRVHeader(0x07230203, 0x00010200, 0, idGen.getCurrentBound(), 0).write(output);
             capabilities.forEach(c -> c.write(output));
             extensions.forEach(e -> e.write(output));
             imports.forEach(i -> i.write(output));

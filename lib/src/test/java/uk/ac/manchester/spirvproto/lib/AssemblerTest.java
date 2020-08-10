@@ -18,22 +18,22 @@ public class AssemblerTest {
         module.add(new SPIRVOpCapability(SPIRVCapability.Linkage()));
         module.add(new SPIRVOpCapability(SPIRVCapability.Kernel()));
 
-        SPIRVId opTypeInt = new SPIRVId(1);
+        SPIRVId opTypeInt = module.getNextId();
         module.add(new SPIRVOpTypeInt(opTypeInt, new SPIRVLiteralInteger(32), new SPIRVLiteralInteger(0)));
 
-        SPIRVId opTypeVoid = new SPIRVId(2);
+        SPIRVId opTypeVoid = module.getNextId();
         module.add(new SPIRVOpTypeVoid(opTypeVoid));
 
-        SPIRVId intPointer = new SPIRVId(3);
+        SPIRVId intPointer = module.getNextId();
         module.add(new SPIRVOpTypePointer(intPointer, SPIRVStorageClass.CrossWorkgroup(), opTypeInt));
 
-        SPIRVId functionType = new SPIRVId(4);
+        SPIRVId functionType = module.getNextId();
         module.add(new SPIRVOpTypeFunction(functionType, opTypeVoid, new SPIRVMultipleOperands<>(intPointer, intPointer, intPointer)));
 
-        SPIRVId function = new SPIRVId(5);
-        SPIRVId param1 = new SPIRVId(6);
-        SPIRVId param2 = new SPIRVId(7);
-        SPIRVId param3 = new SPIRVId(8);
+        SPIRVId function = module.getNextId();
+        SPIRVId param1 = module.getNextId();
+        SPIRVId param2 = module.getNextId();
+        SPIRVId param3 = module.getNextId();
         module.createFunctionDeclaration(
                 opTypeVoid,
                 functionType,
@@ -44,11 +44,11 @@ public class AssemblerTest {
                 new SPIRVOpFunctionParameter(opTypeInt, param3)
         );
 
-        SPIRVId vector = new SPIRVId(11);
+        SPIRVId vector = module.getNextId();
         module.add(new SPIRVOpTypeVector(vector, opTypeInt, new SPIRVLiteralInteger(3)));
-        SPIRVId pointer = new SPIRVId(10);
+        SPIRVId pointer = module.getNextId();
         module.add(new SPIRVOpTypePointer(pointer, SPIRVStorageClass.Input(), vector));
-        SPIRVId input = new SPIRVId(9);
+        SPIRVId input = module.getNextId();
         module.add(new SPIRVOpVariable(pointer, input, SPIRVStorageClass.Input(), new SPIRVOptionalOperand<>()));
         module.add(new SPIRVOpEntryPoint(
                 SPIRVExecutionModel.Kernel(),

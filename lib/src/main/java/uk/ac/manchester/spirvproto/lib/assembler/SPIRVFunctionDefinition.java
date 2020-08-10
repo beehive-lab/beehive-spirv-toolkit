@@ -11,13 +11,16 @@ import java.util.List;
 public class SPIRVFunctionDefinition extends SPIRVFunctionDeclaration {
     private final List<SPIRVBlock> blocks;
 
-    public SPIRVFunctionDefinition(SPIRVId resultType, SPIRVId funcType, SPIRVId result, SPIRVFunctionControl control, SPIRVFunctionParameterInst... params) {
+    private final SPIRVIdGenerator idGen;
+
+    public SPIRVFunctionDefinition(SPIRVId resultType, SPIRVId funcType, SPIRVId result, SPIRVFunctionControl control, SPIRVIdGenerator idGen, SPIRVFunctionParameterInst... params) {
         super(resultType, funcType, result, control, params);
+        this.idGen = idGen;
         blocks = new ArrayList<>();
     }
 
     public SPIRVBlock addBlock() {
-        SPIRVBlock newBlock = new SPIRVBlock();
+        SPIRVBlock newBlock = new SPIRVBlock(idGen);
         blocks.add(newBlock);
         return newBlock;
     }
