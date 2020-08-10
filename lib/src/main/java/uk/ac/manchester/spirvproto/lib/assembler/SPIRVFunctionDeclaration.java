@@ -13,13 +13,17 @@ public class SPIRVFunctionDeclaration {
     protected List<SPIRVFunctionParameterInst> parameters;
     protected SPIRVFunctionEndInst end;
 
-    public SPIRVFunctionDeclaration(SPIRVId resultType, SPIRVId funcType, SPIRVId result, SPIRVFunctionControl control, SPIRVFunctionParameterInst... params) {
+    public SPIRVFunctionDeclaration(SPIRVId resultType,
+                                    SPIRVId funcType,
+                                    SPIRVId result,
+                                    SPIRVFunctionControl control,
+                                    SPIRVFunctionParameterInst... params) {
         functionDeclaration = new SPIRVOpFunction(resultType, result, control, funcType);
         parameters = Arrays.asList(params);
         end = new SPIRVOpFunctionEnd();
     }
 
-    public void write(ByteBuffer output) {
+    public void write(ByteBuffer output) throws InvalidSPIRVModuleException {
         functionDeclaration.write(output);
         parameters.forEach(p -> p.write(output));
         end.write(output);

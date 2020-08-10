@@ -7,11 +7,9 @@ import java.nio.ByteBuffer;
 
 @Generated("beehive-lab.spirv-proto.generator")
 public class SPIRV${kind} extends SPIRVEnum {
-    private final List<SPIRVOperand> parameters;
 
     protected SPIRV${kind}(int value, List<SPIRVOperand> parameters) {
-        super(value);
-        this.parameters = parameters;
+        super(value, parameters);
     }
 
     @Override

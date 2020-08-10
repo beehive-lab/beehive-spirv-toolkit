@@ -13,7 +13,12 @@ public class SPIRVFunctionDefinition extends SPIRVFunctionDeclaration {
 
     private final SPIRVIdGenerator idGen;
 
-    public SPIRVFunctionDefinition(SPIRVId resultType, SPIRVId funcType, SPIRVId result, SPIRVFunctionControl control, SPIRVIdGenerator idGen, SPIRVFunctionParameterInst... params) {
+    public SPIRVFunctionDefinition(SPIRVId resultType,
+                                   SPIRVId funcType,
+                                   SPIRVId result,
+                                   SPIRVFunctionControl control,
+                                   SPIRVIdGenerator idGen,
+                                   SPIRVFunctionParameterInst... params) {
         super(resultType, funcType, result, control, params);
         this.idGen = idGen;
         blocks = new ArrayList<>();
@@ -31,7 +36,8 @@ public class SPIRVFunctionDefinition extends SPIRVFunctionDeclaration {
     }
 
     @Override
-    public void write(ByteBuffer output) {
+    public void write(ByteBuffer output) throws InvalidSPIRVModuleException {
+        if (blocks.size() <= 0) throw new InvalidSPIRVModuleException("Function definition does not have any blocks");
         functionDeclaration.write(output);
         parameters.forEach(p -> p.write(output));
         blocks.forEach(b -> b.write(output));

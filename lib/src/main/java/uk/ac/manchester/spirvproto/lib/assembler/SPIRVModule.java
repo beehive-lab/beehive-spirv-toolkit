@@ -125,7 +125,7 @@ public class SPIRVModule {
     public class SPIRVModuleWriter {
         protected SPIRVModuleWriter() { }
 
-        public void write(ByteBuffer output) {
+        public void write(ByteBuffer output) throws InvalidSPIRVModuleException {
             new SPIRVHeader(0x07230203, 0x00010200, 0, idGen.getCurrentBound(), 0).write(output);
             capabilities.forEach(c -> c.write(output));
             extensions.forEach(e -> e.write(output));
@@ -138,8 +138,12 @@ public class SPIRVModule {
             types.forEach(t -> t.write(output));
             constants.forEach(c -> c.write(output));
             globals.forEach(g -> g.write(output));
-            functionDeclarations.forEach(f -> f.write(output));
-            functionDefinitions.forEach(f -> f.write(output));
+            for (SPIRVFunctionDeclaration functionDeclaration : functionDeclarations) {
+                functionDeclaration.write(output);
+            }
+            for (SPIRVFunctionDefinition f : functionDefinitions) {
+                f.write(output);
+            }
         }
     }
 }
