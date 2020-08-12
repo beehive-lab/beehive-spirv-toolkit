@@ -34,10 +34,10 @@ public class SPIRVHeader {
     public void write(ByteBuffer output) {
         output.putInt(magicNumber);
 
-        output.put((byte) 0);
-        output.put((byte) majorVersion);
-        output.put((byte) minorVersion);
-        output.put((byte) 0);
+        int version = 0;
+        version |= (minorVersion << 8);
+        version |= (majorVersion << 16);
+        output.putInt(version);
 
         output.putInt(genMagicNumber);
         output.putInt(bound);

@@ -18,8 +18,9 @@ public class SPIRV${kind} extends SPIRVEnum {
         parameters.forEach(param -> param.write(output));
     }
 
-    public SPIRV${kind} add(SPIRV${kind} other) {
-        return new SPIRV${kind}(this.value & other.value, parameters);
+    public void add(SPIRV${kind} other) {
+        this.value |= other.value;
+        this.parameters.addAll(other.parameters);
     }
 
     <#list enumerants as enum>

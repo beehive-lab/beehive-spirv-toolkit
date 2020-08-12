@@ -1,21 +1,21 @@
 package uk.ac.manchester.spirvproto.lib;
 
 import org.junit.Test;
-import uk.ac.manchester.spirvproto.lib.assembler.InvalidSPIRVModuleException;
-import uk.ac.manchester.spirvproto.lib.assembler.SPIRVBlock;
-import uk.ac.manchester.spirvproto.lib.assembler.SPIRVFunctionDefinition;
-import uk.ac.manchester.spirvproto.lib.assembler.SPIRVModule;
+import uk.ac.manchester.spirvproto.lib.assembler.*;
 import uk.ac.manchester.spirvproto.lib.instructions.*;
 import uk.ac.manchester.spirvproto.lib.instructions.operands.*;
 
-import java.nio.ByteBuffer;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 
 public class AssemblerTest {
 
     @Test
     public void testSPIRVModule() throws InvalidSPIRVModuleException {
-        SPIRVModule module = new SPIRVModule(
-                new SPIRVOpMemoryModel(SPIRVAddressingModel.Physical32(), SPIRVMemoryModel.OpenCL()));
+        SPIRVModule module = new SPIRVModule();
+
+        module.add(new SPIRVOpMemoryModel(SPIRVAddressingModel.Physical32(), SPIRVMemoryModel.OpenCL()));
 
         module.add(new SPIRVOpCapability(SPIRVCapability.Addresses()));
         module.add(new SPIRVOpCapability(SPIRVCapability.Linkage()));
@@ -119,10 +119,13 @@ public class AssemblerTest {
         ));
         theBlock.addInstruction(new SPIRVOpReturn());
 
-        ByteBuffer out = ByteBuffer.allocate(module.getByteCount());
-        module.validate().write(out);
-        TestUtils.writeBufferToFile(out, "/home/beehive-lab/Development/OpenCL-SPIRV/test.spv");
+        TestUtils.writeModuleToFile(module, "/home/beehive-lab/Development/OpenCL-SPIRV/test.spv");
     }
 
+    @Test
+    public void testAssembler() throws IOException, InvalidSPIRVModuleException {
+        SPIRVModule module = new Assembler(new FileReader(new File("/home/beehive-lab/Development/OpenCL-SPIRV/spirv-proto/examples/vector_add.spv.dis"))).assemble();
+        TestUtils.writeModuleToFile(module, "/home/beehive-lab/Development/OpenCL-SPIRV/spirv-proto/examples/vector_add.spv");
+    }
 
 }

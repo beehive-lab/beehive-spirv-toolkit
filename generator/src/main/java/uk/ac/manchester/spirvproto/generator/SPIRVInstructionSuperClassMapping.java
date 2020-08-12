@@ -35,7 +35,7 @@ public class SPIRVInstructionSuperClassMapping extends HashMap<String, String> {
         put("OpMemberDecorate", "SPIRVAnnotationInst");
         put("OpGroupDecorate", "SPIRVAnnotationInst");
         put("OpGroupMemberDecorate", "SPIRVAnnotationInst");
-        put("OpGroupDecoration", "SPIRVAnnotationInst");
+        put("OpDecorationGroup", "SPIRVAnnotationInst");
 
         put("OpBranch", "SPIRVTerminationInst");
         put("OpBranchConditional", "SPIRVTerminationInst");

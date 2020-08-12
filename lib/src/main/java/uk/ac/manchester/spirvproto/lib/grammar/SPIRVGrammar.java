@@ -36,4 +36,12 @@ public class SPIRVGrammar {
 
         throw new InvalidSPIRVOperandKindException(kind);
     }
+
+    public boolean isInstruction(String name) {
+        for (SPIRVInstruction instruction : instructions) {
+            if (instruction.name.equals(name)) return true;
+        }
+
+        return false;
+    }
 }

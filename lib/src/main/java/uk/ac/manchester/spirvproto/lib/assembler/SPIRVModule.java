@@ -10,11 +10,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.ToIntFunction;
 
-public class SPIRVModule {
+public class SPIRVModule implements SPIRVInstScope {
     private final List<SPIRVCapabilityInst> capabilities;
     private final List<SPIRVExtensionInst> extensions;
     private final List<SPIRVImportInst> imports;
-    private final SPIRVMemoryModelInst memoryModel;
+    private SPIRVMemoryModelInst memoryModel;
     private final List<SPIRVEntryPointInst> entryPoints;
     private final List<SPIRVExecutionModeInst> executionModes;
     private final SPIRVDebugInstructions debugInstructions;
@@ -27,11 +27,13 @@ public class SPIRVModule {
 
     private final SPIRVIdGenerator idGen;
 
-    public SPIRVModule(SPIRVMemoryModelInst memoryModel) {
+    private SPIRVInstScope currentScope;
+
+    public SPIRVModule() {
         capabilities = new ArrayList<>();
         extensions = new ArrayList<>();
         imports = new ArrayList<>();
-        this.memoryModel = memoryModel;
+        this.memoryModel = null;
         entryPoints = new ArrayList<>();
         executionModes = new ArrayList<>();
         debugInstructions = new SPIRVDebugInstructions();
@@ -43,9 +45,10 @@ public class SPIRVModule {
         functionDefinitions = new ArrayList<>();
 
         idGen = new SPIRVIdGenerator();
+        currentScope = this;
     }
 
-    public void add(SPIRVInstruction instruction) {
+    public SPIRVInstScope add(SPIRVInstruction instruction) {
         if (instruction instanceof SPIRVCapabilityInst) capabilities.add((SPIRVCapabilityInst) instruction);
         else if (instruction instanceof SPIRVExtensionInst) extensions.add((SPIRVExtensionInst) instruction);
         else if (instruction instanceof SPIRVImportInst) imports.add((SPIRVImportInst) instruction);
@@ -56,8 +59,17 @@ public class SPIRVModule {
         else if (instruction instanceof SPIRVTypeInst) types.add((SPIRVTypeInst) instruction);
         else if (instruction instanceof SPIRVConstantInst) constants.add((SPIRVConstantInst) instruction);
         else if (instruction instanceof SPIRVVariableInst) globals.add((SPIRVVariableInst) instruction);
-
+        else if (instruction instanceof SPIRVMemoryModelInst) memoryModel = (SPIRVMemoryModelInst) instruction;
+        else if (instruction instanceof SPIRVFunctionInst) return createFunction(instruction);
         else throw new IllegalArgumentException("Instruction: " + instruction.getClass().getName() + " is not a valid global instruction");
+
+        return this;
+    }
+
+    private SPIRVInstScope createFunction(SPIRVInstruction instruction) {
+        SPIRVFunctionDefinition def = new SPIRVFunctionDefinition((SPIRVFunctionInst) instruction, this);
+        functionDefinitions.add(def);
+        return def;
     }
 
     public SPIRVFunctionDeclaration createFunctionDeclaration(SPIRVId returnType, SPIRVId funcType, SPIRVId result, SPIRVFunctionControl control, SPIRVFunctionParameterInst... params) {
@@ -120,6 +132,15 @@ public class SPIRVModule {
 
     public SPIRVId getNextId() {
         return idGen.getNextId();
+    }
+
+    public SPIRVId getOrCreateId(String name) {
+        return idGen.getOrCreateId(name);
+    }
+
+    @Override
+    public SPIRVIdGenerator getIdGen() {
+        return idGen;
     }
 
     public class SPIRVModuleWriter {

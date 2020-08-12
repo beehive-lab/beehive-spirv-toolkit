@@ -14,14 +14,9 @@ public class SPIRVLiteralString implements SPIRVOperand {
         for (byte b : value.getBytes()) {
             output.put(b);
         }
-        int alignRemaining = value.length() % 4;
-        if (alignRemaining == 0) {
-            output.putInt(0);
-        }
-        else {
-            for (int i = 0; i < alignRemaining; i++) {
-                output.put((byte) 0);
-            }
+        int alignRemaining = 4 - value.length() % 4;
+        for (int i = 0; i < alignRemaining; i++) {
+            output.put((byte) 0);
         }
     }
 

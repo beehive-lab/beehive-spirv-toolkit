@@ -86,12 +86,30 @@ int main( int argc, char* argv[] )
  
     // Create the compute program from the source buffer
     program = clCreateProgramWithIL(context, string, fsize, &err);
+    if (err != CL_SUCCESS) {
+        printf("Failed to create program (%d)\n", err);
+    }
+    else {
+        printf("Successfully created program (%d)\n", err);
+    }
  
     // Build the program executable
-    clBuildProgram(program, 0, NULL, NULL, NULL, NULL);
+    err = clBuildProgram(program, 0, NULL, NULL, NULL, NULL);
+    if (err != CL_SUCCESS) {
+        printf("Failed to build program (%d)\n", err);
+    }
+    else {
+        printf("Successfully build program (%d)\n", err);
+    }
  
     // Create the compute kernel in the program we wish to run
     kernel = clCreateKernel(program, "vecAdd", &err);
+    if (err != CL_SUCCESS) {
+        printf("Failed to create kernel (%d)\n", err);
+    }
+    else {
+        printf("Successfully created kernel (%d)\n", err);
+    }
  
     // Create the input and output arrays in device memory for our calculation
     d_a = clCreateBuffer(context, CL_MEM_READ_ONLY, bytes, NULL, NULL);

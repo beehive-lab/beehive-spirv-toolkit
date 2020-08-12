@@ -5,6 +5,7 @@ import uk.ac.manchester.spirvproto.lib.instructions.operands.SPIRVFunctionContro
 import uk.ac.manchester.spirvproto.lib.instructions.operands.SPIRVId;
 
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -21,6 +22,11 @@ public class SPIRVFunctionDeclaration {
         functionDeclaration = new SPIRVOpFunction(resultType, result, control, funcType);
         parameters = Arrays.asList(params);
         end = new SPIRVOpFunctionEnd();
+    }
+
+    public SPIRVFunctionDeclaration(SPIRVFunctionInst instruction) {
+        functionDeclaration = instruction;
+        parameters = new ArrayList<>();
     }
 
     public void write(ByteBuffer output) throws InvalidSPIRVModuleException {
