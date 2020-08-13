@@ -4,7 +4,7 @@ import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.codehaus.jackson.annotate.JsonProperty;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class SPIRVEnumerant implements Comparable<SPIRVEnumerant>{
+public class SPIRVEnumerant {
     @JsonProperty("enumerant")
     public String name;
 
@@ -13,11 +13,6 @@ public class SPIRVEnumerant implements Comparable<SPIRVEnumerant>{
 
     @JsonProperty("parameters")
     public SPIRVOperandParameter[] parameters;
-
-    @Override
-    public int compareTo(SPIRVEnumerant o) {
-        return this.getValue().compareTo(o.getValue());
-    }
 
     public String getName() {
         return name;

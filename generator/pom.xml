@@ -1,6 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <artifactId>spirv-proto</artifactId>
+    <groupId>beehive-lab</groupId>
+    <version>1.0-SNAPSHOT</version>
+  </parent>
+
+  <artifactId>spirv-generator</artifactId>
+  <name>generator</name>
+  <version>1.0-SNAPSHOT</version>
+
   <dependencies>
     <dependency>
       <groupId>org.freemarker</groupId>
@@ -13,18 +23,26 @@
       <artifactId>jackson-mapper-asl</artifactId>
       <version>1.9.2</version>
     </dependency>
-
   </dependencies>
 
-  <parent>
-    <artifactId>spirv-proto</artifactId>
-    <groupId>beehive-lab</groupId>
-    <version>1.0-SNAPSHOT</version>
-  </parent>
+  <profiles>
+    <profile>
+      <id>release</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+      <properties>
+        <maven.exec.skip>false</maven.exec.skip>
+      </properties>
+    </profile>
 
-  <artifactId>spirv-generator</artifactId>
-  <name>generator</name>
-  <version>1.0-SNAPSHOT</version>
+    <profile>
+      <id>debug</id>
+      <properties>
+        <maven.exec.skip>true</maven.exec.skip>
+      </properties>
+    </profile>
+  </profiles>
 
   <build>
     <plugins>
@@ -48,9 +66,10 @@
               <goal>java</goal>
             </goals>
             <configuration>
+              <skip>${maven.exec.skip}</skip>
               <mainClass>uk.ac.manchester.spirvproto.generator.Runner</mainClass>
               <arguments>
-                <argument>${project.parent.basedir}/lib/src/main/java/uk/ac/manchester/spirvproto/lib/instructions</argument>
+                <argument>${project.parent.basedir}/lib/src/main/java/uk/ac/manchester/spirvproto/lib</argument>
               </arguments>
             </configuration>
           </execution>

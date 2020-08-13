@@ -4,7 +4,7 @@ import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.codehaus.jackson.annotate.JsonProperty;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class SPIRVInstruction implements Comparable<SPIRVInstruction> {
+public class SPIRVInstruction {
     @JsonProperty("opname")
     public String name;
 
@@ -16,9 +16,10 @@ public class SPIRVInstruction implements Comparable<SPIRVInstruction> {
 
     public String superClass;
 
-    @Override
-    public int compareTo(SPIRVInstruction o) {
-        return this.getOpCode() - o.getOpCode();
+    public boolean hasReturnType;
+
+    public SPIRVInstruction() {
+        hasReturnType = false;
     }
 
     @Override
@@ -38,21 +39,11 @@ public class SPIRVInstruction implements Comparable<SPIRVInstruction> {
         return operands;
     }
 
-    public int getRequiredOperandCount() {
-        int requiredOperandCount = 0;
-        if (operands != null) {
-            for (SPIRVOperand operand : operands) {
-                if (operand.getQuantifier() != '*' && operand.getQuantifier() != '?') requiredOperandCount++;
-            }
-        }
-        return requiredOperandCount;
-    }
-
-    public int getOperandCount() {
-        return (operands != null) ? operands.length : 0;
-    }
-
     public String getSuperClass() {
         return superClass;
+    }
+
+    public boolean getHasReturnType() {
+        return hasReturnType;
     }
 }
