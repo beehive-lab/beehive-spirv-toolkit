@@ -6,6 +6,7 @@ import uk.ac.manchester.spirvproto.lib.instructions.SPIRVOpLabel;
 import uk.ac.manchester.spirvproto.lib.instructions.SPIRVTerminationInst;
 import uk.ac.manchester.spirvproto.lib.instructions.operands.SPIRVId;
 
+import java.io.PrintStream;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
@@ -68,5 +69,11 @@ public class SPIRVBlock implements SPIRVInstScope {
     @Override
     public SPIRVIdGenerator getIdGen() {
         return idGen;
+    }
+
+    public void print(PrintStream output) {
+        label.print(output);
+        instructions.forEach(i -> i.print(output));
+        end.print(output);
     }
 }

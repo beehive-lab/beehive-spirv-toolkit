@@ -4,6 +4,7 @@ import uk.ac.manchester.spirvproto.lib.instructions.*;
 import uk.ac.manchester.spirvproto.lib.instructions.operands.SPIRVFunctionControl;
 import uk.ac.manchester.spirvproto.lib.instructions.operands.SPIRVId;
 
+import java.io.PrintStream;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -40,5 +41,11 @@ public class SPIRVFunctionDeclaration {
         wordCount += parameters.stream().mapToInt(SPIRVInstruction::getWordCount).sum();
 
         return wordCount;
+    }
+
+    public void print(PrintStream output) {
+        functionDeclaration.print(output);
+        parameters.forEach(p -> p.print(output));
+        end.print(output);
     }
 }

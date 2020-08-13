@@ -8,8 +8,8 @@ import java.nio.ByteBuffer;
 @Generated("beehive-lab.spirv-proto.generator")
 public class SPIRV${kind} extends SPIRVEnum {
 
-    protected SPIRV${kind}(int value, List<SPIRVOperand> parameters) {
-        super(value, parameters);
+    protected SPIRV${kind}(int value, String name, List<SPIRVOperand> parameters) {
+        super(value, name, parameters);
     }
 
     @Override
@@ -21,6 +21,7 @@ public class SPIRV${kind} extends SPIRVEnum {
     public void add(SPIRV${kind} other) {
         this.value |= other.value;
         this.parameters.addAll(other.parameters);
+        this.name += "|" + other.name;
     }
 
     <#list enumerants as enum>
@@ -29,7 +30,7 @@ public class SPIRV${kind} extends SPIRVEnum {
         <#if enum.parameters??><#list enum.parameters as param>
         params.add(${param.name});
         </#list></#if>
-        return new SPIRV${kind}(${enum.value}, params);
+        return new SPIRV${kind}(${enum.value}, "${enum.name}", params);
     }
     </#list>
 }

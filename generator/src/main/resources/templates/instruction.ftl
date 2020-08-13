@@ -3,6 +3,7 @@ package uk.ac.manchester.spirvproto.lib.instructions;
 import uk.ac.manchester.spirvproto.lib.instructions.operands.*;
 
 import javax.annotation.Generated;
+import java.io.PrintStream;
 import java.nio.ByteBuffer;
 
 @Generated("beehive-lab.spirv-proto.generator")
@@ -20,7 +21,7 @@ public class SPIRV${name} extends ${superClass} {
     </#if>
 
     public SPIRV${name}(<#if operands??><#list  operands as operand><#if operand.quantifier == '*'>SPIRVMultipleOperands<<#elseif operand.quantifier == '?'>SPIRVOptionalOperand<</#if>SPIRV${operand.kind}<#if operand.quantifier == '*' || operand.quantifier == '?'>></#if> ${operand.name}<#sep>, </#list></#if>) {
-        super(${opCode?string.computer}, <#if operands??><#list  operands as operand>${operand.name}.getWordCount() + </#list></#if>1);
+        super(${opCode?string.computer}, <#if operands??><#list  operands as operand>${operand.name}.getWordCount() + </#list></#if>1, "${name}");
         <#if operands??>
         <#list operands as operand>
         this.${operand.name} = ${operand.name};
@@ -30,10 +31,20 @@ public class SPIRV${name} extends ${superClass} {
 
     @Override
     protected void writeOperands(ByteBuffer output) {
-    <#if operands??>
-    <#list operands as operand>
+        <#if operands??>
+        <#list operands as operand>
         ${operand.name}.write(output);
-    </#list>
-    </#if>
+        </#list>
+        </#if>
+    }
+
+    @Override
+    protected void printOperands(PrintStream output) {
+        <#if operands??>
+        <#list operands as operand>
+        ${operand.name}.print(output);<#sep>
+        output.print(" ");</#sep>
+        </#list>
+        </#if>
     }
 }

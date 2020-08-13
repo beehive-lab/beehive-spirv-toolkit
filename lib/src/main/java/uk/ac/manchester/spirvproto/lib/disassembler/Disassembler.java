@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -34,15 +35,9 @@ public class Disassembler implements SPIRVTool {
 		externalImports = new HashMap<>(1);
 
 		int magicNumber = wordStream.getNextWord();
-		if (magicNumber != 0x07230203) {
-			if (magicNumber == 0x03022307) {
-				wordStream.changeEndianness();
-				magicNumber = 0x07230203;
-			}
-			else {
-				throw new InvalidBinarySPIRVInputException(magicNumber);
-			}
-		}
+		if (magicNumber == 0x07230203) wordStream.setEndianness(ByteOrder.LITTLE_ENDIAN);
+		else if (magicNumber == 0x03022307) wordStream.setEndianness(ByteOrder.BIG_ENDIAN);
+		else throw new InvalidBinarySPIRVInputException(magicNumber);
 
 		header = new SPIRVHeader(magicNumber,
 				wordStream.getNextWord(),

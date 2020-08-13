@@ -11,6 +11,7 @@ import uk.ac.manchester.spirvproto.lib.grammar.SPIRVUnsupportedExternalImport;
 
 import java.io.IOException;
 import java.io.PrintStream;
+import java.nio.ByteOrder;
 
 public class DisassemblerTest {
 
@@ -34,8 +35,8 @@ public class DisassemblerTest {
 		Disassembler littleE = new Disassembler(wordStreamL, outStream, options);
 		Disassembler BigE = new Disassembler(wordStreamB, outStream, options);
 
-		Mockito.verify(wordStreamL, Mockito.never()).changeEndianness();
-		Mockito.verify(wordStreamB, Mockito.times(1)).changeEndianness();
+		Mockito.verify(wordStreamL, Mockito.times(1)).setEndianness(ByteOrder.LITTLE_ENDIAN);
+		Mockito.verify(wordStreamB, Mockito.times(1)).setEndianness(ByteOrder.BIG_ENDIAN);
 	}
 
 	@Test(expected = InvalidBinarySPIRVInputException.class)

@@ -5769,20 +5769,6 @@
           "extensions" : [ "SPV_KHR_16bit_storage" ]
         },
         {
-          "enumerant" : "StorageUniformBufferBlock16",
-          "value" : 4433,
-          "extensions" : [ "SPV_KHR_16bit_storage" ]
-        },
-        {
-          "enumerant" : "UniformAndStorageBuffer16BitAccess",
-          "value" : 4434,
-          "capabilities" : [
-            "StorageBuffer16BitAccess",
-            "StorageUniformBufferBlock16"
-          ],
-          "extensions" : [ "SPV_KHR_16bit_storage" ]
-        },
-        {
           "enumerant" : "StorageUniform16",
           "value" : 4434,
           "capabilities" : [
@@ -5875,12 +5861,6 @@
           "value" : 5254,
           "capabilities" : [ "MultiViewport" ],
           "extensions" : [ "SPV_EXT_shader_viewport_index_layer" ]
-        },
-        {
-          "enumerant" : "ShaderViewportIndexLayerNV",
-          "value" : 5254,
-          "capabilities" : [ "MultiViewport" ],
-          "extensions" : [ "SPV_NV_viewport_array2" ]
         },
         {
           "enumerant" : "ShaderViewportMaskNV",

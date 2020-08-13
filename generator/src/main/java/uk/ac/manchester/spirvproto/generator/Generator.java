@@ -16,7 +16,8 @@ public class Generator {
     private final SPIRVGrammar grammar;
     private final File operandsDir;
     private final File instructionsDir;
-    private final File asMapperDir;
+    private final File asmMapperDir;
+    private final File disMapperDir;
     private final SPIRVInstructionSuperClassMapping superClasses;
     private final Set<String> ignoredOperandKinds;
 
@@ -40,8 +41,11 @@ public class Generator {
         operandsDir = new File(instructionsDir, "operands");
         ensureDirExists(operandsDir);
 
-        asMapperDir = new File(path, "assembler");
-        ensureDirExists(asMapperDir);
+        asmMapperDir = new File(path, "assembler");
+        ensureDirExists(asmMapperDir);
+
+        disMapperDir = new File(path, "disassembler");
+        ensureDirExists(disMapperDir);
 
         superClasses = new SPIRVInstructionSuperClassMapping();
 
@@ -64,21 +68,39 @@ public class Generator {
 
         generateOperandClasses();
         generateInstructionClasses();
-        generateInstructionMapper();
-        generateOperandMapper();
+        generateAsmInstructionMapper();
+        generateAsmOperandMapper();
+        generateDisInstructionMapper();
+        generateDisOperandMapper();
     }
 
-    private void generateOperandMapper() throws Exception {
-        Template mapperTemplate = config.getTemplate("operand-mapper.ftl");
-        Writer out = createWriter("OperandMapper", asMapperDir);
+    private void generateDisOperandMapper() throws Exception {
+        Template mapperTemplate = config.getTemplate("dis-operand-mapper.ftl");
+        Writer out = createWriter("OperandMapper", disMapperDir);
         mapperTemplate.process(grammar, out);
         out.flush();
         out.close();
     }
 
-    private void generateInstructionMapper() throws Exception {
-        Template mapperTemplate = config.getTemplate("instruction-mapper.ftl");
-        Writer out = createWriter("InstMapper", asMapperDir);
+    private void generateDisInstructionMapper() throws Exception {
+        Template mapperTemplate = config.getTemplate("dis-instruction-mapper.ftl");
+        Writer out = createWriter("InstMapper", disMapperDir);
+        mapperTemplate.process(grammar, out);
+        out.flush();
+        out.close();
+    }
+
+    private void generateAsmOperandMapper() throws Exception {
+        Template mapperTemplate = config.getTemplate("asm-operand-mapper.ftl");
+        Writer out = createWriter("OperandMapper", asmMapperDir);
+        mapperTemplate.process(grammar, out);
+        out.flush();
+        out.close();
+    }
+
+    private void generateAsmInstructionMapper() throws Exception {
+        Template mapperTemplate = config.getTemplate("asm-instruction-mapper.ftl");
+        Writer out = createWriter("InstMapper", asmMapperDir);
         mapperTemplate.process(grammar, out);
         out.flush();
         out.close();
@@ -123,6 +145,7 @@ public class Generator {
                 Map<String, MutableInt> nameCount = new HashMap<>();
                 for (SPIRVOperand operand : instruction.operands) {
                     if (operand.kind.equals("IdResultType")) instruction.hasReturnType = true;
+                    else if (operand.kind.equals("IdResult")) instruction.hasResult = true;
                     if (operand.name == null) {
                         operand.name = uncapFirst(operand.kind);
                         if (!nameCount.containsKey(operand.name)) {

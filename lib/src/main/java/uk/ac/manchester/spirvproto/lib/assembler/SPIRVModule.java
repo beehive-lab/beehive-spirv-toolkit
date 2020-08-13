@@ -5,6 +5,7 @@ import uk.ac.manchester.spirvproto.lib.instructions.*;
 import uk.ac.manchester.spirvproto.lib.instructions.operands.SPIRVFunctionControl;
 import uk.ac.manchester.spirvproto.lib.instructions.operands.SPIRVId;
 
+import java.io.PrintStream;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
@@ -141,6 +142,26 @@ public class SPIRVModule implements SPIRVInstScope {
     @Override
     public SPIRVIdGenerator getIdGen() {
         return idGen;
+    }
+
+    public void print(PrintStream output) {
+        capabilities.forEach(c -> c.print(output));
+        extensions.forEach(e -> e.print(output));
+        imports.forEach(i -> i.print(output));
+        memoryModel.print(output);
+        entryPoints.forEach(e -> e.print(output));
+        executionModes.forEach(e -> e.print(output));
+        debugInstructions.print(output);
+        annotations.forEach(a -> a.print(output));
+        types.forEach(t -> t.print(output));
+        constants.forEach(c -> c.print(output));
+        globals.forEach(g -> g.print(output));
+        for (SPIRVFunctionDeclaration functionDeclaration : functionDeclarations) {
+            functionDeclaration.print(output);
+        }
+        for (SPIRVFunctionDefinition f : functionDefinitions) {
+            f.print(output);
+        }
     }
 
     public class SPIRVModuleWriter {

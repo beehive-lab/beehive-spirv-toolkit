@@ -1,5 +1,6 @@
 package uk.ac.manchester.spirvproto.lib.instructions.operands;
 
+import java.io.PrintStream;
 import java.nio.ByteBuffer;
 
 public class SPIRVLiteralString implements SPIRVOperand {
@@ -23,5 +24,10 @@ public class SPIRVLiteralString implements SPIRVOperand {
     @Override
     public int getWordCount() {
         return (value.length() / 4) + 1;
+    }
+
+    @Override
+    public void print(PrintStream output) {
+        output.print("\"" + value + "\"");
     }
 }

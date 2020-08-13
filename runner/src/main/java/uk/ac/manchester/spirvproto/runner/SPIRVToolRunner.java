@@ -2,7 +2,7 @@ package uk.ac.manchester.spirvproto.runner;
 
 import org.apache.commons.cli.*;
 import uk.ac.manchester.spirvproto.lib.SPIRVTool;
-import uk.ac.manchester.spirvproto.lib.disassembler.Disassembler;
+import uk.ac.manchester.spirvproto.lib.disassembler.DisassemblerV2;
 import uk.ac.manchester.spirvproto.lib.disassembler.SPIRVDisassemblerOptions;
 import uk.ac.manchester.spirvproto.lib.disassembler.SPVFileReader;
 
@@ -78,7 +78,7 @@ public class SPIRVToolRunner {
 				cmd.hasOption('g'),
 				cmd.hasOption('e')
 		);
-		spirvTool = new Disassembler(reader, output, disassemblerOptions);
+		spirvTool = new DisassemblerV2(reader, output, disassemblerOptions);
 
 		return new Configuration(cmd.hasOption('d'), spirvTool);
 	}

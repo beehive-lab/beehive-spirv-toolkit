@@ -2,6 +2,7 @@ package uk.ac.manchester.spirvproto.lib.assembler;
 
 import uk.ac.manchester.spirvproto.lib.instructions.*;
 
+import java.io.PrintStream;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
@@ -37,5 +38,11 @@ public class SPIRVDebugInstructions {
         wordCount += modules.stream().mapToInt(SPIRVInstruction::getWordCount).sum();
 
         return wordCount;
+    }
+
+    public void print(PrintStream output) {
+        sourceInstructions.forEach(s -> s.print(output));
+        nameInstructions.forEach(n -> n.print(output));
+        modules.forEach(m -> m.print(output));
     }
 }

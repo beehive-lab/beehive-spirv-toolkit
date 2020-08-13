@@ -1,5 +1,6 @@
 package uk.ac.manchester.spirvproto.lib.instructions.operands;
 
+import java.io.PrintStream;
 import java.nio.ByteBuffer;
 
 public class SPIRVOptionalOperand<T extends SPIRVOperand> implements SPIRVOperand {
@@ -21,6 +22,11 @@ public class SPIRVOptionalOperand<T extends SPIRVOperand> implements SPIRVOperan
     @Override
     public int getWordCount() {
         return operand == null ? 0: operand.getWordCount();
+    }
+
+    @Override
+    public void print(PrintStream output) {
+        if (operand != null) operand.print(output);
     }
 
     public void setValue(T value) {

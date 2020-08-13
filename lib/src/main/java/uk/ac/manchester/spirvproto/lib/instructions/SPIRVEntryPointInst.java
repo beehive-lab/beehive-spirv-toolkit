@@ -1,7 +1,7 @@
 package uk.ac.manchester.spirvproto.lib.instructions;
 
 public abstract class SPIRVEntryPointInst extends SPIRVInstruction{
-    protected SPIRVEntryPointInst(int opCode, int wordCount) {
-        super(opCode, wordCount);
+    protected SPIRVEntryPointInst(int opCode, int wordCount, String name) {
+        super(opCode, wordCount, name);
     }
 }

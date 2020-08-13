@@ -4,6 +4,7 @@ import uk.ac.manchester.spirvproto.lib.instructions.*;
 import uk.ac.manchester.spirvproto.lib.instructions.operands.SPIRVFunctionControl;
 import uk.ac.manchester.spirvproto.lib.instructions.operands.SPIRVId;
 
+import java.io.PrintStream;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
@@ -77,5 +78,13 @@ public class SPIRVFunctionDefinition extends SPIRVFunctionDeclaration implements
     @Override
     public SPIRVIdGenerator getIdGen() {
         return idGen;
+    }
+
+    @Override
+    public void print(PrintStream output) {
+        functionDeclaration.print(output);
+        parameters.forEach(p -> p.print(output));
+        blocks.forEach(b -> b.print(output));
+        end.print(output);
     }
 }

@@ -1,5 +1,6 @@
 package uk.ac.manchester.spirvproto.lib.instructions.operands;
 
+import java.io.PrintStream;
 import java.nio.ByteBuffer;
 
 public class SPIRVId implements SPIRVOperand {
@@ -17,5 +18,10 @@ public class SPIRVId implements SPIRVOperand {
     @Override
     public int getWordCount() {
         return 1;
+    }
+
+    @Override
+    public void print(PrintStream output) {
+        output.print("%" + id);
     }
 }
