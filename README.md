@@ -62,7 +62,7 @@ This is a compiled version of what the Khronos Group recommends. The original ca
 
 Tools needed:
 
-- clang (To install: `$ sudo apt-get install clang`)
+- clang (version 10.0.0 or higher) (To install: `$ sudo apt-get install clang`)
 - llvm-spirv (See build instructions [here](https://github.com/KhronosGroup/SPIRV-LLVM) )
 
 Go into the examples folder:
