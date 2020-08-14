@@ -1,6 +1,7 @@
 package uk.ac.manchester.spirvproto.lib.assembler;
 
 import uk.ac.manchester.spirvproto.lib.SPIRVHeader;
+import uk.ac.manchester.spirvproto.lib.disassembler.SPIRVPrintingOptions;
 import uk.ac.manchester.spirvproto.lib.instructions.*;
 import uk.ac.manchester.spirvproto.lib.instructions.operands.SPIRVFunctionControl;
 import uk.ac.manchester.spirvproto.lib.instructions.operands.SPIRVId;
@@ -9,7 +10,7 @@ import java.io.PrintStream;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.ToIntFunction;
+import java.util.function.Consumer;
 
 public class SPIRVModule implements SPIRVInstScope {
     private final List<SPIRVCapabilityInst> capabilities;
@@ -28,8 +29,6 @@ public class SPIRVModule implements SPIRVInstScope {
 
     private final SPIRVIdGenerator idGen;
 
-    private SPIRVInstScope currentScope;
-
     public SPIRVModule() {
         capabilities = new ArrayList<>();
         extensions = new ArrayList<>();
@@ -37,7 +36,7 @@ public class SPIRVModule implements SPIRVInstScope {
         this.memoryModel = null;
         entryPoints = new ArrayList<>();
         executionModes = new ArrayList<>();
-        debugInstructions = new SPIRVDebugInstructions();
+        debugInstructions = new SPIRVDebugInstructions(this);
         annotations = new ArrayList<>();
         types = new ArrayList<>();
         constants = new ArrayList<>();
@@ -46,7 +45,6 @@ public class SPIRVModule implements SPIRVInstScope {
         functionDefinitions = new ArrayList<>();
 
         idGen = new SPIRVIdGenerator();
-        currentScope = this;
     }
 
     public SPIRVInstScope add(SPIRVInstruction instruction) {
@@ -104,31 +102,11 @@ public class SPIRVModule implements SPIRVInstScope {
     }
 
     public int getByteCount() {
-        int wordCount = memoryModel.getWordCount();
-        wordCount += sumLists(SPIRVInstruction::getWordCount,
-                capabilities,
-                extensions,
-                imports,
-                entryPoints,
-                executionModes,
-                annotations,
-                types,
-                constants,
-                globals);
-        wordCount += sumLists(SPIRVFunctionDeclaration::getWordCount, functionDeclarations, functionDefinitions);
-        wordCount += debugInstructions.getWordCount();
-        wordCount += 5; // for the header
+        final int[] wordCount = {0};
+        this.forEachInstruction(i -> wordCount[0] += i.getWordCount());
+        wordCount[0] += 5; // for the header
 
-        return wordCount * 4;
-    }
-
-    @SafeVarargs
-    private final <T> int sumLists(ToIntFunction<T> mapper, List<? extends T>... lists) {
-        int wordCount = 0;
-        for (List<? extends T> list : lists) {
-            wordCount += list.stream().mapToInt(mapper).sum();
-        }
-        return wordCount;
+        return wordCount[0] * 4;
     }
 
     public SPIRVId getNextId() {
@@ -144,48 +122,33 @@ public class SPIRVModule implements SPIRVInstScope {
         return idGen;
     }
 
-    public void print(PrintStream output) {
-        capabilities.forEach(c -> c.print(output));
-        extensions.forEach(e -> e.print(output));
-        imports.forEach(i -> i.print(output));
-        memoryModel.print(output);
-        entryPoints.forEach(e -> e.print(output));
-        executionModes.forEach(e -> e.print(output));
-        debugInstructions.print(output);
-        annotations.forEach(a -> a.print(output));
-        types.forEach(t -> t.print(output));
-        constants.forEach(c -> c.print(output));
-        globals.forEach(g -> g.print(output));
-        for (SPIRVFunctionDeclaration functionDeclaration : functionDeclarations) {
-            functionDeclaration.print(output);
-        }
-        for (SPIRVFunctionDefinition f : functionDefinitions) {
-            f.print(output);
-        }
+    @Override
+    public void forEachInstruction(Consumer<SPIRVInstruction> instructionConsumer) {
+        capabilities.forEach(instructionConsumer);
+        extensions.forEach(instructionConsumer);
+        imports.forEach(instructionConsumer);
+        instructionConsumer.accept(memoryModel);
+        entryPoints.forEach(instructionConsumer);
+        executionModes.forEach(instructionConsumer);
+        debugInstructions.forEachInstruction(instructionConsumer);
+        annotations.forEach(instructionConsumer);
+        types.forEach(instructionConsumer);
+        constants.forEach(instructionConsumer);
+        globals.forEach(instructionConsumer);
+        functionDeclarations.forEach(f -> f.forEachInstruction(instructionConsumer));
+        functionDefinitions.forEach(f -> f.forEachInstruction(instructionConsumer));
+    }
+
+    public void print(PrintStream output, SPIRVPrintingOptions options) {
+        this.forEachInstruction(i -> i.print(output, options));
     }
 
     public class SPIRVModuleWriter {
         protected SPIRVModuleWriter() { }
 
-        public void write(ByteBuffer output) throws InvalidSPIRVModuleException {
+        public void write(ByteBuffer output) {
             new SPIRVHeader(0x07230203, 0x00010200, 0, idGen.getCurrentBound(), 0).write(output);
-            capabilities.forEach(c -> c.write(output));
-            extensions.forEach(e -> e.write(output));
-            imports.forEach(i -> i.write(output));
-            memoryModel.write(output);
-            entryPoints.forEach(e -> e.write(output));
-            executionModes.forEach(e -> e.write(output));
-            debugInstructions.write(output);
-            annotations.forEach(a -> a.write(output));
-            types.forEach(t -> t.write(output));
-            constants.forEach(c -> c.write(output));
-            globals.forEach(g -> g.write(output));
-            for (SPIRVFunctionDeclaration functionDeclaration : functionDeclarations) {
-                functionDeclaration.write(output);
-            }
-            for (SPIRVFunctionDefinition f : functionDefinitions) {
-                f.write(output);
-            }
+            forEachInstruction(i -> i.write(output));
         }
     }
 }

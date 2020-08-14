@@ -6,10 +6,9 @@ import uk.ac.manchester.spirvproto.lib.instructions.SPIRVOpLabel;
 import uk.ac.manchester.spirvproto.lib.instructions.SPIRVTerminationInst;
 import uk.ac.manchester.spirvproto.lib.instructions.operands.SPIRVId;
 
-import java.io.PrintStream;
-import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 
 public class SPIRVBlock implements SPIRVInstScope {
     private final SPIRVLabelInst label;
@@ -37,19 +36,6 @@ public class SPIRVBlock implements SPIRVInstScope {
         else instructions.add(instruction);
     }
 
-    public void write(ByteBuffer output) {
-        label.write(output);
-        instructions.forEach(i -> i.write(output));
-        end.write(output);
-    }
-
-    public int getWordCount() {
-        int wordCount = label.getWordCount() + end.getWordCount();
-        wordCount += instructions.stream().mapToInt(SPIRVInstruction::getWordCount).sum();
-
-        return wordCount;
-    }
-
     @Override
     public SPIRVInstScope add(SPIRVInstruction instruction) {
         if (instruction instanceof SPIRVTerminationInst) {
@@ -71,9 +57,11 @@ public class SPIRVBlock implements SPIRVInstScope {
         return idGen;
     }
 
-    public void print(PrintStream output) {
-        label.print(output);
-        instructions.forEach(i -> i.print(output));
-        end.print(output);
+    @Override
+    public void forEachInstruction(Consumer<SPIRVInstruction> instructionConsumer) {
+        instructionConsumer.accept(label);
+        instructions.forEach(instructionConsumer);
+        instructionConsumer.accept(end);
     }
+
 }

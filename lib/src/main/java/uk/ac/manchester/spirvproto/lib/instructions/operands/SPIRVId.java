@@ -1,13 +1,17 @@
 package uk.ac.manchester.spirvproto.lib.instructions.operands;
 
+import uk.ac.manchester.spirvproto.lib.disassembler.SPIRVPrintingOptions;
+
 import java.io.PrintStream;
 import java.nio.ByteBuffer;
 
 public class SPIRVId implements SPIRVOperand {
     private final int id;
+    private final String name;
 
     public SPIRVId(int id) {
         this.id = id;
+        name = "%" + id;
     }
 
     @Override
@@ -21,7 +25,11 @@ public class SPIRVId implements SPIRVOperand {
     }
 
     @Override
-    public void print(PrintStream output) {
-        output.print("%" + id);
+    public void print(PrintStream output, SPIRVPrintingOptions options) {
+        output.print(options.highlighter.highlightId(name));
+    }
+
+    public int nameSize() {
+        return name.length();
     }
 }

@@ -1,5 +1,7 @@
 package uk.ac.manchester.spirvproto.lib.instructions.operands;
 
+import uk.ac.manchester.spirvproto.lib.disassembler.SPIRVPrintingOptions;
+
 import java.io.PrintStream;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
@@ -23,7 +25,10 @@ public class SPIRVMultipleOperands<T extends SPIRVOperand> extends ArrayList<T> 
     }
 
     @Override
-    public void print(PrintStream output) {
-        this.forEach(o -> o.print(output));
+    public void print(PrintStream output, SPIRVPrintingOptions options) {
+        this.forEach(o -> {
+            o.print(output, options);
+            output.print(" ");
+        });
     }
 }

@@ -19,9 +19,11 @@ public class SPIRV${kind} extends SPIRVEnum {
     }
 
     public void add(SPIRV${kind} other) {
+        if (this.value == 0) this.name = other.name;
+        else if (other.value != 0) this.name += "|" + other.name;
+
         this.value |= other.value;
         this.parameters.addAll(other.parameters);
-        this.name += "|" + other.name;
     }
 
     <#list enumerants as enum>

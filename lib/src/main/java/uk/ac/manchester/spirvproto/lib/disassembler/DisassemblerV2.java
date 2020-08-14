@@ -4,6 +4,7 @@ import uk.ac.manchester.spirvproto.lib.SPIRVHeader;
 import uk.ac.manchester.spirvproto.lib.SPIRVTool;
 import uk.ac.manchester.spirvproto.lib.assembler.SPIRVInstScope;
 import uk.ac.manchester.spirvproto.lib.assembler.SPIRVModule;
+import uk.ac.manchester.spirvproto.lib.instructions.SPIRVInstruction;
 
 import java.io.IOException;
 import java.io.PrintStream;
@@ -18,16 +19,12 @@ public class DisassemblerV2 implements SPIRVTool {
     private SPIRVHeader header;
     private final SPIRVSyntaxHighlighter highlighter;
 
-    //private final Map<String, String> idToNameMap;
-    //private final Map<String, SPIRVNumberFormat> idToTypeMap;
-    //private final Map<String, SPIRVExternalImport> externalImports;
-
     public DisassemblerV2(BinaryWordStream wordStream, PrintStream output, SPIRVDisassemblerOptions options) {
         this.wordStream = wordStream;
         this.output = output;
         this.options = options;
 
-        highlighter = new CLIHighlighter();
+        highlighter = new CLIHighlighter(options.shouldHighlight);
     }
 
     @Override
@@ -71,8 +68,16 @@ public class DisassemblerV2 implements SPIRVTool {
     }
 
     private void print(SPIRVModule module) {
-        if (!options.noHeader) output.println(header);
+        if (!options.noHeader) output.println(highlighter.highlightComment(header.toString()));
 
-        module.print(output);
+        final int[] indent = {0};
+        if (!options.turnOffIndent) module.forEachInstruction((SPIRVInstruction i) -> {
+            int assignSize = i.getResultAssigmentSize();
+            if (assignSize > indent[0]) indent[0] = assignSize;
+        });
+
+        SPIRVPrintingOptions printingOptions = new SPIRVPrintingOptions(highlighter, indent[0], options.shouldInlineNames, options.turnOffGrouping);
+
+        module.print(output, printingOptions);
     }
 }

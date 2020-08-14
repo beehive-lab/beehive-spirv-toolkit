@@ -1,5 +1,6 @@
 package uk.ac.manchester.spirvproto.lib.instructions;
 
+import uk.ac.manchester.spirvproto.lib.disassembler.SPIRVPrintingOptions;
 import uk.ac.manchester.spirvproto.lib.instructions.operands.*;
 
 import javax.annotation.Generated;
@@ -39,12 +40,29 @@ public class SPIRV${name} extends ${superClass} {
     }
 
     @Override
-    protected void printOperands(PrintStream output) {
+    protected void printOperands(PrintStream output, SPIRVPrintingOptions options) {
         <#if operands??>
-        <#list operands as operand>
-        ${operand.name}.print(output);<#sep>
+        <#list operands as operand> <#if operand.name != "_idResult">
+        ${operand.name}.print(output, options);<#sep>
         output.print(" ");</#sep>
-        </#list>
+        </#if></#list>
+        </#if>
+    }
+
+    @Override
+    protected void printResultAssignment(PrintStream output, SPIRVPrintingOptions options) {
+        <#if hasResult>
+        _idResult.print(output, options);
+        output.print(" = ");
+        </#if>
+    }
+
+    @Override
+    public int getResultAssigmentSize() {
+        <#if hasResult>
+        return _idResult.nameSize() + 3;
+        <#else>
+        return 0;
         </#if>
     }
 }

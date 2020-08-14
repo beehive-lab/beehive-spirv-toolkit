@@ -31,7 +31,7 @@ public class Disassembler implements SPIRVTool {
 		this.wordStream = wordStream;
 		this.output = output;
 		this.options = options;
-		highlighter = new CLIHighlighter();
+		highlighter = new CLIHighlighter(options.shouldHighlight);
 		externalImports = new HashMap<>(1);
 
 		int magicNumber = wordStream.getNextWord();
