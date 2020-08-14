@@ -4,9 +4,9 @@ import uk.ac.manchester.spirvproto.lib.instructions.*;
 import uk.ac.manchester.spirvproto.lib.instructions.operands.SPIRVFunctionControl;
 import uk.ac.manchester.spirvproto.lib.instructions.operands.SPIRVId;
 
-import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 
 public class SPIRVFunctionDefinition extends SPIRVFunctionDeclaration implements SPIRVInstScope {
     private final List<SPIRVBlock> blocks;
@@ -39,20 +39,6 @@ public class SPIRVFunctionDefinition extends SPIRVFunctionDeclaration implements
     }
 
     @Override
-    public int getWordCount() {
-        return super.getWordCount() + blocks.stream().mapToInt(SPIRVBlock::getWordCount).sum();
-    }
-
-    @Override
-    public void write(ByteBuffer output) throws InvalidSPIRVModuleException {
-        if (blocks.size() <= 0) throw new InvalidSPIRVModuleException("Function definition does not have any blocks");
-        functionDeclaration.write(output);
-        parameters.forEach(p -> p.write(output));
-        blocks.forEach(b -> b.write(output));
-        end.write(output);
-    }
-
-    @Override
     public SPIRVInstScope add(SPIRVInstruction instruction) {
         if (instruction instanceof SPIRVFunctionParameterInst) {
             parameters.add((SPIRVFunctionParameterInst) instruction);
@@ -78,4 +64,13 @@ public class SPIRVFunctionDefinition extends SPIRVFunctionDeclaration implements
     public SPIRVIdGenerator getIdGen() {
         return idGen;
     }
+
+    @Override
+    public void forEachInstruction(Consumer<SPIRVInstruction> instructionConsumer) {
+        instructionConsumer.accept(functionDeclaration);
+        parameters.forEach(instructionConsumer);
+        blocks.forEach(b -> b.forEachInstruction(instructionConsumer));
+        instructionConsumer.accept(end);
+    }
+
 }

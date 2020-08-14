@@ -4,10 +4,10 @@ import uk.ac.manchester.spirvproto.lib.instructions.*;
 import uk.ac.manchester.spirvproto.lib.instructions.operands.SPIRVFunctionControl;
 import uk.ac.manchester.spirvproto.lib.instructions.operands.SPIRVId;
 
-import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.Consumer;
 
 public class SPIRVFunctionDeclaration {
     protected SPIRVFunctionInst functionDeclaration;
@@ -29,16 +29,9 @@ public class SPIRVFunctionDeclaration {
         parameters = new ArrayList<>();
     }
 
-    public void write(ByteBuffer output) throws InvalidSPIRVModuleException {
-        functionDeclaration.write(output);
-        parameters.forEach(p -> p.write(output));
-        end.write(output);
-    }
-
-    public int getWordCount() {
-        int wordCount = functionDeclaration.getWordCount() + end.getWordCount();
-        wordCount += parameters.stream().mapToInt(SPIRVInstruction::getWordCount).sum();
-
-        return wordCount;
+    public void forEachInstruction(Consumer<SPIRVInstruction> instructionConsumer) {
+        instructionConsumer.accept(functionDeclaration);
+        parameters.forEach(instructionConsumer);
+        instructionConsumer.accept(end);
     }
 }
