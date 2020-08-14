@@ -18,10 +18,6 @@ public class DisassemblerV2 implements SPIRVTool {
     private SPIRVHeader header;
     private final SPIRVSyntaxHighlighter highlighter;
 
-    //private final Map<String, String> idToNameMap;
-    //private final Map<String, SPIRVNumberFormat> idToTypeMap;
-    //private final Map<String, SPIRVExternalImport> externalImports;
-
     public DisassemblerV2(BinaryWordStream wordStream, PrintStream output, SPIRVDisassemblerOptions options) {
         this.wordStream = wordStream;
         this.output = output;

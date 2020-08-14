@@ -1,5 +1,7 @@
 package uk.ac.manchester.spirvproto.lib.instructions.operands;
 
+import uk.ac.manchester.spirvproto.lib.disassembler.SPIRVPrintingOptions;
+
 import java.io.PrintStream;
 import java.nio.ByteBuffer;
 
@@ -21,7 +23,7 @@ public class SPIRVLiteralInteger implements SPIRVOperand {
     }
 
     @Override
-    public void print(PrintStream output) {
-        output.print(value);
+    public void print(PrintStream output, SPIRVPrintingOptions options) {
+        output.print(options.highlighter.highlightInt(Integer.toString(value)));
     }
 }

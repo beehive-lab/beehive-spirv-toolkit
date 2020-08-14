@@ -1,10 +1,12 @@
 package uk.ac.manchester.spirvproto.lib.instructions.operands;
 
+import uk.ac.manchester.spirvproto.lib.disassembler.SPIRVPrintingOptions;
+
 import java.io.PrintStream;
 import java.nio.ByteBuffer;
 import java.util.List;
 
-public abstract class SPIRVEnum implements SPIRVOperand{
+public abstract class SPIRVEnum implements SPIRVOperand {
     protected int value;
     protected String name;
     protected List<SPIRVOperand> parameters;
@@ -26,9 +28,12 @@ public abstract class SPIRVEnum implements SPIRVOperand{
     }
 
     @Override
-    public void print(PrintStream output) {
+    public void print(PrintStream output, SPIRVPrintingOptions options) {
         output.print(name);
         if (parameters.size() > 0) output.print(" ");
-        parameters.forEach(p -> p.print(output));
+        parameters.forEach(p -> {
+            p.print(output, options);
+            output.print(" ");
+        });
     }
 }

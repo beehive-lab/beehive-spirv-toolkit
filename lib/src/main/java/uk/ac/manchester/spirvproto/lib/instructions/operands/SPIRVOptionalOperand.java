@@ -1,5 +1,7 @@
 package uk.ac.manchester.spirvproto.lib.instructions.operands;
 
+import uk.ac.manchester.spirvproto.lib.disassembler.SPIRVPrintingOptions;
+
 import java.io.PrintStream;
 import java.nio.ByteBuffer;
 
@@ -25,8 +27,8 @@ public class SPIRVOptionalOperand<T extends SPIRVOperand> implements SPIRVOperan
     }
 
     @Override
-    public void print(PrintStream output) {
-        if (operand != null) operand.print(output);
+    public void print(PrintStream output, SPIRVPrintingOptions options) {
+        if (operand != null) operand.print(output, options);
     }
 
     public void setValue(T value) {

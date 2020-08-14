@@ -48,4 +48,9 @@ public class TesterWordStream implements BinaryWordStream {
 
     }
 
+    @Override
+    public ByteOrder getEndianness() {
+        return null;
+    }
+
 }

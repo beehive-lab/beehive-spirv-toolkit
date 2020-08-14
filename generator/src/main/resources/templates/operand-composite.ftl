@@ -1,5 +1,7 @@
 package uk.ac.manchester.spirvproto.lib.instructions.operands;
 
+import uk.ac.manchester.spirvproto.lib.disassembler.SPIRVPrintingOptions;
+
 import javax.annotation.Generated;
 import java.io.PrintStream;
 import java.nio.ByteBuffer;
@@ -29,12 +31,14 @@ public class SPIRV${kind} implements SPIRVOperand {
     }
 
     @Override
-    public void print(PrintStream output) {
+    public void print(PrintStream output, SPIRVPrintingOptions options) {
+        if (!options.turnOffGrouping) output.print("{");
         <#list bases as base>
-        member${base?counter}.print(output);
+        member${base?counter}.print(output, options);
         <#sep>
         output.print(" ");
         </#sep>
         </#list>
+        if (!options.turnOffGrouping) output.print("}");
     }
 }
