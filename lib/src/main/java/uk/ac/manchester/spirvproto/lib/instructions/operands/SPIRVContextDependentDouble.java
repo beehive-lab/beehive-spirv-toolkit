@@ -1,5 +1,8 @@
 package uk.ac.manchester.spirvproto.lib.instructions.operands;
 
+import uk.ac.manchester.spirvproto.lib.disassembler.SPIRVPrintingOptions;
+
+import java.io.PrintStream;
 import java.nio.ByteBuffer;
 
 public class SPIRVContextDependentDouble extends SPIRVLiteralContextDependentNumber {
@@ -17,5 +20,10 @@ public class SPIRVContextDependentDouble extends SPIRVLiteralContextDependentNum
     @Override
     public int getWordCount() {
         return 2;
+    }
+
+    @Override
+    public void print(PrintStream output, SPIRVPrintingOptions options) {
+        output.print(value);
     }
 }

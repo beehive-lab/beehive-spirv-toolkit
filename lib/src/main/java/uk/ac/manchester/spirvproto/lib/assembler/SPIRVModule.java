@@ -144,6 +144,11 @@ public class SPIRVModule implements SPIRVInstScope {
         return idToInstMap.get(id);
     }
 
+    @Override
+    public SPIRVId getOrAddId(int id) {
+        return idGen.getOrAddId(id);
+    }
+
     public class SPIRVModuleWriter {
         protected SPIRVModuleWriter() { }
 

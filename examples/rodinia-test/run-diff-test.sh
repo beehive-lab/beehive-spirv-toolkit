@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 FILES=${1:-$(find ../rodinia -type f -name "*.spv")}
 
@@ -13,5 +13,5 @@ for FILE in $FILES; do
 	# Tools
 	spirv-dis --raw-id --no-indent --no-header $FILE -o tools/out.spv.dis
 
-	diff proto/out.spv.dis tools/out.spv.dis
+	diff --ignore-trailing-space <(sort proto/out.spv.dis) <(sort tools/out.spv.dis)
 done

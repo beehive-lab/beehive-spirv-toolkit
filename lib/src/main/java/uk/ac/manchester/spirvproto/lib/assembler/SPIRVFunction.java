@@ -74,6 +74,11 @@ public class SPIRVFunction implements SPIRVInstScope {
         }
     }
 
+    @Override
+    public SPIRVId getOrAddId(int id) {
+        return idGen.getOrAddId(id);
+    }
+
     public boolean hasBlocks() {
         return blocks.size() > 0;
     }

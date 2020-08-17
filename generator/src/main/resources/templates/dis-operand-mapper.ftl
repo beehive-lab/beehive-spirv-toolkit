@@ -1,14 +1,17 @@
 package uk.ac.manchester.spirvproto.lib.disassembler;
 
 import uk.ac.manchester.spirvproto.lib.assembler.SPIRVInstScope;
+import uk.ac.manchester.spirvproto.lib.instructions.SPIRVInstruction;
+import uk.ac.manchester.spirvproto.lib.instructions.SPIRVOpTypeFloat;
+import uk.ac.manchester.spirvproto.lib.instructions.SPIRVOpTypeInt;
 import uk.ac.manchester.spirvproto.lib.instructions.operands.*;
 
+import java.math.BigInteger;
 import java.nio.ByteBuffer;
-import java.util.Iterator;
 
 public class SPIRVOperandMapper {
     public static SPIRVId mapId(SPIRVLine operands, SPIRVInstScope scope) {
-        return new SPIRVId(operands.next());
+        return scope.getOrAddId(operands.next());
     }
 
     public static SPIRVLiteralString mapLiteralString(SPIRVLine operands, SPIRVInstScope scope) {
@@ -16,7 +19,7 @@ public class SPIRVOperandMapper {
         byte[] word;
         boolean lastWord;
         do {
-            word = ByteBuffer.allocate(4).order(operands.getByteOrder()).putInt(operands.next()).array();
+            word = operands.nextInBytes();
             lastWord = word[3] == 0;
             String shard;
             if (lastWord) {
@@ -38,6 +41,66 @@ public class SPIRVOperandMapper {
 
     public static SPIRVLiteralInteger mapLiteralInteger(SPIRVLine operands, SPIRVInstScope scope) {
         return new SPIRVLiteralInteger(operands.next());
+    }
+
+    public static SPIRVLiteralContextDependentNumber mapLiteralContextDependentNumber(SPIRVLine operands, SPIRVInstScope scope, SPIRVId typeId) {
+        SPIRVInstruction type = scope.getInstruction(typeId);
+        if (type instanceof SPIRVOpTypeInt) {
+            int width = ((SPIRVOpTypeInt) type)._width.value;
+            int signedness = ((SPIRVOpTypeInt) type)._signedness.value;
+
+            byte[][] words = new byte[width / 32][4];
+            for (int i = 0; i < width / 32; i++) {
+                byte[] word = operands.nextInBytes();
+                words[i][0] = word[0];
+                words[i][1] = word[1];
+                words[i][2] = word[2];
+                words[i][3] = word[3];
+            }
+
+            byte[] numberInBytes = new byte[width / 8];
+            for (int i = width / 32 - 1; i >= 0; i--) {
+                int arrayIndex = i * 4;
+                numberInBytes[arrayIndex + 0] = words[i][3];
+                numberInBytes[arrayIndex + 1] = words[i][2];
+                numberInBytes[arrayIndex + 2] = words[i][1];
+                numberInBytes[arrayIndex + 3] = words[i][0];
+            }
+
+            if (width == 32) return new SPIRVContextDependentInt(new BigInteger(1 - signedness, numberInBytes));
+            if (width == 64) return new SPIRVContextDependentLong(new BigInteger(1 - signedness, numberInBytes));
+
+            throw new RuntimeException("OpTypeInt cannot have width of " + width);
+        }
+
+        if (type instanceof SPIRVOpTypeFloat) {
+            int width = ((SPIRVOpTypeFloat) type)._width.value;
+
+            byte[][] words = new byte[width / 32][4];
+            for (int i = 0; i < width / 32; i++) {
+                byte[] word = operands.nextInBytes();
+                words[i][0] = word[0];
+                words[i][1] = word[1];
+                words[i][2] = word[2];
+                words[i][3] = word[3];
+            }
+
+            byte[] numberInBytes = new byte[width / 8];
+            for (int i = width / 32 - 1; i >= 0; i--) {
+                int arrayIndex = ((width / 32 - 1) - i) * 4;
+                numberInBytes[arrayIndex + 0] = words[i][3];
+                numberInBytes[arrayIndex + 1] = words[i][2];
+                numberInBytes[arrayIndex + 2] = words[i][1];
+                numberInBytes[arrayIndex + 3] = words[i][0];
+            }
+
+            if (width == 32) return new SPIRVContextDependentFloat(Float.intBitsToFloat(ByteBuffer.wrap(numberInBytes).getInt()));
+            if (width == 64) return new SPIRVContextDependentDouble(Double.longBitsToDouble(ByteBuffer.wrap(numberInBytes).getLong()));
+
+            throw new RuntimeException("OpTypeInt cannot have width of " + width);
+        }
+
+        throw new RuntimeException("Unknown type for ContextDependentLiteral: " + type.getClass().getName());
     }
 
 <#list operandKinds as operand>

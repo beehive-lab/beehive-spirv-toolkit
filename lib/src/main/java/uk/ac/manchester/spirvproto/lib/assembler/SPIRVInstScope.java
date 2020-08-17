@@ -11,6 +11,6 @@ public interface SPIRVInstScope {
     SPIRVId getOrCreateId(String name);
     SPIRVIdGenerator getIdGen();
     void forEachInstruction(Consumer<SPIRVInstruction> instructionConsumer);
-
     SPIRVInstruction getInstruction(SPIRVId id);
+    SPIRVId getOrAddId(int id);
 }

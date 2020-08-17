@@ -68,4 +68,9 @@ public class SPIRVBlock implements SPIRVInstScope {
         else return enclosingScope.getInstruction(id);
     }
 
+    @Override
+    public SPIRVId getOrAddId(int id) {
+        return idGen.getOrAddId(id);
+    }
+
 }

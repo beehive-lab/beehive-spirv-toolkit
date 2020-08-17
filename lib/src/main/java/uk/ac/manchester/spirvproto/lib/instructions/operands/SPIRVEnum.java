@@ -31,9 +31,10 @@ public abstract class SPIRVEnum implements SPIRVOperand {
     public void print(PrintStream output, SPIRVPrintingOptions options) {
         output.print(name);
         if (parameters.size() > 0) output.print(" ");
-        parameters.forEach(p -> {
+        for (int i = 0, parametersSize = parameters.size(); i < parametersSize; i++) {
+            SPIRVOperand p = parameters.get(i);
             p.print(output, options);
-            output.print(" ");
-        });
+            if (i < parameters.size() - 1) output.print(" ");
+        }
     }
 }

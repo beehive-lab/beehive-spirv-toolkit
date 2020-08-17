@@ -1,5 +1,6 @@
 package uk.ac.manchester.spirvproto.lib.disassembler;
 
+import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.Iterator;
 
@@ -16,11 +17,11 @@ public class SPIRVLine {
         return operands.next();
     }
 
-    public boolean hasNext() {
-        return operands.hasNext();
+    public byte[] nextInBytes() {
+        return ByteBuffer.allocate(4).order(byteOrder).putInt(operands.next()).array();
     }
 
-    public ByteOrder getByteOrder() {
-        return byteOrder;
+    public boolean hasNext() {
+        return operands.hasNext();
     }
 }
