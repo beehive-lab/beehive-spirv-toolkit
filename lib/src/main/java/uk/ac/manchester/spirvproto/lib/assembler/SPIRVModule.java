@@ -3,14 +3,15 @@ package uk.ac.manchester.spirvproto.lib.assembler;
 import uk.ac.manchester.spirvproto.lib.SPIRVHeader;
 import uk.ac.manchester.spirvproto.lib.disassembler.SPIRVPrintingOptions;
 import uk.ac.manchester.spirvproto.lib.instructions.*;
-import uk.ac.manchester.spirvproto.lib.instructions.operands.SPIRVFunctionControl;
 import uk.ac.manchester.spirvproto.lib.instructions.operands.SPIRVId;
 
 import java.io.PrintStream;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 public class SPIRVModule implements SPIRVInstScope {
     private final List<SPIRVCapabilityInst> capabilities;
@@ -24,8 +25,7 @@ public class SPIRVModule implements SPIRVInstScope {
     private final List<SPIRVTypeInst> types;
     private final List<SPIRVConstantInst> constants;
     private final List<SPIRVVariableInst> globals;
-    private final List<SPIRVFunctionDeclaration> functionDeclarations;
-    private final List<SPIRVFunctionDefinition> functionDefinitions;
+    private final List<SPIRVFunction> functions;
 
     private final SPIRVIdGenerator idGen;
 
@@ -41,8 +41,7 @@ public class SPIRVModule implements SPIRVInstScope {
         types = new ArrayList<>();
         constants = new ArrayList<>();
         globals = new ArrayList<>();
-        functionDeclarations = new ArrayList<>();
-        functionDefinitions = new ArrayList<>();
+        functions = new ArrayList<>();
 
         idGen = new SPIRVIdGenerator();
     }
@@ -66,21 +65,9 @@ public class SPIRVModule implements SPIRVInstScope {
     }
 
     private SPIRVInstScope createFunction(SPIRVInstruction instruction) {
-        SPIRVFunctionDefinition def = new SPIRVFunctionDefinition((SPIRVFunctionInst) instruction, this);
-        functionDefinitions.add(def);
-        return def;
-    }
-
-    public SPIRVFunctionDeclaration createFunctionDeclaration(SPIRVId returnType, SPIRVId funcType, SPIRVId result, SPIRVFunctionControl control, SPIRVFunctionParameterInst... params) {
-        SPIRVFunctionDeclaration declaration = new SPIRVFunctionDeclaration(returnType, funcType, result, control, params);
-        functionDeclarations.add(declaration);
-        return declaration;
-    }
-
-    public SPIRVFunctionDefinition createFunctionDefinition(SPIRVId returnType, SPIRVId funcType, SPIRVId result, SPIRVFunctionControl control, SPIRVFunctionParameterInst... params) {
-        SPIRVFunctionDefinition definition = new SPIRVFunctionDefinition(returnType, funcType, result, control, idGen, params);
-        functionDefinitions.add(definition);
-        return definition;
+        SPIRVFunction function = new SPIRVFunction((SPIRVFunctionInst) instruction, this);
+        functions.add(function);
+        return function;
     }
 
     public SPIRVModuleWriter validate() throws InvalidSPIRVModuleException {
@@ -90,7 +77,7 @@ public class SPIRVModule implements SPIRVInstScope {
         if (memoryModel == null) {
             throw new InvalidSPIRVModuleException("There was no memory model defined");
         }
-        if (functionDeclarations.size() + functionDefinitions.size() < 1) {
+        if (functions.size() < 1) {
             throw new InvalidSPIRVModuleException("There are no functions declared or defined");
         }
         if (entryPoints.size() < 1) {
@@ -135,8 +122,11 @@ public class SPIRVModule implements SPIRVInstScope {
         types.forEach(instructionConsumer);
         constants.forEach(instructionConsumer);
         globals.forEach(instructionConsumer);
-        functionDeclarations.forEach(f -> f.forEachInstruction(instructionConsumer));
-        functionDefinitions.forEach(f -> f.forEachInstruction(instructionConsumer));
+
+        Map<Boolean, List<SPIRVFunction>> functionGroups = functions.stream().collect(
+                Collectors.partitioningBy(SPIRVFunction::hasBlocks));
+        functionGroups.get(false).forEach(f -> f.forEachInstruction(instructionConsumer));
+        functionGroups.get(true).forEach(f -> f.forEachInstruction(instructionConsumer));
     }
 
     public void print(PrintStream output, SPIRVPrintingOptions options) {

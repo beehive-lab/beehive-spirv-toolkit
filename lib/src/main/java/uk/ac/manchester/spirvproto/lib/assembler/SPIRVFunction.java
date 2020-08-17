@@ -1,41 +1,26 @@
 package uk.ac.manchester.spirvproto.lib.assembler;
 
 import uk.ac.manchester.spirvproto.lib.instructions.*;
-import uk.ac.manchester.spirvproto.lib.instructions.operands.SPIRVFunctionControl;
 import uk.ac.manchester.spirvproto.lib.instructions.operands.SPIRVId;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
-public class SPIRVFunctionDefinition extends SPIRVFunctionDeclaration implements SPIRVInstScope {
-    private final List<SPIRVBlock> blocks;
-    private final SPIRVInstScope enclosingScope;
-    private final SPIRVIdGenerator idGen;
+public class SPIRVFunction implements SPIRVInstScope {
+    protected final List<SPIRVBlock> blocks;
+    protected final SPIRVInstScope enclosingScope;
+    protected final SPIRVIdGenerator idGen;
+    protected SPIRVFunctionInst functionDeclaration;
+    protected List<SPIRVFunctionParameterInst> parameters;
+    protected SPIRVFunctionEndInst end;
 
-    public SPIRVFunctionDefinition(SPIRVId resultType,
-                                   SPIRVId funcType,
-                                   SPIRVId result,
-                                   SPIRVFunctionControl control,
-                                   SPIRVIdGenerator idGen,
-                                   SPIRVFunctionParameterInst... params) {
-        super(resultType, funcType, result, control, params);
-        this.idGen = idGen;
+    public SPIRVFunction(SPIRVFunctionInst instruction, SPIRVInstScope enclosingScope) {
+        functionDeclaration = instruction;
+        parameters = new ArrayList<>();
         blocks = new ArrayList<>();
-        enclosingScope = null;
-    }
-
-    public SPIRVFunctionDefinition(SPIRVFunctionInst instruction, SPIRVInstScope enclosingScope) {
-        super(instruction);
         this.enclosingScope = enclosingScope;
         idGen = enclosingScope.getIdGen();
-        blocks = new ArrayList<>();
-    }
-
-    public SPIRVBlock addBlock() {
-        SPIRVBlock newBlock = new SPIRVBlock(idGen);
-        blocks.add(newBlock);
-        return newBlock;
     }
 
     @Override
@@ -73,4 +58,7 @@ public class SPIRVFunctionDefinition extends SPIRVFunctionDeclaration implements
         instructionConsumer.accept(end);
     }
 
+    public boolean hasBlocks() {
+        return blocks.size() > 0;
+    }
 }

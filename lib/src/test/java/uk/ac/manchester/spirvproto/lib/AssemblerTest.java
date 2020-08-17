@@ -14,6 +14,8 @@ public class AssemblerTest {
     @Test
     public void testSPIRVModule() throws InvalidSPIRVModuleException {
         SPIRVModule module = new SPIRVModule();
+        SPIRVInstScope functionScope;
+        SPIRVInstScope blockScope;
 
         module.add(new SPIRVOpMemoryModel(SPIRVAddressingModel.Physical32(), SPIRVMemoryModel.OpenCL()));
 
@@ -38,19 +40,6 @@ public class AssemblerTest {
         ));
 
         SPIRVId function = module.getNextId();
-        SPIRVId param1 = module.getNextId();
-        SPIRVId param2 = module.getNextId();
-        SPIRVId param3 = module.getNextId();
-        module.createFunctionDeclaration(
-                opTypeVoid,
-                functionType,
-                function,
-                SPIRVFunctionControl.DontInline(),
-                new SPIRVOpFunctionParameter(opTypeInt, param1),
-                new SPIRVOpFunctionParameter(opTypeInt, param2),
-                new SPIRVOpFunctionParameter(opTypeInt, param3)
-        );
-
         SPIRVId vector = module.getNextId();
         module.add(new SPIRVOpTypeVector(vector, opTypeInt, new SPIRVLiteralInteger(3)));
         SPIRVId pointer = module.getNextId();
@@ -65,18 +54,13 @@ public class AssemblerTest {
         ));
 
         SPIRVId functionDef = module.getNextId();
+        functionScope = module.add(new SPIRVOpFunction(opTypeVoid, functionDef, SPIRVFunctionControl.DontInline(), functionType));
         SPIRVId defParam1 = module.getNextId();
+        functionScope.add(new SPIRVOpFunctionParameter(opTypeInt, defParam1));
         SPIRVId defParam2= module.getNextId();
+        functionScope.add(new SPIRVOpFunctionParameter(opTypeInt, defParam2));
         SPIRVId defParam3 = module.getNextId();
-        SPIRVFunctionDefinition vecAdd = module.createFunctionDefinition(
-                opTypeVoid,
-                functionType,
-                functionDef,
-                SPIRVFunctionControl.DontInline(),
-                new SPIRVOpFunctionParameter(opTypeInt, defParam1),
-                new SPIRVOpFunctionParameter(opTypeInt, defParam2),
-                new SPIRVOpFunctionParameter(opTypeInt, defParam3)
-        );
+        functionScope.add(new SPIRVOpFunctionParameter(opTypeInt, defParam3));
 
         module.add(new SPIRVOpEntryPoint(
                 SPIRVExecutionModel.Kernel(),
@@ -85,16 +69,16 @@ public class AssemblerTest {
                 new SPIRVMultipleOperands<>(input)
         ));
 
-        SPIRVBlock theBlock = vecAdd.addBlock();
+        blockScope = functionScope.add(new SPIRVOpLabel(module.getNextId()));
         SPIRVId var1 = module.getNextId();
-        theBlock.addInstruction(new SPIRVOpVariable(
+        blockScope.add(new SPIRVOpVariable(
                 pointer,
                 var1,
                 SPIRVStorageClass.Function(),
                 new SPIRVOptionalOperand<>()
         ));
         SPIRVId var4 = module.getNextId();
-        theBlock.addInstruction(new SPIRVOpVariable(
+        blockScope.add(new SPIRVOpVariable(
                 intPointer,
                 var4,
                 SPIRVStorageClass.Function(),
@@ -102,7 +86,7 @@ public class AssemblerTest {
         ));
 
         SPIRVId load = module.getNextId();
-        theBlock.addInstruction(new SPIRVOpLoad(
+        blockScope.add(new SPIRVOpLoad(
                 vector,
                 load,
                 input,
@@ -110,14 +94,24 @@ public class AssemblerTest {
         ));
 
         SPIRVId add = module.getNextId();
-        theBlock.addInstruction(new SPIRVOpIAdd(opTypeInt, add, var4, load));
+        blockScope.add(new SPIRVOpIAdd(opTypeInt, add, var4, load));
 
-        theBlock.addInstruction(new SPIRVOpStore(
+        blockScope.add(new SPIRVOpStore(
                 var1,
                 add,
                 new SPIRVOptionalOperand<>(SPIRVMemoryAccess.Aligned(new SPIRVLiteralInteger(4)))
         ));
-        theBlock.addInstruction(new SPIRVOpReturn());
+        blockScope.add(new SPIRVOpReturn());
+        functionScope.add(new SPIRVOpFunctionEnd());
+
+        functionScope = module.add(new SPIRVOpFunction(opTypeVoid, function, SPIRVFunctionControl.DontInline(), functionType));
+        SPIRVId param1 = module.getNextId();
+        functionScope.add(new SPIRVOpFunctionParameter(opTypeInt, param1));
+        SPIRVId param2 = module.getNextId();
+        functionScope.add(new SPIRVOpFunctionParameter(opTypeInt, param2));
+        SPIRVId param3 = module.getNextId();
+        functionScope.add(new SPIRVOpFunctionParameter(opTypeInt, param3));
+        functionScope.add(new SPIRVOpFunctionEnd());
 
         TestUtils.writeModuleToFile(module, "/home/beehive-lab/Development/OpenCL-SPIRV/test.spv");
     }
