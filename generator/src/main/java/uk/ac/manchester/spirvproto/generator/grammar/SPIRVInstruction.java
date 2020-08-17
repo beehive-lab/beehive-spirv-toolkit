@@ -22,6 +22,7 @@ public class SPIRVInstruction {
 
     public SPIRVInstruction() {
         hasReturnType = false;
+        hasResult = false;
     }
 
     @Override

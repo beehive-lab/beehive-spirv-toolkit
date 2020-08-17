@@ -119,7 +119,7 @@ public class AssemblerTest {
     @Test
     public void testAssembler() throws IOException, InvalidSPIRVModuleException {
         SPIRVModule module = new Assembler(new FileReader(new File("/home/beehive-lab/Development/OpenCL-SPIRV/spirv-proto/examples/vector_add.spv.dis"))).assemble();
-        TestUtils.writeModuleToFile(module, "/home/beehive-lab/Development/OpenCL-SPIRV/spirv-proto/examples/vector_add.spv");
+        TestUtils.writeModuleToFile(module, "/home/beehive-lab/Development/OpenCL-SPIRV/spirv-proto/examples/asm-vector_add.spv");
     }
 
 }

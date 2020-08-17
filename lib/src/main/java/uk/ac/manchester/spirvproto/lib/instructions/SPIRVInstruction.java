@@ -3,6 +3,8 @@ package uk.ac.manchester.spirvproto.lib.instructions;
 import uk.ac.manchester.spirvproto.lib.disassembler.SPIRVPrintingOptions;
 
 import java.io.PrintStream;
+import uk.ac.manchester.spirvproto.lib.instructions.operands.SPIRVId;
+
 import java.nio.ByteBuffer;
 
 public abstract class SPIRVInstruction {
@@ -45,4 +47,6 @@ public abstract class SPIRVInstruction {
     protected abstract void printResultAssignment(PrintStream output, SPIRVPrintingOptions options);
 
     protected abstract void printOperands(PrintStream output, SPIRVPrintingOptions options);
+
+    public abstract SPIRVId getResultId();
 }

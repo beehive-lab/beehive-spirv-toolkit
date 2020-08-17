@@ -6,7 +6,7 @@ import java.io.PrintStream;
 import java.nio.ByteBuffer;
 
 public class SPIRVLiteralInteger implements SPIRVOperand {
-    private final int value;
+    public final int value;
 
     public SPIRVLiteralInteger(int value) {
         this.value = value;

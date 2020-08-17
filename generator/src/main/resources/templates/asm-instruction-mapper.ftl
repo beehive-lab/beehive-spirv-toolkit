@@ -25,12 +25,12 @@ public class SPIRVInstMapper {
         <#if instruction.operands??><#list instruction.operands as operand>
         <#if operand.quantifier == '*'>
         SPIRVMultipleOperands<SPIRV${operand.kind}> operand${operand?counter} = new SPIRVMultipleOperands<>();
-        while (tokens.hasNext()) operand${operand?counter}.add(SPIRVOperandMapper.map${operand.kind}(tokens, scope));
+        while (tokens.hasNext()) operand${operand?counter}.add(SPIRVOperandMapper.map${operand.kind}(<@mapperParams operand operand?counter/>));
         <#elseif operand.quantifier == '?'>
         SPIRVOptionalOperand<SPIRV${operand.kind}> operand${operand?counter} = new SPIRVOptionalOperand<>();
-        if (tokens.hasNext()) operand${operand?counter}.setValue(SPIRVOperandMapper.map${operand.kind}(tokens, scope));
+        if (tokens.hasNext()) operand${operand?counter}.setValue(SPIRVOperandMapper.map${operand.kind}(<@mapperParams operand operand?counter/>));
         <#else>
-        SPIRV${operand.kind} operand${operand?counter} = SPIRVOperandMapper.map${operand.kind}(tokens, scope);
+        SPIRV${operand.kind} operand${operand?counter} = SPIRVOperandMapper.map${operand.kind}(<@mapperParams operand operand?counter/>);
         </#if>
         </#list></#if>
 
@@ -43,3 +43,5 @@ public class SPIRVInstMapper {
 
     </#list>
 }
+
+<#macro mapperParams operand counter>tokens, scope<#if operand.kind == "LiteralContextDependentNumber">, operand${counter - 1}</#if></#macro>

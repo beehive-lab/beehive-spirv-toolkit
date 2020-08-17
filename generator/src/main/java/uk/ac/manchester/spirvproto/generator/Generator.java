@@ -52,6 +52,7 @@ public class Generator {
         ignoredOperandKinds = new HashSet<>();
         ignoredOperandKinds.add("LiteralInteger");
         ignoredOperandKinds.add("LiteralString");
+        ignoredOperandKinds.add("LiteralContextDependentNumber");
         ignoredOperandKinds.add("Id");
     }
 

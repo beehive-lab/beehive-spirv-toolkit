@@ -12,11 +12,11 @@ public class SPIRV${name} extends ${superClass} {
     <#if operands??>
     <#list operands as operand>
     <#if operand.quantifier == '*'>
-    private final SPIRVMultipleOperands<SPIRV${operand.kind}> ${operand.name};
+    public final SPIRVMultipleOperands<SPIRV${operand.kind}> ${operand.name};
     <#elseif operand.quantifier == '?'>
-    private final SPIRVOptionalOperand<SPIRV${operand.kind}> ${operand.name};
+    public final SPIRVOptionalOperand<SPIRV${operand.kind}> ${operand.name};
     <#else>
-    private final SPIRV${operand.kind} ${operand.name};
+    public final SPIRV${operand.kind} ${operand.name};
     </#if>
     </#list>
     </#if>
@@ -63,6 +63,15 @@ public class SPIRV${name} extends ${superClass} {
         return _idResult.nameSize() + 3;
         <#else>
         return 0;
+        </#if>
+    }
+
+    @Override
+    public SPIRVId getResultId() {
+        <#if hasResult>
+        return _idResult;
+        <#else>
+        return null;
         </#if>
     }
 }

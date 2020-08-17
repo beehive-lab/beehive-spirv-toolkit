@@ -25,6 +25,11 @@ public class SPIRVId implements SPIRVOperand {
     }
 
     @Override
+    public int hashCode() {
+        return id;
+    }
+
+    @Override
     public void print(PrintStream output, SPIRVPrintingOptions options) {
         output.print(options.highlighter.highlightId(name));
     }
