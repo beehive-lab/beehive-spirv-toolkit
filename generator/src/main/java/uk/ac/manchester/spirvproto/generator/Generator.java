@@ -69,7 +69,7 @@ public class Generator {
     }
 
     private void generateOperandMapper() throws Exception {
-        Template mapperTemplate = config.getTemplate("operand-mapper.ftl");
+        Template mapperTemplate = config.getTemplate("asm-operand-mapper.ftl");
         Writer out = createWriter("OperandMapper", asMapperDir);
         mapperTemplate.process(grammar, out);
         out.flush();
@@ -77,7 +77,7 @@ public class Generator {
     }
 
     private void generateInstructionMapper() throws Exception {
-        Template mapperTemplate = config.getTemplate("instruction-mapper.ftl");
+        Template mapperTemplate = config.getTemplate("asm-instruction-mapper.ftl");
         Writer out = createWriter("InstMapper", asMapperDir);
         mapperTemplate.process(grammar, out);
         out.flush();
