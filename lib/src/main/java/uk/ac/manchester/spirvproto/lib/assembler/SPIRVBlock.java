@@ -2,7 +2,6 @@ package uk.ac.manchester.spirvproto.lib.assembler;
 
 import uk.ac.manchester.spirvproto.lib.instructions.SPIRVInstruction;
 import uk.ac.manchester.spirvproto.lib.instructions.SPIRVLabelInst;
-import uk.ac.manchester.spirvproto.lib.instructions.SPIRVOpLabel;
 import uk.ac.manchester.spirvproto.lib.instructions.SPIRVTerminationInst;
 import uk.ac.manchester.spirvproto.lib.instructions.operands.SPIRVId;
 
@@ -17,23 +16,11 @@ public class SPIRVBlock implements SPIRVInstScope {
     private final List<SPIRVInstruction> instructions;
     private SPIRVTerminationInst end;
 
-    public SPIRVBlock(SPIRVIdGenerator idGen) {
-        label = new SPIRVOpLabel(idGen.getNextId());
-        this.idGen = idGen;
-        instructions = new ArrayList<>();
-        enclosingScope = null;
-    }
-
     public SPIRVBlock(SPIRVLabelInst instruction, SPIRVInstScope enclosingScope) {
         label = instruction;
         this.enclosingScope = enclosingScope;
         this.idGen = enclosingScope.getIdGen();
         instructions = new ArrayList<>();
-    }
-
-    public void addInstruction(SPIRVInstruction instruction) {
-        if (instruction instanceof SPIRVTerminationInst) end = (SPIRVTerminationInst) instruction;
-        else instructions.add(instruction);
     }
 
     @Override
