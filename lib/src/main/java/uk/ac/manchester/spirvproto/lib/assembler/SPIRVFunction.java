@@ -4,7 +4,9 @@ import uk.ac.manchester.spirvproto.lib.instructions.*;
 import uk.ac.manchester.spirvproto.lib.instructions.operands.SPIRVId;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Consumer;
 
 public class SPIRVFunction implements SPIRVInstScope {
@@ -14,6 +16,7 @@ public class SPIRVFunction implements SPIRVInstScope {
     protected SPIRVFunctionInst functionDeclaration;
     protected List<SPIRVFunctionParameterInst> parameters;
     protected SPIRVFunctionEndInst end;
+    private final Map<SPIRVId, SPIRVInstruction> idToInstMap;
 
     public SPIRVFunction(SPIRVFunctionInst instruction, SPIRVInstScope enclosingScope) {
         functionDeclaration = instruction;
@@ -21,12 +24,15 @@ public class SPIRVFunction implements SPIRVInstScope {
         blocks = new ArrayList<>();
         this.enclosingScope = enclosingScope;
         idGen = enclosingScope.getIdGen();
+        idToInstMap = new HashMap<>(1);
+        idToInstMap.put(functionDeclaration.getResultId(), functionDeclaration);
     }
 
     @Override
     public SPIRVInstScope add(SPIRVInstruction instruction) {
         if (instruction instanceof SPIRVFunctionParameterInst) {
             parameters.add((SPIRVFunctionParameterInst) instruction);
+            idToInstMap.put(instruction.getResultId(), instruction);
             return this;
         } else if (instruction instanceof SPIRVFunctionEndInst) {
             end = (SPIRVFunctionEndInst) instruction;
@@ -56,6 +62,16 @@ public class SPIRVFunction implements SPIRVInstScope {
         parameters.forEach(instructionConsumer);
         blocks.forEach(b -> b.forEachInstruction(instructionConsumer));
         instructionConsumer.accept(end);
+    }
+
+    @Override
+    public SPIRVInstruction getInstruction(SPIRVId id) {
+        if (idToInstMap.containsKey(id)) {
+            return idToInstMap.get(id);
+        }
+        else {
+            return enclosingScope.getInstruction(id);
+        }
     }
 
     public boolean hasBlocks() {

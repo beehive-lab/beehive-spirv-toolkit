@@ -18,8 +18,11 @@ public class SPIRVInstruction {
 
     public boolean hasReturnType;
 
+    public boolean hasResult;
+
     public SPIRVInstruction() {
         hasReturnType = false;
+        hasResult = false;
     }
 
     @Override
@@ -45,5 +48,9 @@ public class SPIRVInstruction {
 
     public boolean getHasReturnType() {
         return hasReturnType;
+    }
+
+    public boolean getHasResult() {
+        return hasResult;
     }
 }

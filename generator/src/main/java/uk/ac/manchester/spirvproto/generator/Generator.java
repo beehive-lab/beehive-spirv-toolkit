@@ -48,6 +48,7 @@ public class Generator {
         ignoredOperandKinds = new HashSet<>();
         ignoredOperandKinds.add("LiteralInteger");
         ignoredOperandKinds.add("LiteralString");
+        ignoredOperandKinds.add("LiteralContextDependentNumber");
         ignoredOperandKinds.add("Id");
     }
 
@@ -123,6 +124,7 @@ public class Generator {
                 Map<String, MutableInt> nameCount = new HashMap<>();
                 for (SPIRVOperand operand : instruction.operands) {
                     if (operand.kind.equals("IdResultType")) instruction.hasReturnType = true;
+                    else if (operand.kind.equals("IdResult")) instruction.hasResult = true;
                     if (operand.name == null) {
                         operand.name = uncapFirst(operand.kind);
                         if (!nameCount.containsKey(operand.name)) {

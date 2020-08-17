@@ -2,25 +2,20 @@ package uk.ac.manchester.spirvproto.lib.instructions.operands;
 
 import java.nio.ByteBuffer;
 
-public class SPIRVId implements SPIRVOperand {
-    private final int id;
+public class SPIRVContextDependentFloat extends SPIRVLiteralContextDependentNumber {
+    private final float value;
 
-    public SPIRVId(int id) {
-        this.id = id;
+    public SPIRVContextDependentFloat(float value) {
+        this.value = value;
     }
 
     @Override
     public void write(ByteBuffer output) {
-        output.putInt(id);
+        output.putFloat(value);
     }
 
     @Override
     public int getWordCount() {
         return 1;
-    }
-
-    @Override
-    public int hashCode() {
-        return id;
     }
 }

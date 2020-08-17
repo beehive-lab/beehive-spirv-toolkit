@@ -3,7 +3,7 @@ package uk.ac.manchester.spirvproto.lib.instructions.operands;
 import java.nio.ByteBuffer;
 
 public class SPIRVLiteralString implements SPIRVOperand {
-    private final String value;
+    public final String value;
 
     public SPIRVLiteralString(String value) {
         this.value = value;

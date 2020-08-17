@@ -6,7 +6,9 @@ import uk.ac.manchester.spirvproto.lib.instructions.SPIRVTerminationInst;
 import uk.ac.manchester.spirvproto.lib.instructions.operands.SPIRVId;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Consumer;
 
 public class SPIRVBlock implements SPIRVInstScope {
@@ -15,12 +17,15 @@ public class SPIRVBlock implements SPIRVInstScope {
     private final SPIRVInstScope enclosingScope;
     private final List<SPIRVInstruction> instructions;
     private SPIRVTerminationInst end;
+    private final Map<SPIRVId, SPIRVInstruction> idToInstMap;
 
     public SPIRVBlock(SPIRVLabelInst instruction, SPIRVInstScope enclosingScope) {
         label = instruction;
         this.enclosingScope = enclosingScope;
         this.idGen = enclosingScope.getIdGen();
         instructions = new ArrayList<>();
+        idToInstMap = new HashMap<>(1);
+        idToInstMap.put(label.getResultId(), label);
     }
 
     @Override
@@ -31,6 +36,10 @@ public class SPIRVBlock implements SPIRVInstScope {
         }
 
         instructions.add(instruction);
+
+        SPIRVId resultId = instruction.getResultId();
+        if (resultId != null) idToInstMap.put(resultId, instruction);
+
         return this;
     }
 
@@ -49,6 +58,14 @@ public class SPIRVBlock implements SPIRVInstScope {
         instructionConsumer.accept(label);
         instructions.forEach(instructionConsumer);
         instructionConsumer.accept(end);
+    }
+
+    @Override
+    public SPIRVInstruction getInstruction(SPIRVId id) {
+        if (idToInstMap.containsKey(id)) {
+            return idToInstMap.get(id);
+        }
+        else return enclosingScope.getInstruction(id);
     }
 
 }

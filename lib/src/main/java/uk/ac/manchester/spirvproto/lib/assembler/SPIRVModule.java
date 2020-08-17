@@ -6,6 +6,7 @@ import uk.ac.manchester.spirvproto.lib.instructions.operands.SPIRVId;
 
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
@@ -26,6 +27,7 @@ public class SPIRVModule implements SPIRVInstScope {
     private final List<SPIRVFunction> functions;
 
     private final SPIRVIdGenerator idGen;
+    private final Map<SPIRVId, SPIRVInstruction> idToInstMap;
 
     public SPIRVModule() {
         capabilities = new ArrayList<>();
@@ -42,6 +44,7 @@ public class SPIRVModule implements SPIRVInstScope {
         functions = new ArrayList<>();
 
         idGen = new SPIRVIdGenerator();
+        idToInstMap = new HashMap<>();
     }
 
     public SPIRVInstScope add(SPIRVInstruction instruction) {
@@ -58,6 +61,9 @@ public class SPIRVModule implements SPIRVInstScope {
         else if (instruction instanceof SPIRVMemoryModelInst) memoryModel = (SPIRVMemoryModelInst) instruction;
         else if (instruction instanceof SPIRVFunctionInst) return createFunction(instruction);
         else throw new IllegalArgumentException("Instruction: " + instruction.getClass().getName() + " is not a valid global instruction");
+
+        SPIRVId resultId = instruction.getResultId();
+        if (resultId != null) idToInstMap.put(resultId, instruction);
 
         return this;
     }
@@ -125,6 +131,11 @@ public class SPIRVModule implements SPIRVInstScope {
                 Collectors.partitioningBy(SPIRVFunction::hasBlocks));
         functionGroups.get(false).forEach(f -> f.forEachInstruction(instructionConsumer));
         functionGroups.get(true).forEach(f -> f.forEachInstruction(instructionConsumer));
+    }
+
+    @Override
+    public SPIRVInstruction getInstruction(SPIRVId id) {
+        return idToInstMap.get(id);
     }
 
     public class SPIRVModuleWriter {

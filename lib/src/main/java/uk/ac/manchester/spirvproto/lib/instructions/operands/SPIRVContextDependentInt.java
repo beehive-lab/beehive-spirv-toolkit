@@ -1,17 +1,18 @@
 package uk.ac.manchester.spirvproto.lib.instructions.operands;
 
+import java.math.BigInteger;
 import java.nio.ByteBuffer;
 
-public class SPIRVLiteralInteger implements SPIRVOperand {
-    public final int value;
+public class SPIRVContextDependentInt extends SPIRVLiteralContextDependentNumber {
+    private final BigInteger value;
 
-    public SPIRVLiteralInteger(int value) {
+    public SPIRVContextDependentInt(BigInteger value) {
         this.value = value;
     }
 
     @Override
     public void write(ByteBuffer output) {
-        output.putInt(value);
+        output.putInt(value.intValue());
     }
 
     @Override

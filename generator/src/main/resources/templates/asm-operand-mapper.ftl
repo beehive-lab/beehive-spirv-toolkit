@@ -1,7 +1,11 @@
 package uk.ac.manchester.spirvproto.lib.assembler;
 
+import uk.ac.manchester.spirvproto.lib.instructions.SPIRVInstruction;
+import uk.ac.manchester.spirvproto.lib.instructions.SPIRVOpTypeFloat;
+import uk.ac.manchester.spirvproto.lib.instructions.SPIRVOpTypeInt;
 import uk.ac.manchester.spirvproto.lib.instructions.operands.*;
 
+import java.math.BigInteger;
 import java.util.Iterator;
 
 public class SPIRVOperandMapper {
@@ -16,6 +20,30 @@ public class SPIRVOperandMapper {
 
     public static SPIRVLiteralInteger mapLiteralInteger(Iterator<SPIRVToken> tokens, SPIRVInstScope scope) {
         return new SPIRVLiteralInteger(Integer.parseInt(tokens.next().value));
+    }
+
+    public static SPIRVLiteralContextDependentNumber mapLiteralContextDependentNumber(Iterator<SPIRVToken> tokens, SPIRVInstScope scope, SPIRVId typeId) {
+        SPIRVInstruction type = scope.getInstruction(typeId);
+        String number = tokens.next().value;
+        if (type instanceof SPIRVOpTypeInt) {
+            int width = ((SPIRVOpTypeInt) type)._width.value;
+
+            if (width == 32) return new SPIRVContextDependentInt(new BigInteger(number));
+            if (width == 64) return new SPIRVContextDependentLong(new BigInteger(number));
+
+            throw new RuntimeException("OpTypeInt cannot have width of " + width);
+        }
+
+        if (type instanceof SPIRVOpTypeFloat) {
+            int width = ((SPIRVOpTypeFloat) type)._width.value;
+
+            if (width == 32) return new SPIRVContextDependentFloat(Float.parseFloat(number));
+            if (width == 64) return new SPIRVContextDependentDouble(Double.parseDouble(number));
+
+            throw new RuntimeException("OpTypeFloat cannot have width of " + width);
+        }
+
+        throw new RuntimeException("Unknown type instruction for ContextDependentNumber: " + type.getClass().getName());
     }
 
 <#list operandKinds as operand>

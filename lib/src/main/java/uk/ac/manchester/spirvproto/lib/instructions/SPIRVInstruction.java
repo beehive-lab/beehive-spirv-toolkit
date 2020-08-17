@@ -1,5 +1,7 @@
 package uk.ac.manchester.spirvproto.lib.instructions;
 
+import uk.ac.manchester.spirvproto.lib.instructions.operands.SPIRVId;
+
 import java.nio.ByteBuffer;
 
 public abstract class SPIRVInstruction {
@@ -22,4 +24,6 @@ public abstract class SPIRVInstruction {
     }
 
     protected abstract void writeOperands(ByteBuffer output);
+
+    public abstract SPIRVId getResultId();
 }

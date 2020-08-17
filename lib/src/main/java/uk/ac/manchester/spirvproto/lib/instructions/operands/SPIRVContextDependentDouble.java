@@ -2,20 +2,20 @@ package uk.ac.manchester.spirvproto.lib.instructions.operands;
 
 import java.nio.ByteBuffer;
 
-public class SPIRVLiteralInteger implements SPIRVOperand {
-    public final int value;
+public class SPIRVContextDependentDouble extends SPIRVLiteralContextDependentNumber {
+    private final double value;
 
-    public SPIRVLiteralInteger(int value) {
+    public SPIRVContextDependentDouble(double value) {
         this.value = value;
     }
 
     @Override
     public void write(ByteBuffer output) {
-        output.putInt(value);
+        output.putDouble(value);
     }
 
     @Override
     public int getWordCount() {
-        return 1;
+        return 2;
     }
 }
