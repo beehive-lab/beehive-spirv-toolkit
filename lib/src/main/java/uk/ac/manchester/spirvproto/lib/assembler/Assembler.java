@@ -28,7 +28,7 @@ public class Assembler implements SPIRVTool {
     }
 
     public SPIRVModule assemble() {
-        SPIRVModule module = new SPIRVModule();
+        SPIRVModule module = new SPIRVModule(true);
         final SPIRVInstScope[] currentScope = new SPIRVInstScope[]{module};
         reader.lines().forEach(line -> currentScope[0] = processLine(line, currentScope[0]));
 

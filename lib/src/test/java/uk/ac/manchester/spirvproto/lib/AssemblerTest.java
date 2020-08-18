@@ -13,7 +13,7 @@ public class AssemblerTest {
 
     @Test
     public void testSPIRVModule() throws InvalidSPIRVModuleException {
-        SPIRVModule module = new SPIRVModule();
+        SPIRVModule module = new SPIRVModule(true);
         SPIRVInstScope functionScope;
         SPIRVInstScope blockScope;
 

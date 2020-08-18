@@ -15,6 +15,8 @@ import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 public class SPIRVModule implements SPIRVInstScope {
+    private final boolean isAssembling;
+
     private final List<SPIRVCapabilityInst> capabilities;
     private final List<SPIRVExtensionInst> extensions;
     private final List<SPIRVImportInst> imports;
@@ -31,7 +33,8 @@ public class SPIRVModule implements SPIRVInstScope {
     private final SPIRVIdGenerator idGen;
     private final Map<SPIRVId, SPIRVInstruction> idToInstMap;
 
-    public SPIRVModule() {
+    public SPIRVModule(boolean isAssembling) {
+        this.isAssembling = isAssembling;
         capabilities = new ArrayList<>();
         extensions = new ArrayList<>();
         imports = new ArrayList<>();
@@ -75,7 +78,8 @@ public class SPIRVModule implements SPIRVInstScope {
         if (instruction instanceof SPIRVOpExtInstImport) {
             String name = ((SPIRVOpExtInstImport) instruction)._name.value;
             if (name.equals("OpenCL.std")) {
-                SPIRVExtInstMapper.loadOpenCL();
+                if (isAssembling) uk.ac.manchester.spirvproto.lib.assembler.SPIRVExtInstMapper.loadOpenCL();
+                else uk.ac.manchester.spirvproto.lib.disassembler.SPIRVExtInstMapper.loadOpenCL();
             }
             else {
                 throw new RuntimeException("Unsupported external import: " + name);

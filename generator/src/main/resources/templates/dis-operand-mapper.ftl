@@ -103,6 +103,11 @@ public class SPIRVOperandMapper {
         throw new RuntimeException("Unknown type for ContextDependentLiteral: " + type.getClass().getName());
     }
 
+    public static SPIRVLiteralExtInstInteger mapLiteralExtInstInteger(SPIRVLine operands, SPIRVInstScope scope) {
+        int opCode = operands.next();
+        return new SPIRVLiteralExtInstInteger(opCode, SPIRVExtInstMapper.get(opCode));
+    }
+
 <#list operandKinds as operand>
     public static SPIRV${operand.kind} map${operand.kind}(SPIRVLine operands, SPIRVInstScope scope) {
         <#if operand.category == "ValueEnum">

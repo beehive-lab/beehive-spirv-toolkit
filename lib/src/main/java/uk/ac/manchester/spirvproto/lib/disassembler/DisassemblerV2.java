@@ -42,7 +42,7 @@ public class DisassemblerV2 implements SPIRVTool {
                 wordStream.getNextWord()
         );
 
-        SPIRVModule module = new SPIRVModule();
+        SPIRVModule module = new SPIRVModule(false);
         SPIRVInstScope currentScope = module;
 
         int currentWord;

@@ -77,6 +77,15 @@ public class Generator {
         generateDisInstructionMapper();
         generateDisOperandMapper();
         generateAsmExtInstMapper();
+        generateDisExtInstMapper();
+    }
+
+    private void generateDisExtInstMapper() throws Exception {
+        Template mapperTemplate = config.getTemplate("dis-extinst-mapper.ftl");
+        Writer out = createWriter("ExtInstMapper", disMapperDir);
+        mapperTemplate.process(openclImport, out);
+        out.flush();
+        out.close();
     }
 
     private void generateDisOperandMapper() throws Exception {
