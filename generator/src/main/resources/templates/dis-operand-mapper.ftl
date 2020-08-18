@@ -49,8 +49,10 @@ public class SPIRVOperandMapper {
             int width = ((SPIRVOpTypeInt) type)._width.value;
             int signedness = ((SPIRVOpTypeInt) type)._signedness.value;
 
-            byte[][] words = new byte[width / 32][4];
-            for (int i = 0; i < width / 32; i++) {
+            int widthInWords = width / 32;
+            if (widthInWords <= 0) widthInWords = 1;
+            byte[][] words = new byte[widthInWords][4];
+            for (int i = 0; i < widthInWords; i++) {
                 byte[] word = operands.nextInBytes();
                 words[i][0] = word[0];
                 words[i][1] = word[1];
@@ -58,16 +60,17 @@ public class SPIRVOperandMapper {
                 words[i][3] = word[3];
             }
 
-            byte[] numberInBytes = new byte[width / 8];
-            for (int i = width / 32 - 1; i >= 0; i--) {
+            byte[] numberInBytes = new byte[widthInWords * 4];
+            for (int i = widthInWords - 1; i >= 0; i--) {
                 int arrayIndex = i * 4;
-                numberInBytes[arrayIndex + 0] = words[i][3];
-                numberInBytes[arrayIndex + 1] = words[i][2];
-                numberInBytes[arrayIndex + 2] = words[i][1];
-                numberInBytes[arrayIndex + 3] = words[i][0];
+                int wordIndex = widthInWords - i - 1;
+                numberInBytes[arrayIndex + 0] = words[wordIndex][3];
+                numberInBytes[arrayIndex + 1] = words[wordIndex][2];
+                numberInBytes[arrayIndex + 2] = words[wordIndex][1];
+                numberInBytes[arrayIndex + 3] = words[wordIndex][0];
             }
 
-            if (width == 32) return new SPIRVContextDependentInt(new BigInteger(1 - signedness, numberInBytes));
+            if (width <= 32) return new SPIRVContextDependentInt(new BigInteger(1 - signedness, numberInBytes));
             if (width == 64) return new SPIRVContextDependentLong(new BigInteger(1 - signedness, numberInBytes));
 
             throw new RuntimeException("OpTypeInt cannot have width of " + width);

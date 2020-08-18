@@ -26,6 +26,7 @@ public class SPIRVInstructionSuperClassMapping extends HashMap<String, String> {
         put("OpConstantSampler", "SPIRVConstantInst");
         put("OpConstantNull", "SPIRVConstantInst");
         put("OpConstantPipeStorage", "SPIRVConstantInst");
+        put("OpUndef", "SPIRVConstantInst");
 
         put("OpExecutionMode", "SPIRVExecutionModeInst");
         put("OpExecutionModeId", "SPIRVExecutionModeInst");
