@@ -14,6 +14,7 @@ import java.util.*;
 public class Generator {
     private final Configuration config;
     private final SPIRVGrammar grammar;
+    private final SPIRVExternalImport openclImport;
     private final File operandsDir;
     private final File instructionsDir;
     private final File asMapperDir;
@@ -31,6 +32,7 @@ public class Generator {
         config = cfg;
 
         grammar = SPIRVSpecification.buildSPIRVGrammar(1, 2);
+        openclImport = SPIRVExternalImport.importExternal("opencl.std");
 
         ensureDirExists(path);
 
@@ -49,6 +51,7 @@ public class Generator {
         ignoredOperandKinds.add("LiteralInteger");
         ignoredOperandKinds.add("LiteralString");
         ignoredOperandKinds.add("LiteralContextDependentNumber");
+        ignoredOperandKinds.add("LiteralExtInstInteger");
         ignoredOperandKinds.add("Id");
     }
 
@@ -67,6 +70,15 @@ public class Generator {
         generateInstructionClasses();
         generateInstructionMapper();
         generateOperandMapper();
+        generateAsmExtInstMapper();
+    }
+
+    private void generateAsmExtInstMapper() throws Exception {
+        Template mapperTemplate = config.getTemplate("asm-extinst-mapper.ftl");
+        Writer out = createWriter("ExtInstMapper", asMapperDir);
+        mapperTemplate.process(openclImport, out);
+        out.flush();
+        out.close();
     }
 
     private void generateOperandMapper() throws Exception {

@@ -5,7 +5,7 @@ import uk.ac.manchester.spirvproto.lib.instructions.operands.SPIRVId;
 import java.util.HashMap;
 import java.util.Map;
 
-public class SPIRVIdGenerator {
+class SPIRVIdGenerator {
     private int currentId;
     private final Map<String, SPIRVId> idNameMap;
 
