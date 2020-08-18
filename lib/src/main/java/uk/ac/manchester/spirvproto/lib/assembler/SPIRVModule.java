@@ -51,8 +51,8 @@ public class SPIRVModule implements SPIRVInstScope {
 
     public SPIRVInstScope add(SPIRVInstruction instruction) {
         if (instruction instanceof SPIRVCapabilityInst) capabilities.add((SPIRVCapabilityInst) instruction);
-        else if (instruction instanceof SPIRVExtensionInst) extensions.add((SPIRVExtensionInst) instruction);
-        else if (instruction instanceof SPIRVImportInst) imports.add((SPIRVImportInst) instruction);
+        else if (instruction instanceof SPIRVExtensionInst) addExtension((SPIRVExtensionInst) instruction);
+        else if (instruction instanceof SPIRVImportInst) addImport((SPIRVImportInst) instruction); //imports.add((SPIRVImportInst) instruction);
         else if (instruction instanceof SPIRVEntryPointInst) entryPoints.add((SPIRVEntryPointInst) instruction);
         else if (instruction instanceof SPIRVExecutionModeInst) executionModes.add((SPIRVExecutionModeInst) instruction);
         else if (instruction instanceof SPIRVDebugInst) debugInstructions.add((SPIRVDebugInst) instruction);
@@ -68,6 +68,23 @@ public class SPIRVModule implements SPIRVInstScope {
         if (resultId != null) idToInstMap.put(resultId, instruction);
 
         return this;
+    }
+
+    private void addImport(SPIRVImportInst instruction) {
+        imports.add(instruction);
+        if (instruction instanceof SPIRVOpExtInstImport) {
+            String name = ((SPIRVOpExtInstImport) instruction)._name.value;
+            if (name.equals("OpenCL.std")) {
+                SPIRVExtInstMapper.loadOpenCL();
+            }
+            else {
+                throw new RuntimeException("Unsupported external import: " + name);
+            }
+        }
+    }
+
+    private void addExtension(SPIRVExtensionInst instruction) {
+        extensions.add(instruction);
     }
 
     private SPIRVInstScope createFunction(SPIRVInstruction instruction) {

@@ -8,7 +8,7 @@ import uk.ac.manchester.spirvproto.lib.instructions.operands.*;
 import java.math.BigInteger;
 import java.util.Iterator;
 
-public class SPIRVOperandMapper {
+class SPIRVOperandMapper {
     public static SPIRVId mapId(Iterator<SPIRVToken> tokens, SPIRVInstScope scope) {
         return scope.getOrCreateId(tokens.next().value);
     }
@@ -46,6 +46,11 @@ public class SPIRVOperandMapper {
         throw new RuntimeException("Unknown type instruction for ContextDependentNumber: " + type.getClass().getName());
     }
 
+    public static SPIRVLiteralExtInstInteger mapLiteralExtInstInteger(Iterator<SPIRVToken> tokens, SPIRVInstScope scope) {
+        String name = tokens.next().value;
+        return new SPIRVLiteralExtInstInteger(SPIRVExtInstMapper.get(name), name);
+    }
+
 <#list operandKinds as operand>
     public static SPIRV${operand.kind} map${operand.kind}(Iterator<SPIRVToken> tokens, SPIRVInstScope scope) {
         <#if operand.category == "ValueEnum">
@@ -79,8 +84,15 @@ public class SPIRVOperandMapper {
             }
         }
         return retVal;
+        <#elseif operand.category == "Composite">
+        <#list operand.bases as base>
+        SPIRV${base} member${base?counter} = SPIRVOperandMapper.map${base}(tokens, scope);
+        </#list>
+        return new SPIRV${operand.kind}(<#list operand.bases as base>member${base?counter}<#sep>, </#sep></#list>);
+        <#elseif operand.category == "Literal">
+        return new SPIRV${operand.kind}(Integer.decode(tokens.next().value));
         <#else>
-        return null;
+        throw new RuntimeException("Unsupported operand kind: ${operand.kind}");
         </#if>
     }
 

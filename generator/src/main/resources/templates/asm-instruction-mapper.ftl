@@ -6,7 +6,7 @@ import uk.ac.manchester.spirvproto.lib.instructions.operands.*;
 import java.util.Arrays;
 import java.util.Iterator;
 
-public class SPIRVInstMapper {
+class SPIRVInstMapper {
     public static SPIRVInstScope addToScope(SPIRVToken instruction, SPIRVToken[] tokens, SPIRVInstScope scope) {
         Iterator<SPIRVToken> tokenIterator = Arrays.stream(tokens).iterator();
         SPIRVInstruction decoded;

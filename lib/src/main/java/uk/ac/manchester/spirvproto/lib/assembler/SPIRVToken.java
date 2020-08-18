@@ -2,7 +2,7 @@ package uk.ac.manchester.spirvproto.lib.assembler;
 
 import uk.ac.manchester.spirvproto.lib.grammar.SPIRVGrammar;
 
-public class SPIRVToken {
+class SPIRVToken {
     String value;
     SPIRVTokenType type;
 

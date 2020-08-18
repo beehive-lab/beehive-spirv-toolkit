@@ -1,6 +1,6 @@
 package uk.ac.manchester.spirvproto.lib.assembler;
 
-public enum SPIRVTokenType {
+enum SPIRVTokenType {
     ID,
     INSTRUCTION,
     IMMEDIATE,
