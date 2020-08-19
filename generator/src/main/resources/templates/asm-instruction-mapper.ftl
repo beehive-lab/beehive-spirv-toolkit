@@ -7,7 +7,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 
 class SPIRVInstMapper {
-    public static SPIRVInstScope addToScope(SPIRVToken instruction, SPIRVToken[] tokens, SPIRVInstScope scope) {
+    public static SPIRVInstruction createInst(SPIRVToken instruction, SPIRVToken[] tokens, SPIRVInstScope scope) {
         Iterator<SPIRVToken> tokenIterator = Arrays.stream(tokens).iterator();
         SPIRVInstruction decoded;
         switch (instruction.value) {
@@ -17,7 +17,7 @@ class SPIRVInstMapper {
             default: throw new IllegalArgumentException(instruction.value);
         }
 
-        return scope.add(decoded);
+        return decoded;
     }
 
     <#list instructions as instruction>

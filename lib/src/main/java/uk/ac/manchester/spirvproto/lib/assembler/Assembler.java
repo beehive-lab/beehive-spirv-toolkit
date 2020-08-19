@@ -1,6 +1,8 @@
 package uk.ac.manchester.spirvproto.lib.assembler;
 
 import uk.ac.manchester.spirvproto.lib.SPIRVTool;
+import uk.ac.manchester.spirvproto.lib.instructions.SPIRVInstruction;
+import uk.ac.manchester.spirvproto.lib.instructions.SPIRVOpExtInstImport;
 
 import java.io.*;
 import java.nio.ByteBuffer;
@@ -47,7 +49,22 @@ public class Assembler implements SPIRVTool {
 
         if (instruction == null) return scope;
 
-        return SPIRVInstMapper.addToScope(instruction, operands.toArray(new SPIRVToken[0]), scope);
+        SPIRVInstruction instructionNode = SPIRVInstMapper.createInst(instruction, operands.toArray(new SPIRVToken[0]), scope);
+
+        processInstruction(instructionNode);
+        return scope.add(instructionNode);
+    }
+
+    private void processInstruction(SPIRVInstruction instruction) {
+        if (instruction instanceof SPIRVOpExtInstImport) {
+            String name = ((SPIRVOpExtInstImport) instruction)._name.value;
+            if (name.equals("OpenCL.std")) {
+                SPIRVExtInstMapper.loadOpenCL();
+            }
+            else {
+                throw new RuntimeException("Unsupported external import: " + name);
+            }
+        }
     }
 
     private SPIRVToken[] tokenize(String line) {
