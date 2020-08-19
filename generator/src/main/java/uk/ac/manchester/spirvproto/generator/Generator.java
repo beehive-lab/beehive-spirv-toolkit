@@ -78,6 +78,7 @@ public class Generator {
         generateDisOperandMapper();
         generateAsmExtInstMapper();
         generateDisExtInstMapper();
+        generateInstRecognizer();
     }
 
     private void generateDisExtInstMapper() throws Exception {
@@ -102,7 +103,14 @@ public class Generator {
         mapperTemplate.process(grammar, out);
         out.flush();
         out.close();
+    }
 
+    private void generateInstRecognizer() throws Exception {
+        Template recognizerTemplate = config.getTemplate("instruction-recognizer.ftl");
+        Writer out = createWriter("InstRecognizer", asmMapperDir);
+        recognizerTemplate.process(grammar, out);
+        out.flush();
+        out.close();
     }
 
     private void generateAsmExtInstMapper() throws Exception {

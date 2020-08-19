@@ -7,9 +7,6 @@ import java.util.Arrays;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class SPIRVGrammar {
-    @JsonProperty("magic_number")
-    public String magicNumber;
-
     @JsonProperty("instructions")
     public SPIRVInstruction[] instructions;
 
