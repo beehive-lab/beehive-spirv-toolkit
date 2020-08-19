@@ -41,7 +41,7 @@ public class SPIRVModule implements SPIRVInstScope {
         this.memoryModel = null;
         entryPoints = new ArrayList<>();
         executionModes = new ArrayList<>();
-        debugInstructions = new SPIRVDebugInstructions(this);
+        debugInstructions = new SPIRVDebugInstructions();
         annotations = new ArrayList<>();
         types = new ArrayList<>();
         constants = new ArrayList<>();

@@ -10,10 +10,8 @@ public class SPIRVDebugInstructions {
     private final List<SPIRVSourceInst> sourceInstructions;
     private final List<SPIRVNameInst> nameInstructions;
     private final List<SPIRVModuleProcessedInst> modules;
-    private final SPIRVModule module;
 
-    public SPIRVDebugInstructions(SPIRVModule module) {
-        this.module = module;
+    public SPIRVDebugInstructions() {
         sourceInstructions = new ArrayList<>();
         nameInstructions = new ArrayList<>();
         modules = new ArrayList<>();

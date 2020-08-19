@@ -5,6 +5,7 @@ import uk.ac.manchester.spirvproto.lib.SPIRVTool;
 import uk.ac.manchester.spirvproto.lib.assembler.SPIRVInstScope;
 import uk.ac.manchester.spirvproto.lib.assembler.SPIRVModule;
 import uk.ac.manchester.spirvproto.lib.instructions.SPIRVInstruction;
+import uk.ac.manchester.spirvproto.lib.instructions.SPIRVOpExtInstImport;
 
 import java.io.IOException;
 import java.io.PrintStream;
@@ -69,7 +70,20 @@ public class DisassemblerV2 implements SPIRVTool {
                 new SPIRVLine(Arrays.stream(line).iterator(), wordStream.getEndianness()), scope);
 
         nameMap.process(instruction);
+        processInstruction(instruction);
         return scope.add(instruction);
+    }
+
+    private void processInstruction(SPIRVInstruction instruction) {
+        if (instruction instanceof SPIRVOpExtInstImport) {
+            String name = ((SPIRVOpExtInstImport) instruction)._name.value;
+            if (name.equals("OpenCL.std")) {
+                SPIRVExtInstMapper.loadOpenCL();
+            }
+            else {
+                throw new RuntimeException("Unsupported external import: " + name);
+            }
+        }
     }
 
     private void print(SPIRVModule module) {
