@@ -26,4 +26,10 @@ public class SPIRVContextDependentDouble extends SPIRVLiteralContextDependentNum
     public void print(PrintStream output, SPIRVPrintingOptions options) {
         output.print(value);
     }
+
+    @Override
+    public boolean equals(Object other) {
+        if (other instanceof SPIRVContextDependentDouble) return this.value == ((SPIRVContextDependentDouble) other).value;
+        else return super.equals(other);
+    }
 }

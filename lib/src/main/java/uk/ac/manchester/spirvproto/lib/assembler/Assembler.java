@@ -1,5 +1,6 @@
 package uk.ac.manchester.spirvproto.lib.assembler;
 
+import uk.ac.manchester.spirvproto.lib.SPIRVHeader;
 import uk.ac.manchester.spirvproto.lib.SPIRVTool;
 
 import java.io.*;
@@ -11,6 +12,7 @@ import java.util.Arrays;
 import java.util.List;
 
 public class Assembler implements SPIRVTool {
+    public static int GenNumber = 0x180000;
     private final BufferedReader reader;
     private final File out;
     private final SPIRVInstRecognizer instRecognizer;
@@ -26,7 +28,7 @@ public class Assembler implements SPIRVTool {
     }
 
     public SPIRVModule assemble() {
-        SPIRVModule module = new SPIRVModule(true);
+        SPIRVModule module = new SPIRVModule(new SPIRVHeader(1, 2, GenNumber, 0, 0));
         final SPIRVInstScope[] currentScope = new SPIRVInstScope[]{module};
         reader.lines().forEach(line -> currentScope[0] = processLine(line, currentScope[0]));
 

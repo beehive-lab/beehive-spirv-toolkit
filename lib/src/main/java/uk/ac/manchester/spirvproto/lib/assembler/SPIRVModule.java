@@ -15,7 +15,7 @@ import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 public class SPIRVModule implements SPIRVInstScope {
-    private final boolean isAssembling;
+    private final SPIRVHeader header;
 
     private final List<SPIRVCapabilityInst> capabilities;
     private final List<SPIRVExtensionInst> extensions;
@@ -33,8 +33,8 @@ public class SPIRVModule implements SPIRVInstScope {
     private final SPIRVIdGenerator idGen;
     private final Map<SPIRVId, SPIRVInstruction> idToInstMap;
 
-    public SPIRVModule(boolean isAssembling) {
-        this.isAssembling = isAssembling;
+    public SPIRVModule(SPIRVHeader header) {
+        this.header = header;
         capabilities = new ArrayList<>();
         extensions = new ArrayList<>();
         imports = new ArrayList<>();
@@ -55,7 +55,7 @@ public class SPIRVModule implements SPIRVInstScope {
     public SPIRVInstScope add(SPIRVInstruction instruction) {
         if (instruction instanceof SPIRVCapabilityInst) capabilities.add((SPIRVCapabilityInst) instruction);
         else if (instruction instanceof SPIRVExtensionInst) addExtension((SPIRVExtensionInst) instruction);
-        else if (instruction instanceof SPIRVImportInst) addImport((SPIRVImportInst) instruction); //imports.add((SPIRVImportInst) instruction);
+        else if (instruction instanceof SPIRVImportInst) addImport((SPIRVImportInst) instruction);
         else if (instruction instanceof SPIRVEntryPointInst) entryPoints.add((SPIRVEntryPointInst) instruction);
         else if (instruction instanceof SPIRVExecutionModeInst) executionModes.add((SPIRVExecutionModeInst) instruction);
         else if (instruction instanceof SPIRVDebugInst) debugInstructions.add((SPIRVDebugInst) instruction);
@@ -78,7 +78,7 @@ public class SPIRVModule implements SPIRVInstScope {
         if (instruction instanceof SPIRVOpExtInstImport) {
             String name = ((SPIRVOpExtInstImport) instruction)._name.value;
             if (name.equals("OpenCL.std")) {
-                if (isAssembling) uk.ac.manchester.spirvproto.lib.assembler.SPIRVExtInstMapper.loadOpenCL();
+                if (header.genMagicNumber == Assembler.GenNumber) uk.ac.manchester.spirvproto.lib.assembler.SPIRVExtInstMapper.loadOpenCL();
                 else uk.ac.manchester.spirvproto.lib.disassembler.SPIRVExtInstMapper.loadOpenCL();
             }
             else {
@@ -112,6 +112,7 @@ public class SPIRVModule implements SPIRVInstScope {
             throw new InvalidSPIRVModuleException("There were no entry points added");
         }
 
+        header.setBound(idGen.getCurrentBound());
         return new SPIRVModuleWriter();
     }
 
@@ -174,7 +175,7 @@ public class SPIRVModule implements SPIRVInstScope {
         protected SPIRVModuleWriter() { }
 
         public void write(ByteBuffer output) {
-            new SPIRVHeader(0x07230203, 0x00010200, 0, idGen.getCurrentBound(), 0).write(output);
+            header.write(output);
             forEachInstruction(i -> i.write(output));
         }
     }

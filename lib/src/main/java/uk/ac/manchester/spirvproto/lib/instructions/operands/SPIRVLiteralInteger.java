@@ -26,4 +26,10 @@ public class SPIRVLiteralInteger implements SPIRVOperand {
     public void print(PrintStream output, SPIRVPrintingOptions options) {
         output.print(options.highlighter.highlightInt(Integer.toString(value)));
     }
+
+    @Override
+    public boolean equals(Object other) {
+        if (other instanceof SPIRVLiteralInteger) return this.value == ((SPIRVLiteralInteger) other).value;
+        return super.equals(other);
+    }
 }

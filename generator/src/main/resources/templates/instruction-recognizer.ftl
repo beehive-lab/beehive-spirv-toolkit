@@ -3,7 +3,7 @@ package uk.ac.manchester.spirvproto.lib.assembler;
 import java.util.HashSet;
 import java.util.Set;
 
-public class SPIRVInstRecognizer {
+class SPIRVInstRecognizer {
     private final Set<String> instructions;
 
     public SPIRVInstRecognizer() {

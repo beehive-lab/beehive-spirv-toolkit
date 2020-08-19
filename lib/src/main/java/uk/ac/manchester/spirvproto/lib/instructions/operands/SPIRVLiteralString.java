@@ -32,4 +32,10 @@ public class SPIRVLiteralString implements SPIRVOperand {
     public void print(PrintStream output, SPIRVPrintingOptions options) {
         output.print(options.highlighter.highlightString("\"" + value + "\""));
     }
+
+    @Override
+    public boolean equals(Object other) {
+        if (other instanceof SPIRVLiteralString) return this.value == ((SPIRVLiteralString) other).value;
+        return super.equals(other);
+    }
 }

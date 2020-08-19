@@ -31,6 +31,17 @@ public class SPIRVOptionalOperand<T extends SPIRVOperand> implements SPIRVOperan
         if (operand != null) operand.print(output, options);
     }
 
+    @Override
+    public boolean equals(Object other) {
+        if (other instanceof SPIRVOptionalOperand){
+            SPIRVOptionalOperand<?> otherOp = (SPIRVOptionalOperand<?>) other;
+            if (this.operand == null) return otherOp.operand == null;
+
+            return this.operand.equals(otherOp.operand);
+        }
+        return super.equals(other);
+    }
+
     public void setValue(T value) {
         operand = value;
     }

@@ -1,10 +1,9 @@
 package uk.ac.manchester.spirvproto.lib.instructions;
 
 import uk.ac.manchester.spirvproto.lib.disassembler.SPIRVPrintingOptions;
-
-import java.io.PrintStream;
 import uk.ac.manchester.spirvproto.lib.instructions.operands.SPIRVId;
 
+import java.io.PrintStream;
 import java.nio.ByteBuffer;
 
 public abstract class SPIRVInstruction {
@@ -31,7 +30,7 @@ public abstract class SPIRVInstruction {
     protected abstract void writeOperands(ByteBuffer output);
 
     public void print(PrintStream output, SPIRVPrintingOptions options) {
-        int indent = options.indent - getResultAssigmentSize();
+        int indent = options.indent - getResultAssigmentSize(options.shouldInlineNames);
         for (int i = 0; i < indent; i++) {
             output.print(" ");
         }
@@ -42,9 +41,20 @@ public abstract class SPIRVInstruction {
         output.println();
     }
 
-    public abstract int getResultAssigmentSize();
+    public int getResultAssigmentSize(boolean shouldInlineNames) {
+        SPIRVId id = getResultId();
+        if (id != null) return id.nameSize(shouldInlineNames) + 3;
 
-    protected abstract void printResultAssignment(PrintStream output, SPIRVPrintingOptions options);
+        return 0;
+    }
+
+    protected void printResultAssignment(PrintStream output, SPIRVPrintingOptions options) {
+        SPIRVId id = getResultId();
+        if (id != null) {
+            id.print(output, options);
+            output.print(" = ");
+        }
+    }
 
     protected abstract void printOperands(PrintStream output, SPIRVPrintingOptions options);
 

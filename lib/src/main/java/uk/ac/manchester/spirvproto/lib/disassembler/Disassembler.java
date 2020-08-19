@@ -39,7 +39,7 @@ public class Disassembler implements SPIRVTool {
 		else if (magicNumber == 0x03022307) wordStream.setEndianness(ByteOrder.BIG_ENDIAN);
 		else throw new InvalidBinarySPIRVInputException(magicNumber);
 
-		header = new SPIRVHeader(magicNumber,
+		header = new SPIRVHeader(
 				wordStream.getNextWord(),
 				wordStream.getNextWord(),
 				wordStream.getNextWord(),

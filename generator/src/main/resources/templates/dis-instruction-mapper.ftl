@@ -8,7 +8,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 
 public class SPIRVInstMapper {
-    public static SPIRVInstScope addToScope(SPIRVLine line, SPIRVInstScope scope) {
+    public static SPIRVInstruction createInst(SPIRVLine line, SPIRVInstScope scope) {
         SPIRVInstruction instruction;
         int opCode = line.next();
         switch (opCode) {
@@ -18,7 +18,7 @@ public class SPIRVInstMapper {
             default: throw new IllegalArgumentException("No operation with opcode: " + opCode);
         }
 
-        return scope.add(instruction);
+        return instruction;
     }
 
 <#list instructions as instruction>

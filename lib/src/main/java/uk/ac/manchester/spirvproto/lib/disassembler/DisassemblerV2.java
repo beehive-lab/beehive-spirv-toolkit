@@ -18,6 +18,7 @@ public class DisassemblerV2 implements SPIRVTool {
 
     private SPIRVHeader header;
     private final SPIRVSyntaxHighlighter highlighter;
+    private final SPIRVBuiltInNameMap nameMap;
 
     public DisassemblerV2(BinaryWordStream wordStream, PrintStream output, SPIRVDisassemblerOptions options) {
         this.wordStream = wordStream;
@@ -25,6 +26,7 @@ public class DisassemblerV2 implements SPIRVTool {
         this.options = options;
 
         highlighter = new CLIHighlighter(options.shouldHighlight);
+        nameMap = new SPIRVBuiltInNameMap();
     }
 
     @Override
@@ -35,14 +37,13 @@ public class DisassemblerV2 implements SPIRVTool {
         else throw new InvalidBinarySPIRVInputException(magicNumber);
 
         header = new SPIRVHeader(
-                magicNumber,
                 wordStream.getNextWord(),
                 wordStream.getNextWord(),
                 wordStream.getNextWord(),
                 wordStream.getNextWord()
         );
 
-        SPIRVModule module = new SPIRVModule(false);
+        SPIRVModule module = new SPIRVModule(header);
         SPIRVInstScope currentScope = module;
 
         int currentWord;
@@ -64,7 +65,11 @@ public class DisassemblerV2 implements SPIRVTool {
             line[i] = wordStream.getNextWord();
         }
 
-        return SPIRVInstMapper.addToScope(new SPIRVLine(Arrays.stream(line).iterator(), wordStream.getEndianness()), scope);
+        SPIRVInstruction instruction = SPIRVInstMapper.createInst(
+                new SPIRVLine(Arrays.stream(line).iterator(), wordStream.getEndianness()), scope);
+
+        nameMap.process(instruction);
+        return scope.add(instruction);
     }
 
     private void print(SPIRVModule module) {
@@ -72,7 +77,7 @@ public class DisassemblerV2 implements SPIRVTool {
 
         final int[] indent = {0};
         if (!options.turnOffIndent) module.forEachInstruction((SPIRVInstruction i) -> {
-            int assignSize = i.getResultAssigmentSize();
+            int assignSize = i.getResultAssigmentSize(options.shouldInlineNames);
             if (assignSize > indent[0]) indent[0] = assignSize;
         });
 

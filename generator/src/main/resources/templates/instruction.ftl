@@ -50,28 +50,24 @@ public class SPIRV${name} extends ${superClass} {
     }
 
     @Override
-    protected void printResultAssignment(PrintStream output, SPIRVPrintingOptions options) {
-        <#if hasResult>
-        _idResult.print(output, options);
-        output.print(" = ");
-        </#if>
-    }
-
-    @Override
-    public int getResultAssigmentSize() {
-        <#if hasResult>
-        return _idResult.nameSize() + 3;
-        <#else>
-        return 0;
-        </#if>
-    }
-
-    @Override
     public SPIRVId getResultId() {
         <#if hasResult>
         return _idResult;
         <#else>
         return null;
         </#if>
+    }
+
+    @Override
+    public boolean equals(Object other) {
+        if (other instanceof SPIRV${name}) {
+            <#if operands??>
+            SPIRV${name} otherInst = (SPIRV${name}) other;
+            <#list operands as operand><#if operand.name != "_idResult">
+            if (!this.${operand.name}.equals(otherInst.${operand.name})) return false;
+            </#if></#list></#if>
+            return true;
+        }
+        else return super.equals(other);
     }
 }

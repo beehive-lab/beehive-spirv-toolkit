@@ -26,4 +26,10 @@ public class SPIRVContextDependentFloat extends SPIRVLiteralContextDependentNumb
     public void print(PrintStream output, SPIRVPrintingOptions options) {
         output.print(value);
     }
+
+    @Override
+    public boolean equals(Object other) {
+        if (other instanceof SPIRVContextDependentFloat) return this.value == ((SPIRVContextDependentFloat) other).value;
+        else return super.equals(other);
+    }
 }

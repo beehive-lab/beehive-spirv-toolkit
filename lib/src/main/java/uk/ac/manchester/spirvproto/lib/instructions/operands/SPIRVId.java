@@ -6,12 +6,12 @@ import java.io.PrintStream;
 import java.nio.ByteBuffer;
 
 public class SPIRVId implements SPIRVOperand {
-    private final int id;
-    private final String name;
+    public final int id;
+    private String name;
 
     public SPIRVId(int id) {
         this.id = id;
-        name = "%" + id;
+        name = null;
     }
 
     @Override
@@ -31,10 +31,31 @@ public class SPIRVId implements SPIRVOperand {
 
     @Override
     public void print(PrintStream output, SPIRVPrintingOptions options) {
-        output.print(options.highlighter.highlightId(name));
+        checkName(options.shouldInlineNames);
+        output.print(options.highlighter.highlightId("%" + name));
     }
 
-    public int nameSize() {
-        return name.length();
+    @Override
+    public boolean equals(Object other) {
+        if (other instanceof SPIRVId) return this.id == ((SPIRVId) other).id;
+        return super.equals(other);
+    }
+
+    public int nameSize(boolean inlineNames) {
+        checkName(inlineNames);
+        return name.length() + 1;
+    }
+
+    private void checkName(boolean inlineNames) {
+        if (!inlineNames || name == null) name = Integer.toString(id);
+    }
+
+    public void setName(String newName) {
+        name = newName;
+    }
+
+    public String getName() {
+        if (name == null) return "";
+        return name;
     }
 }

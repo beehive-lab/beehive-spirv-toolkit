@@ -37,4 +37,17 @@ public abstract class SPIRVEnum implements SPIRVOperand {
             if (i < parameters.size() - 1) output.print(" ");
         }
     }
+
+    @Override
+    public boolean equals(Object other) {
+        if (other instanceof SPIRVEnum) {
+            SPIRVEnum otherEnum = (SPIRVEnum) other;
+            if (this.value != otherEnum.value) return false;
+            if (!this.name.equals(otherEnum.name)) return false;
+
+            return this.parameters.equals(otherEnum.parameters);
+        }
+
+        return super.equals(other);
+    }
 }

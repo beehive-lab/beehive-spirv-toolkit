@@ -7,18 +7,21 @@ public class SPIRVHeader {
     public final int majorVersion;
     public final int minorVersion;
     public final int genMagicNumber;
-    public final int bound;
+    public int bound;
     public final int schema;
 
 
-    public SPIRVHeader(int magicNumber, int version, int genMagicNumber, int bound, int schema) {
-        this.magicNumber = magicNumber;
+    public SPIRVHeader(int version, int genMagicNumber, int bound, int schema) {
+        this((version >> 16) & 0xFF, (version >> 8)  & 0xFF, genMagicNumber, bound, schema);
+    }
+
+    public SPIRVHeader(int majorVersion, int minorVersion, int genMagicNumber, int bound, int schema) {
+        this.magicNumber = 0x7230203;
         this.genMagicNumber = genMagicNumber >> 16;
         this.bound = bound;
         this.schema = schema;
-
-        minorVersion = (version >> 8)  & 0xFF;
-        majorVersion = (version >> 16) & 0xFF;
+        this.majorVersion = majorVersion;
+        this.minorVersion = minorVersion;
     }
 
     @Override
@@ -42,5 +45,9 @@ public class SPIRVHeader {
         output.putInt(genMagicNumber);
         output.putInt(bound);
         output.putInt(schema);
+    }
+
+    public void setBound(int currentBound) {
+        bound = currentBound;
     }
 }
