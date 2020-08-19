@@ -2,6 +2,8 @@ package uk.ac.manchester.spirvproto.lib;
 
 import uk.ac.manchester.spirvproto.lib.disassembler.BinaryWordStream;
 
+import java.nio.ByteOrder;
+
 public class TesterWordStream implements BinaryWordStream {
     private final int[] words;
     private int position;
@@ -25,10 +27,6 @@ public class TesterWordStream implements BinaryWordStream {
     }
 
     @Override
-    public void changeEndianness() {
-    }
-
-    @Override
     public byte[] getNextWordInBytes() {
         return getNextWordInBytes(false);
     }
@@ -44,4 +42,15 @@ public class TesterWordStream implements BinaryWordStream {
 
         return bytes;
     }
+
+    @Override
+    public void setEndianness(ByteOrder endianness) {
+
+    }
+
+    @Override
+    public ByteOrder getEndianness() {
+        return null;
+    }
+
 }

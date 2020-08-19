@@ -14,11 +14,19 @@ public class SPIRVInstructionSuperClassMapping extends HashMap<String, String> {
         put("OpEntryPoint", "SPIRVEntryPointInst");
         put("OpModuleProcessed", "SPIRVModuleProcessedInst");
         put("OpVariable", "SPIRVVariableInst");
-        put("OpConstant", "SPIRVConstantInst");
         put("OpFunction", "SPIRVFunctionInst");
         put("OpFunctionParameter", "SPIRVFunctionParameterInst");
         put("OpFunctionEnd", "SPIRVFunctionEndInst");
         put("OpLabel", "SPIRVLabelInst");
+
+        put("OpConstant", "SPIRVConstantInst");
+        put("OpConstantTrue", "SPIRVConstantInst");
+        put("OpConstantFalse", "SPIRVConstantInst");
+        put("OpConstantComposite", "SPIRVConstantInst");
+        put("OpConstantSampler", "SPIRVConstantInst");
+        put("OpConstantNull", "SPIRVConstantInst");
+        put("OpConstantPipeStorage", "SPIRVConstantInst");
+        put("OpUndef", "SPIRVConstantInst");
 
         put("OpExecutionMode", "SPIRVExecutionModeInst");
         put("OpExecutionModeId", "SPIRVExecutionModeInst");
@@ -35,7 +43,7 @@ public class SPIRVInstructionSuperClassMapping extends HashMap<String, String> {
         put("OpMemberDecorate", "SPIRVAnnotationInst");
         put("OpGroupDecorate", "SPIRVAnnotationInst");
         put("OpGroupMemberDecorate", "SPIRVAnnotationInst");
-        put("OpGroupDecoration", "SPIRVAnnotationInst");
+        put("OpDecorationGroup", "SPIRVAnnotationInst");
 
         put("OpBranch", "SPIRVTerminationInst");
         put("OpBranchConditional", "SPIRVTerminationInst");

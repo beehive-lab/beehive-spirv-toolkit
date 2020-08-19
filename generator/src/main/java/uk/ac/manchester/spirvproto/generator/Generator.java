@@ -3,21 +3,24 @@ package uk.ac.manchester.spirvproto.generator;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateExceptionHandler;
-import uk.ac.manchester.spirvproto.lib.SPIRVTool;
-import uk.ac.manchester.spirvproto.lib.grammar.*;
+import uk.ac.manchester.spirvproto.generator.grammar.*;
 
 import java.io.File;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.io.Writer;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
-public class Generator implements SPIRVTool {
+public class Generator {
     private final Configuration config;
     private final SPIRVGrammar grammar;
+    private final SPIRVExternalImport openclImport;
     private final File operandsDir;
     private final File instructionsDir;
+    private final File asmMapperDir;
+    private final File disMapperDir;
     private final SPIRVInstructionSuperClassMapping superClasses;
+    private final Set<String> ignoredOperandKinds;
 
     public Generator(File path) throws Exception {
         Configuration cfg = new Configuration(Configuration.VERSION_2_3_29);
@@ -29,69 +32,151 @@ public class Generator implements SPIRVTool {
         cfg.setFallbackOnNullLoopVariable(false);
         config = cfg;
 
-        grammar = SPIRVSpecification.buildSPIRVGrammar(0, 0);
+        grammar = SPIRVSpecification.buildSPIRVGrammar(1, 2);
+        openclImport = SPIRVExternalImport.importExternal("opencl.std");
 
-        instructionsDir = path;
-        if (!instructionsDir.exists()) {
-            if (!instructionsDir.mkdir()) throw new Exception("Could not create " + instructionsDir);
-        }
-        else if (!instructionsDir.isDirectory()) throw new Exception(path + " is not a directory");
+        ensureDirExists(path);
+
+        instructionsDir = new File(path, "instructions");
+        ensureDirExists(instructionsDir);
 
         operandsDir = new File(instructionsDir, "operands");
-        if (!operandsDir.exists()) {
-            if (!operandsDir.mkdir()) throw new Exception("Could not create: " + operandsDir);
-        }
+        ensureDirExists(operandsDir);
+
+        asmMapperDir = new File(path, "assembler");
+        ensureDirExists(asmMapperDir);
+
+        disMapperDir = new File(path, "disassembler");
+        ensureDirExists(disMapperDir);
+
         superClasses = new SPIRVInstructionSuperClassMapping();
+
+        ignoredOperandKinds = new HashSet<>();
+        ignoredOperandKinds.add("LiteralInteger");
+        ignoredOperandKinds.add("LiteralString");
+        ignoredOperandKinds.add("LiteralContextDependentNumber");
+        ignoredOperandKinds.add("LiteralExtInstInteger");
+        ignoredOperandKinds.add("Id");
+    }
+
+    private void ensureDirExists(File directory) throws IOException {
+        if (!directory.exists()) {
+            if (!directory.mkdir()) throw new IOException("Could not create directory: " + directory);
+        }
+        else if (!directory.isDirectory()) throw new IOException(directory + " is not a directory");
     }
 
     public void generate() throws Exception {
+        cleanUpOperands();
+        cleanUpInstructions(grammar.getInstructions());
+
+        generateOperandClasses();
+        generateInstructionClasses();
+        generateAsmInstructionMapper();
+        generateAsmOperandMapper();
+        generateDisInstructionMapper();
+        generateDisOperandMapper();
+        generateAsmExtInstMapper();
+        generateDisExtInstMapper();
+        generateInstRecognizer();
+    }
+
+    private void generateDisExtInstMapper() throws Exception {
+        Template mapperTemplate = config.getTemplate("dis-extinst-mapper.ftl");
+        Writer out = createWriter("ExtInstMapper", disMapperDir);
+        mapperTemplate.process(openclImport, out);
+        out.flush();
+        out.close();
+    }
+
+    private void generateDisOperandMapper() throws Exception {
+        Template mapperTemplate = config.getTemplate("dis-operand-mapper.ftl");
+        Writer out = createWriter("OperandMapper", disMapperDir);
+        mapperTemplate.process(grammar, out);
+        out.flush();
+        out.close();
+    }
+
+    private void generateDisInstructionMapper() throws Exception {
+        Template mapperTemplate = config.getTemplate("dis-instruction-mapper.ftl");
+        Writer out = createWriter("InstMapper", disMapperDir);
+        mapperTemplate.process(grammar, out);
+        out.flush();
+        out.close();
+    }
+
+    private void generateInstRecognizer() throws Exception {
+        Template recognizerTemplate = config.getTemplate("instruction-recognizer.ftl");
+        Writer out = createWriter("InstRecognizer", asmMapperDir);
+        recognizerTemplate.process(grammar, out);
+        out.flush();
+        out.close();
+    }
+
+    private void generateAsmExtInstMapper() throws Exception {
+        Template mapperTemplate = config.getTemplate("asm-extinst-mapper.ftl");
+        Writer out = createWriter("ExtInstMapper", asmMapperDir);
+        mapperTemplate.process(openclImport, out);
+        out.flush();
+        out.close();
+    }
+
+    private void generateAsmOperandMapper() throws Exception {
+        Template mapperTemplate = config.getTemplate("asm-operand-mapper.ftl");
+        Writer out = createWriter("OperandMapper", asmMapperDir);
+        mapperTemplate.process(grammar, out);
+        out.flush();
+        out.close();
+    }
+
+    private void generateAsmInstructionMapper() throws Exception {
+        Template mapperTemplate = config.getTemplate("asm-instruction-mapper.ftl");
+        Writer out = createWriter("InstMapper", asmMapperDir);
+        mapperTemplate.process(grammar, out);
+        out.flush();
+        out.close();
+    }
+
+    private void generateInstructionClasses() throws Exception {
+        Writer out;
+        Template instructionTemplate = config.getTemplate("instruction.ftl");
+        for (SPIRVInstruction instruction : grammar.getInstructions()) {
+            out = createWriter(instruction.name, instructionsDir);
+
+            instructionTemplate.process(instruction, out);
+
+            out.flush();
+            out.close();
+        }
+    }
+
+    private void generateOperandClasses() throws Exception {
+        Writer out;
         Template enumOperand = config.getTemplate("operand-enum.ftl");
-        Template idOperand = config.getTemplate("operand-id.ftl");
         Template compositeOperand = config.getTemplate("operand-composite.ftl");
         Template literalOperand = config.getTemplate("operand-literal.ftl");
-        Writer out;
-        for (SPIRVOperandKind operandKind : grammar.operandKinds) {
-            if (operandKind.kind.equals("LiteralInteger") || operandKind.kind.equals("LiteralString")) continue;
 
-            // Clean up parameter names
-            if (operandKind.enumerants != null) {
-                for (SPIRVEnumerant enumerant : operandKind.enumerants) {
-                    if (enumerant.parameters != null) {
-                        for (int i = 0; i < enumerant.parameters.length; i++) {
-                            SPIRVOperandParameter param = enumerant.parameters[i];
-                            if (param.name == null || param.name.isEmpty()) {
-                                param.name = "parameter" + i;
-                            }
-                            else {
-                                param.name = uncapFirst(sanitize(param.name));
-                            }
-                        }
-                    }
-                }
-            }
+        for (SPIRVOperandKind operandKind : grammar.getOperandKinds()) {
 
             out = createWriter(operandKind.kind, operandsDir);
 
-            //Template templateToUse = operandKind.category.equals("Id") ? idOperand : enumOperand;
             Template templateToUse = enumOperand;
-            if (operandKind.category.equals("Id")) templateToUse = idOperand;
             if (operandKind.category.equals("Composite")) templateToUse = compositeOperand;
-            if (operandKind.category.equals("Literal")) templateToUse = literalOperand;
+            else if (operandKind.category.equals("Literal")) templateToUse = literalOperand;
 
             templateToUse.process(operandKind, out);
             out.flush();
             out.close();
         }
+    }
 
-        Template instructionTemplate = config.getTemplate("instruction.ftl");
-        for (SPIRVInstruction instruction : grammar.instructions) {
-            out = createWriter(instruction.name, instructionsDir);
-
-            // Clean up operands
+    private void cleanUpInstructions(SPIRVInstruction[] instructions) {
+        for (SPIRVInstruction instruction : instructions) {
             if (instruction.operands != null) {
                 Map<String, MutableInt> nameCount = new HashMap<>();
-                for (int i = 0; i < instruction.operands.length; i++) {
-                    SPIRVOperand operand = instruction.operands[i];
+                for (SPIRVOperand operand : instruction.operands) {
+                    if (operand.kind.equals("IdResultType")) instruction.hasReturnType = true;
+                    else if (operand.kind.equals("IdResult")) instruction.hasResult = true;
                     if (operand.name == null) {
                         operand.name = uncapFirst(operand.kind);
                         if (!nameCount.containsKey(operand.name)) {
@@ -105,6 +190,7 @@ public class Generator implements SPIRVTool {
                         operand.name = uncapFirst(sanitize(operand.name));
                     }
                     operand.name = "_" + operand.name;
+                    if (operand.kind.startsWith("Id")) operand.kind = "Id";
                 }
             }
             String superClass;
@@ -112,12 +198,40 @@ public class Generator implements SPIRVTool {
                 superClass = "SPIRVInstruction";
             }
             instruction.superClass = superClass;
-
-            instructionTemplate.process(instruction, out);
-
-            out.flush();
-            out.close();
         }
+    }
+
+    private void cleanUpOperands() {
+        for (SPIRVOperandKind kind : grammar.operandKinds) {
+            if (kind.bases != null) {
+                for (int i = 0; i < kind.bases.length; i++) {
+                    if (kind.bases[i].startsWith("Id")) kind.bases[i] = "Id";
+                }
+            }
+            else if (kind.enumerants != null) {
+                for (SPIRVEnumerant enumerant : kind.enumerants) {
+                    if (enumerant.parameters != null) {
+                        for (int i = 0; i < enumerant.parameters.length; i++) {
+                            SPIRVOperandParameter param = enumerant.parameters[i];
+                            if (param.name == null || param.name.isEmpty()) {
+                                param.name = "parameter" + i;
+                            }
+                            else {
+                                param.name = uncapFirst(sanitize(param.name));
+                            }
+
+                            if (param.kind.startsWith("Id")) param.kind = "Id";
+                        }
+                    }
+                }
+            }
+            else if (kind.kind.startsWith("Id")) kind.kind = "Id";
+        }
+
+        grammar.operandKinds = Arrays
+                .stream(grammar.operandKinds)
+                .filter(o -> !ignoredOperandKinds.contains(o.kind))
+                .toArray(SPIRVOperandKind[]::new);
     }
 
     private FileWriter createWriter(String name, File directory) throws Exception {
@@ -145,10 +259,5 @@ public class Generator implements SPIRVTool {
 
     private String capFirst(String value) {
         return value.substring(0, 1).toUpperCase() + value.substring(1);
-    }
-
-    @Override
-    public void run() throws Exception {
-        generate();
     }
 }

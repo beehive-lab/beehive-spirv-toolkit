@@ -1,5 +1,8 @@
 package uk.ac.manchester.spirvproto.lib.disassembler;
 
-interface SPIRVSyntaxHighlighter {
-    String highlight(SPIRVDecodedOperand op);
+public interface SPIRVSyntaxHighlighter {
+    String highlightId(String id);
+    String highlightString(String string);
+    String highlightInt(String value);
+    String highlightComment(String comment);
 }

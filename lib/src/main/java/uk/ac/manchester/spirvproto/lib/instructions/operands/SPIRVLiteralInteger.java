@@ -1,9 +1,12 @@
 package uk.ac.manchester.spirvproto.lib.instructions.operands;
 
+import uk.ac.manchester.spirvproto.lib.disassembler.SPIRVPrintingOptions;
+
+import java.io.PrintStream;
 import java.nio.ByteBuffer;
 
 public class SPIRVLiteralInteger implements SPIRVOperand {
-    private final int value;
+    public final int value;
 
     public SPIRVLiteralInteger(int value) {
         this.value = value;
@@ -17,5 +20,16 @@ public class SPIRVLiteralInteger implements SPIRVOperand {
     @Override
     public int getWordCount() {
         return 1;
+    }
+
+    @Override
+    public void print(PrintStream output, SPIRVPrintingOptions options) {
+        output.print(options.highlighter.highlightInt(Integer.toString(value)));
+    }
+
+    @Override
+    public boolean equals(Object other) {
+        if (other instanceof SPIRVLiteralInteger) return this.value == ((SPIRVLiteralInteger) other).value;
+        return super.equals(other);
     }
 }

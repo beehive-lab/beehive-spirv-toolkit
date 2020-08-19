@@ -1,13 +1,14 @@
 package uk.ac.manchester.spirvproto.runner;
 
 import org.apache.commons.cli.*;
-import uk.ac.manchester.spirvproto.generator.Generator;
 import uk.ac.manchester.spirvproto.lib.SPIRVTool;
+import uk.ac.manchester.spirvproto.lib.assembler.Assembler;
 import uk.ac.manchester.spirvproto.lib.disassembler.Disassembler;
 import uk.ac.manchester.spirvproto.lib.disassembler.SPIRVDisassemblerOptions;
 import uk.ac.manchester.spirvproto.lib.disassembler.SPVFileReader;
 
 import java.io.File;
+import java.io.FileReader;
 import java.io.PrintStream;
 
 public class SPIRVToolRunner {
@@ -42,7 +43,7 @@ public class SPIRVToolRunner {
 		options.addOption("c", "no-color", false, "Do not use coloured output");
 
 		options.addOption("o", "out", true, "Specify an output file/directory");
-		options.addOption("t", "tool", true, "Select tool: gen | dis[default]");
+		options.addOption("t", "tool", true, "Specify the tool to be used: Disassembler: dis [default] | Assembler asm");
 
 		CommandLineParser parser = new DefaultParser();
 		CommandLine cmd = null;
@@ -58,24 +59,20 @@ public class SPIRVToolRunner {
 		}
 		File inputFile = new File(cmd.getArgs()[0]);
 
-		PrintStream output;
-		if (!cmd.hasOption('o')) {
-			output = System.out;
-		}
-		else {
-			File outputFile = new File(cmd.getOptionValue('o'));
-			if (outputFile.isDirectory()) {
-				outputFile = new File(outputFile, inputFile.getName() + ".dis");
-			}
-			output = new PrintStream(outputFile);
-		}
-
 		String tool = cmd.getOptionValue('t', "dis");
-		SPIRVTool spirvTool;
-		if (tool.equals("gen")) {
-			spirvTool = new Generator(inputFile);
-		}
-		else {
+		SPIRVTool spirvTool = null;
+		if (tool.equals("dis")) {
+			PrintStream output;
+			if (!cmd.hasOption('o')) {
+				output = System.out;
+			}
+			else {
+				File outputFile = new File(cmd.getOptionValue('o'));
+				if (outputFile.isDirectory()) {
+					outputFile = new File(outputFile, inputFile.getName() + ".dis");
+				}
+				output = new PrintStream(outputFile);
+			}
 			SPVFileReader reader = new SPVFileReader(inputFile);
 			SPIRVDisassemblerOptions disassemblerOptions = new SPIRVDisassemblerOptions(
 					(output != null && output.equals(System.out)) && (!cmd.hasOption('c')),
@@ -85,6 +82,22 @@ public class SPIRVToolRunner {
 					cmd.hasOption('e')
 			);
 			spirvTool = new Disassembler(reader, output, disassemblerOptions);
+		}
+		else if (tool.equals("asm")) {
+			File output;
+			if (!cmd.hasOption('o')) {
+				String inputFileName = inputFile.getAbsolutePath();
+				int indexOfExtension = inputFileName.lastIndexOf(".");
+				output = new File(inputFileName.substring(0, indexOfExtension) + ".spv");
+			}
+			else {
+				output = new File(cmd.getOptionValue('o'));
+			}
+			spirvTool = new Assembler(new FileReader(inputFile), output);
+		}
+		else {
+			System.err.println("Unrecognized tool: " + tool);
+			handleError(options);
 		}
 
 		return new Configuration(cmd.hasOption('d'), spirvTool);

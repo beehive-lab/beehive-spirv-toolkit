@@ -7,13 +7,9 @@ import java.nio.ByteBuffer;
 
 @Generated("beehive-lab.spirv-proto.generator")
 public class SPIRV${kind} extends SPIRVEnum {
-    public static EmptySPIRV${kind} Empty = new EmptySPIRV${kind}();
 
-    private final List<SPIRVOperand> parameters;
-
-    protected SPIRV${kind}(int value, List<SPIRVOperand> parameters) {
-        super(value);
-        this.parameters = parameters;
+    protected SPIRV${kind}(int value, String name, List<SPIRVOperand> parameters) {
+        super(value, name, parameters);
     }
 
     @Override
@@ -22,29 +18,21 @@ public class SPIRV${kind} extends SPIRVEnum {
         parameters.forEach(param -> param.write(output));
     }
 
+    public void add(SPIRV${kind} other) {
+        if (this.value == 0) this.name = other.name;
+        else if (other.value != 0) this.name += "|" + other.name;
+
+        this.value |= other.value;
+        this.parameters.addAll(other.parameters);
+    }
+
     <#list enumerants as enum>
     public static SPIRV${kind} ${enum.name}(<#if enum.parameters??><#list enum.parameters as param>SPIRV${param.kind} ${param.name}<#sep>, </#sep></#list></#if>) {
         List<SPIRVOperand> params = new ArrayList<>(<#if enum.parameters??>${enum.parameters?size}<#else>0</#if>);
         <#if enum.parameters??><#list enum.parameters as param>
         params.add(${param.name});
         </#list></#if>
-        return new SPIRV${kind}(${enum.value}, params);
+        return new SPIRV${kind}(${enum.value}, "${enum.name}", params);
     }
     </#list>
-
-    public static class EmptySPIRV${kind} extends SPIRV${kind} {
-        protected EmptySPIRV${kind}() {
-            super(-1, new ArrayList<SPIRVOperand>(0));
-        }
-
-        @Override
-        public void write(ByteBuffer output) {
-            // Do nothing as this is empty
-        }
-
-        @Override
-        public int getWordCount() {
-            return 0;
-        }
-    }
 }

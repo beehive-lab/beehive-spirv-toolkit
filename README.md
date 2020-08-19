@@ -40,7 +40,7 @@ spirv-proto [OPTIONS] <filepath>
  -i,--no-indent      Turn off indentation
  -n,--inline-names   Inline names of nodes where possible
  -o,--out <arg>      Specify an output file/directory
- -t,--tool <arg>     Select tool: gen | dis[default]
+ -t,--tool <arg>     Specify the tool to be used: Disassembler: dis [default] | Assembler asm
 ```
 
 To run the disassembler:

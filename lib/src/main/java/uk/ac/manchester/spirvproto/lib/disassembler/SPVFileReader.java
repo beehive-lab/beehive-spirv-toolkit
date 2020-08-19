@@ -1,6 +1,9 @@
 package uk.ac.manchester.spirvproto.lib.disassembler;
 
-import java.io.*;
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 
 public class SPVFileReader extends SPVByteStreamReader {
     public SPVFileReader(String filename) throws FileNotFoundException {

@@ -4,31 +4,35 @@ public class CLIHighlighter implements SPIRVSyntaxHighlighter {
     String IDFormat = "\033[1;33m%s\033[0m";
     String stringFormat = "\033[0;32m%s\033[0m";
     String intFormat = "\033[0;34m%s\033[0m";
+    String commentFormat = "\u001b[38;5;246m%s\033[0m";
 
-    public CLIHighlighter() {}
+    private final boolean shouldHighlight;
 
-    private String highlightID(String ID) {
-        return String.format(IDFormat, ID);
-    }
-
-    private String highlightString(String string) {
-        return String.format(stringFormat, string);
-    }
-
-    private String highlightInteger(String integer) {
-        return String.format(intFormat, integer);
+    public CLIHighlighter(boolean shouldHighlight) {
+        this.shouldHighlight = shouldHighlight;
     }
 
     @Override
-    public String highlight(SPIRVDecodedOperand op) {
-        switch (op.category) {
-            case Result:
-            case ID: return highlightID(op.operand);
+    public String highlightId(String ID) {
+        if (shouldHighlight) return String.format(IDFormat, ID);
+        else return ID;
+    }
 
-            case LiteralString: return highlightString(op.operand);
-            case LiteralNumber: return highlightInteger(op.operand);
-            case Enum:
-            default: return op.operand;
-        }
+    @Override
+    public String highlightString(String string) {
+        if (shouldHighlight) return String.format(stringFormat, string);
+        else return string;
+    }
+
+    @Override
+    public String highlightInt(String integer) {
+        if (shouldHighlight) return String.format(intFormat, integer);
+        else return integer;
+    }
+
+    @Override
+    public String highlightComment(String comment) {
+        if (shouldHighlight) return String.format(commentFormat, comment);
+        else return comment;
     }
 }

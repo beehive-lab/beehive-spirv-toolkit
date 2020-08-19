@@ -1,20 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  <dependencies>
-    <dependency>
-      <groupId>org.freemarker</groupId>
-      <artifactId>freemarker</artifactId>
-      <version>2.3.29</version>
-    </dependency>
-
-    <dependency>
-      <groupId>beehive-lab</groupId>
-      <artifactId>spirv-lib</artifactId>
-      <version>1.0-SNAPSHOT</version>
-    </dependency>
-  </dependencies>
-
   <parent>
     <artifactId>spirv-proto</artifactId>
     <groupId>beehive-lab</groupId>
@@ -25,6 +11,39 @@
   <name>generator</name>
   <version>1.0-SNAPSHOT</version>
 
+  <dependencies>
+    <dependency>
+      <groupId>org.freemarker</groupId>
+      <artifactId>freemarker</artifactId>
+      <version>2.3.29</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.codehaus.jackson</groupId>
+      <artifactId>jackson-mapper-asl</artifactId>
+      <version>1.9.2</version>
+    </dependency>
+  </dependencies>
+
+  <profiles>
+    <profile>
+      <id>release</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+      <properties>
+        <maven.exec.skip>false</maven.exec.skip>
+      </properties>
+    </profile>
+
+    <profile>
+      <id>debug</id>
+      <properties>
+        <maven.exec.skip>true</maven.exec.skip>
+      </properties>
+    </profile>
+  </profiles>
+
   <build>
     <plugins>
 
@@ -33,6 +52,44 @@
         <version>3.0.2</version>
         <configuration>
           <outputDirectory>${project.build.outputDirectory}/resources</outputDirectory>
+        </configuration>
+      </plugin>
+
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>exec-maven-plugin</artifactId>
+        <version>1.6.0</version>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>java</goal>
+            </goals>
+            <configuration>
+              <skip>${maven.exec.skip}</skip>
+              <mainClass>uk.ac.manchester.spirvproto.generator.Runner</mainClass>
+              <arguments>
+                <argument>${project.parent.basedir}/lib/src/main/java/uk/ac/manchester/spirvproto/lib</argument>
+              </arguments>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-shade-plugin</artifactId>
+        <version>3.2.4</version>
+        <configuration>
+          <finalName>spirv-generator</finalName>
+          <outputDirectory>../dist</outputDirectory>
+
+          <transformers>
+            <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+              <mainClass>uk.ac.manchester.spirvproto.generator.Runner</mainClass>
+            </transformer>
+          </transformers>
+
         </configuration>
       </plugin>
 
