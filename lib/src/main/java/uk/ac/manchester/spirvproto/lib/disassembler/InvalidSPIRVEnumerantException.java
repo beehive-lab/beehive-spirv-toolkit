@@ -1,6 +1,6 @@
-package uk.ac.manchester.spirvproto.lib.grammar;
+package uk.ac.manchester.spirvproto.lib.disassembler;
 
-public class InvalidSPIRVEnumerantException extends Exception {
+public class InvalidSPIRVEnumerantException extends RuntimeException {
     public InvalidSPIRVEnumerantException(String kind, String value) {
         super("Enumerant " + kind + " cannot have value: " + value);
     }

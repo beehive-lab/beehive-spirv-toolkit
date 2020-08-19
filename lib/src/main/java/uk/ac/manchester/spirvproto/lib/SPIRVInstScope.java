@@ -1,7 +1,6 @@
-package uk.ac.manchester.spirvproto.lib.assembler;
+package uk.ac.manchester.spirvproto.lib;
 
 import uk.ac.manchester.spirvproto.lib.instructions.SPIRVInstruction;
-import uk.ac.manchester.spirvproto.lib.instructions.SPIRVTypeInst;
 import uk.ac.manchester.spirvproto.lib.instructions.operands.SPIRVId;
 
 import java.util.function.Consumer;

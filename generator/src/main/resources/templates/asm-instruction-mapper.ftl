@@ -1,5 +1,6 @@
 package uk.ac.manchester.spirvproto.lib.assembler;
 
+import uk.ac.manchester.spirvproto.lib.SPIRVInstScope;
 import uk.ac.manchester.spirvproto.lib.instructions.*;
 import uk.ac.manchester.spirvproto.lib.instructions.operands.*;
 

@@ -1,6 +1,5 @@
-package uk.ac.manchester.spirvproto.lib.assembler;
+package uk.ac.manchester.spirvproto.lib;
 
-import uk.ac.manchester.spirvproto.lib.SPIRVHeader;
 import uk.ac.manchester.spirvproto.lib.disassembler.SPIRVPrintingOptions;
 import uk.ac.manchester.spirvproto.lib.instructions.*;
 import uk.ac.manchester.spirvproto.lib.instructions.operands.SPIRVId;

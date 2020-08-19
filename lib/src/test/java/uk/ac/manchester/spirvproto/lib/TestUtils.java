@@ -1,8 +1,5 @@
 package uk.ac.manchester.spirvproto.lib;
 
-import uk.ac.manchester.spirvproto.lib.assembler.InvalidSPIRVModuleException;
-import uk.ac.manchester.spirvproto.lib.assembler.SPIRVModule;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;

@@ -1,6 +1,6 @@
 package uk.ac.manchester.spirvproto.lib.disassembler;
 
-import uk.ac.manchester.spirvproto.lib.assembler.SPIRVInstScope;
+import uk.ac.manchester.spirvproto.lib.SPIRVInstScope;
 import uk.ac.manchester.spirvproto.lib.instructions.SPIRVInstruction;
 import uk.ac.manchester.spirvproto.lib.instructions.SPIRVOpTypeFloat;
 import uk.ac.manchester.spirvproto.lib.instructions.SPIRVOpTypeInt;
@@ -140,7 +140,7 @@ public class SPIRVOperandMapper {
                 return SPIRV${operand.kind}.${enum.name}(<#if enum.parameters ??><#list enum.parameters as param>operand${param?counter}<#sep>, </#sep></#list></#if>);
             }
             </#list>
-            default: throw new IllegalArgumentException("There is no SPIRV${operand.kind} with value" + value);
+            default: throw new InvalidSPIRVEnumerantException("${operand.kind}", Integer.toString(value));
         }
 </#macro>
 
@@ -151,9 +151,7 @@ public class SPIRVOperandMapper {
         if ((value & ${enum.value}) != 0) {
             <#if enum.parameters ??><#list enum.parameters as param>
             SPIRV${param.kind} operand${param?counter} = map${param.kind}(operands, scope);
-            </#list>
-
-            </#if>
+            </#list></#if>
             retVal.add(SPIRV${operand.kind}.${enum.name}(<#if enum.parameters ??><#list enum.parameters as param>operand${param?counter}<#sep>, </#sep></#list></#if>));
         }
         </#list>

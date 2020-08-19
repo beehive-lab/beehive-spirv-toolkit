@@ -35,17 +35,4 @@ public class CLIHighlighter implements SPIRVSyntaxHighlighter {
         if (shouldHighlight) return String.format(commentFormat, comment);
         else return comment;
     }
-
-    @Override
-    public String highlight(SPIRVDecodedOperand op) {
-        switch (op.category) {
-            case Result:
-            case ID: return highlightId(op.operand);
-
-            case LiteralString: return highlightString(op.operand);
-            case LiteralNumber: return highlightInt(op.operand);
-            case Enum:
-            default: return op.operand;
-        }
-    }
 }

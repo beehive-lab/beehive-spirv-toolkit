@@ -1,4 +1,4 @@
-package uk.ac.manchester.spirvproto.lib.assembler;
+package uk.ac.manchester.spirvproto.lib;
 
 import uk.ac.manchester.spirvproto.lib.instructions.operands.SPIRVId;
 

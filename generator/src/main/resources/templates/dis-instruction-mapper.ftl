@@ -1,6 +1,6 @@
 package uk.ac.manchester.spirvproto.lib.disassembler;
 
-import uk.ac.manchester.spirvproto.lib.assembler.SPIRVInstScope;
+import uk.ac.manchester.spirvproto.lib.SPIRVInstScope;
 import uk.ac.manchester.spirvproto.lib.instructions.*;
 import uk.ac.manchester.spirvproto.lib.instructions.operands.*;
 
@@ -8,14 +8,14 @@ import java.util.Arrays;
 import java.util.Iterator;
 
 public class SPIRVInstMapper {
-    public static SPIRVInstruction createInst(SPIRVLine line, SPIRVInstScope scope) {
+    public static SPIRVInstruction createInst(SPIRVLine line, SPIRVInstScope scope) throws InvalidSPIRVOpcodeException {
         SPIRVInstruction instruction;
         int opCode = line.next();
         switch (opCode) {
 <#list instructions as instruction>
             case ${instruction.opCode?string.computer}: instruction = create${instruction.name}(line, scope); break;
 </#list>
-            default: throw new IllegalArgumentException("No operation with opcode: " + opCode);
+            default: throw new InvalidSPIRVOpcodeException(opCode);
         }
 
         return instruction;
