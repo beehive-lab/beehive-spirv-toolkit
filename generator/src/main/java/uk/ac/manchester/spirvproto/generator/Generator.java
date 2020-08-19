@@ -71,6 +71,15 @@ public class Generator {
         generateInstructionMapper();
         generateOperandMapper();
         generateAsmExtInstMapper();
+        generateInstRecognizer();
+    }
+
+    private void generateInstRecognizer() throws Exception {
+        Template recognizerTemplate = config.getTemplate("instruction-recognizer.ftl");
+        Writer out = createWriter("InstRecognizer", asMapperDir);
+        recognizerTemplate.process(grammar, out);
+        out.flush();
+        out.close();
     }
 
     private void generateAsmExtInstMapper() throws Exception {

@@ -1,8 +1,6 @@
 package uk.ac.manchester.spirvproto.lib.assembler;
 
 import uk.ac.manchester.spirvproto.lib.SPIRVTool;
-import uk.ac.manchester.spirvproto.lib.grammar.SPIRVGrammar;
-import uk.ac.manchester.spirvproto.lib.grammar.SPIRVSpecification;
 
 import java.io.*;
 import java.nio.ByteBuffer;
@@ -15,16 +13,16 @@ import java.util.List;
 public class Assembler implements SPIRVTool {
     private final BufferedReader reader;
     private final File out;
-    private final SPIRVGrammar grammar;
+    private final SPIRVInstRecognizer instRecognizer;
 
-    public Assembler(Reader reader) throws IOException {
+    public Assembler(Reader reader) {
         this(reader, null);
     }
 
-    public Assembler(Reader reader, File out) throws IOException {
+    public Assembler(Reader reader, File out) {
         this.reader = new BufferedReader(reader);
         this.out = out;
-        grammar = SPIRVSpecification.buildSPIRVGrammar(0, 0);
+        instRecognizer = new SPIRVInstRecognizer();
     }
 
     public SPIRVModule assemble() {
@@ -56,7 +54,7 @@ public class Assembler implements SPIRVTool {
         String[] tokens = line.split("\\s+");
         return Arrays.stream(tokens)
                 .filter(s -> !s.isEmpty())
-                .map(token -> new SPIRVToken(token, grammar))
+                .map(token -> new SPIRVToken(token, instRecognizer))
                 .toArray(SPIRVToken[]::new);
     }
 
