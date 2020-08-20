@@ -113,13 +113,13 @@ public class AssemblerTest {
         functionScope.add(new SPIRVOpFunctionParameter(opTypeInt, param3));
         functionScope.add(new SPIRVOpFunctionEnd());
 
-        TestUtils.writeModuleToFile(module, "/home/beehive-lab/Development/OpenCL-SPIRV/test.spv");
+        TestUtils.writeModuleToFile(module, "../test.spv");
     }
 
     @Test
     public void testAssembler() throws IOException, InvalidSPIRVModuleException {
-        SPIRVModule module = new Assembler(new FileReader(new File("/home/beehive-lab/Development/OpenCL-SPIRV/spirv-proto/examples/vector_add.spv.dis"))).assemble();
-        TestUtils.writeModuleToFile(module, "/home/beehive-lab/Development/OpenCL-SPIRV/spirv-proto/examples/asm-vector_add.spv");
+        SPIRVModule module = new Assembler(new FileReader(new File("../examples/vector_add.spv.dis"))).assemble();
+        TestUtils.writeModuleToFile(module, "../examples/asm-vector_add.spv");
     }
 
 }
