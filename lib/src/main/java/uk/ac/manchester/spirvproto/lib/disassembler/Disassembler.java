@@ -34,6 +34,10 @@ public class Disassembler implements SPIRVTool {
         nameMap = new SPIRVBuiltInNameMap();
     }
 
+    /**
+     * Disassemble the SPIR-V module given and print the result to the given stream.
+     * @throws Exception
+     */
     @Override
     public void run() throws Exception {
         int magicNumber = wordStream.getNextWord();

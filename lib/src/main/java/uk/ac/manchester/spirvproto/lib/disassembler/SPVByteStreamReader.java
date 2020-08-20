@@ -27,31 +27,6 @@ public class SPVByteStreamReader implements BinaryWordStream {
     }
 
     @Override
-    public byte[] getNextWordInBytes() throws IOException {
-        return getNextWordInBytes(false);
-    }
-
-    @Override
-    public byte[] getNextWordInBytes(boolean reverse) throws IOException {
-        byte[] bytes = new byte[4];
-        int status = input.read(bytes);
-        if (status == -1) return null;
-
-        // Reorder bytes if on a little endian system
-        if (reverse) {
-            byte[] reversed = new byte[4];
-            reversed[0] = bytes[3];
-            reversed[1] = bytes[2];
-            reversed[2] = bytes[1];
-            reversed[3] = bytes[0];
-
-            return reversed;
-        }
-
-        return bytes;
-    }
-
-    @Override
     public void setEndianness(ByteOrder endianness) {
         this.endianness = endianness;
     }

@@ -21,6 +21,10 @@ class SPIRVBuiltInNameMap {
         names.add(new KeyPair<>(new SPIRVOpTypeVoid(new SPIRVId(-1)), "void"));
     }
 
+    /**
+     * Gives a human readable name to SPIRVIds where that can be deduced from the instruction or debug symbols.
+     * @param instruction
+     */
     public void process(SPIRVInstruction instruction) {
         int index = names.indexOf(new KeyPair<>(instruction, ""));
         if (index >= 0 && index < names.size()) {

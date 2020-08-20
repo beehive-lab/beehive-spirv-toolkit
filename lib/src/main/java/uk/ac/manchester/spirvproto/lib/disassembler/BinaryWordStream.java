@@ -4,9 +4,12 @@ import java.io.IOException;
 import java.nio.ByteOrder;
 
 public interface BinaryWordStream {
+    /**
+     * Reads the next 32 bit word.
+     * @return The next word.
+     * @throws IOException
+     */
     int getNextWord() throws IOException;
-    byte[] getNextWordInBytes() throws IOException;
-    byte[] getNextWordInBytes(boolean reverse) throws IOException;
 
     void setEndianness(ByteOrder endianness);
     ByteOrder getEndianness();

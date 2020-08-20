@@ -27,23 +27,6 @@ public class TesterWordStream implements BinaryWordStream {
     }
 
     @Override
-    public byte[] getNextWordInBytes() {
-        return getNextWordInBytes(false);
-    }
-
-    @Override
-    public byte[] getNextWordInBytes(boolean reverse) {
-        int nextWord = words[position++];
-        byte[] bytes = new byte[4];
-        bytes[0] = (byte) (0xFF & nextWord);
-        bytes[1] = (byte) (0xFF & (nextWord >> 8));
-        bytes[2] = (byte) (0xFF & (nextWord >> 16));
-        bytes[3] = (byte) (0xFF & (nextWord >> 24));
-
-        return bytes;
-    }
-
-    @Override
     public void setEndianness(ByteOrder endianness) {
 
     }

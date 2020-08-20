@@ -32,6 +32,10 @@ public class Assembler implements SPIRVTool {
         instRecognizer = new SPIRVInstRecognizer();
     }
 
+    /**
+     * Read all lines from the input and construct a SPIRVModule.
+     * @return An instance of SPIRVModule representing the instructions from the input.
+     */
     public SPIRVModule assemble() {
         SPIRVModule module = new SPIRVModule(new SPIRVHeader(
                 GeneratorConstants.SPIRVMajorVersion,
@@ -87,6 +91,11 @@ public class Assembler implements SPIRVTool {
                 .toArray(SPIRVToken[]::new);
     }
 
+    /**
+     * Transform the input into a binary SPIR-V module and write it out to the given file.
+     * @throws InvalidSPIRVModuleException
+     * @throws IOException
+     */
     @Override
     public void run() throws InvalidSPIRVModuleException, IOException {
         SPIRVModule module = assemble();
