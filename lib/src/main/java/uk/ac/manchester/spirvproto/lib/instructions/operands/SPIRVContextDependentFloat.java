@@ -24,7 +24,10 @@ public class SPIRVContextDependentFloat extends SPIRVLiteralContextDependentNumb
 
     @Override
     public void print(PrintStream output, SPIRVPrintingOptions options) {
-        output.print(value);
+        String number;
+        if (value == (int) value) number = String.format("%d", (int) value);
+        else number = String.format("%s", value);
+        output.print(number);
     }
 
     @Override
