@@ -2,6 +2,7 @@ package uk.ac.manchester.spirvproto.lib;
 
 import uk.ac.manchester.spirvproto.lib.disassembler.SPIRVPrintingOptions;
 import uk.ac.manchester.spirvproto.lib.instructions.*;
+import uk.ac.manchester.spirvproto.lib.instructions.operands.SPIRVGlobal;
 import uk.ac.manchester.spirvproto.lib.instructions.operands.SPIRVId;
 
 import java.io.PrintStream;
@@ -24,9 +25,7 @@ public class SPIRVModule implements SPIRVInstScope {
     private final List<SPIRVExecutionModeInst> executionModes;
     private final SPIRVDebugInstructions debugInstructions;
     private final List<SPIRVAnnotationInst> annotations;
-    private final List<SPIRVTypeInst> types;
-    private final List<SPIRVConstantInst> constants;
-    private final List<SPIRVVariableInst> globals;
+    private final List<SPIRVGlobal> globals;
     private final List<SPIRVFunction> functions;
 
     private final SPIRVIdGenerator idGen;
@@ -42,8 +41,6 @@ public class SPIRVModule implements SPIRVInstScope {
         executionModes = new ArrayList<>();
         debugInstructions = new SPIRVDebugInstructions();
         annotations = new ArrayList<>();
-        types = new ArrayList<>();
-        constants = new ArrayList<>();
         globals = new ArrayList<>();
         functions = new ArrayList<>();
 
@@ -59,9 +56,7 @@ public class SPIRVModule implements SPIRVInstScope {
         else if (instruction instanceof SPIRVExecutionModeInst) executionModes.add((SPIRVExecutionModeInst) instruction);
         else if (instruction instanceof SPIRVDebugInst) debugInstructions.add((SPIRVDebugInst) instruction);
         else if (instruction instanceof SPIRVAnnotationInst) annotations.add((SPIRVAnnotationInst) instruction);
-        else if (instruction instanceof SPIRVTypeInst) types.add((SPIRVTypeInst) instruction);
-        else if (instruction instanceof SPIRVConstantInst) constants.add((SPIRVConstantInst) instruction);
-        else if (instruction instanceof SPIRVVariableInst) globals.add((SPIRVVariableInst) instruction);
+        else if (instruction instanceof SPIRVGlobal) globals.add((SPIRVGlobal) instruction);
         else if (instruction instanceof SPIRVMemoryModelInst) memoryModel = (SPIRVMemoryModelInst) instruction;
         else if (instruction instanceof SPIRVFunctionInst) return createFunction(instruction);
         else throw new IllegalArgumentException("Instruction: " + instruction.getClass().getName() + " is not a valid global instruction");
@@ -128,8 +123,6 @@ public class SPIRVModule implements SPIRVInstScope {
         executionModes.forEach(instructionConsumer);
         debugInstructions.forEachInstruction(instructionConsumer);
         annotations.forEach(instructionConsumer);
-        types.forEach(instructionConsumer);
-        constants.forEach(instructionConsumer);
         globals.forEach(instructionConsumer);
 
         Map<Boolean, List<SPIRVFunction>> functionGroups = functions.stream().collect(

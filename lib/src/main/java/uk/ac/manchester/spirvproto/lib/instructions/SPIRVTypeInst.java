@@ -1,6 +1,8 @@
 package uk.ac.manchester.spirvproto.lib.instructions;
 
-public abstract class SPIRVTypeInst extends SPIRVInstruction {
+import uk.ac.manchester.spirvproto.lib.instructions.operands.SPIRVGlobal;
+
+public abstract class SPIRVTypeInst extends SPIRVGlobal {
     protected SPIRVTypeInst(int opCode, int wordCount, String name) {
         super(opCode, wordCount, name);
     }

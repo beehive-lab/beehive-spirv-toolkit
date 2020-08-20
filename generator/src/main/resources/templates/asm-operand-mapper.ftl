@@ -29,7 +29,7 @@ class SPIRVOperandMapper {
         if (type instanceof SPIRVOpTypeInt) {
             int width = ((SPIRVOpTypeInt) type)._width.value;
 
-            if (width == 32) return new SPIRVContextDependentInt(new BigInteger(number));
+            if (width <= 32) return new SPIRVContextDependentInt(new BigInteger(number));
             if (width == 64) return new SPIRVContextDependentLong(new BigInteger(number));
 
             throw new RuntimeException("OpTypeInt cannot have width of " + width);
