@@ -8,7 +8,9 @@ import uk.ac.manchester.spirvproto.lib.instructions.operands.*;
 
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
+import javax.annotation.Generated;
 
+@Generated("beehive-lab.spirv-proto.generator")
 public class SPIRVOperandMapper {
     public static SPIRVId mapId(SPIRVLine operands, SPIRVInstScope scope) {
         return scope.getOrAddId(operands.next());

@@ -3,7 +3,7 @@ package uk.ac.manchester.spirvproto.lib;
 import java.nio.ByteBuffer;
 
 public class SPIRVHeader {
-    public final int magicNumber;
+    public final int magicNumber = 0x7230203;
     public final int majorVersion;
     public final int minorVersion;
     public final int genMagicNumber;
@@ -16,7 +16,6 @@ public class SPIRVHeader {
     }
 
     public SPIRVHeader(int majorVersion, int minorVersion, int genMagicNumber, int bound, int schema) {
-        this.magicNumber = 0x7230203;
         this.genMagicNumber = genMagicNumber >> 16;
         this.bound = bound;
         this.schema = schema;

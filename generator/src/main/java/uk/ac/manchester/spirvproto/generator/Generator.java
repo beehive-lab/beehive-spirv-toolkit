@@ -9,20 +9,23 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
+import java.lang.annotation.Target;
 import java.util.*;
 
 public class Generator {
     private final Configuration config;
     private final SPIRVGrammar grammar;
+    private final Constants constants;
     private final SPIRVExternalImport openclImport;
     private final File operandsDir;
     private final File instructionsDir;
     private final File asmMapperDir;
     private final File disMapperDir;
+    private final File rootDir;
     private final SPIRVInstructionSuperClassMapping superClasses;
     private final Set<String> ignoredOperandKinds;
 
-    public Generator(File path) throws Exception {
+    public Generator(File path, Constants constants) throws Exception {
         Configuration cfg = new Configuration(Configuration.VERSION_2_3_29);
         cfg.setClassForTemplateLoading(Generator.class, "/resources/templates");
         cfg.setDefaultEncoding("UTF-8");
@@ -32,10 +35,13 @@ public class Generator {
         cfg.setFallbackOnNullLoopVariable(false);
         config = cfg;
 
-        grammar = SPIRVSpecification.buildSPIRVGrammar(1, 2);
+        this.constants = constants;
+
+        grammar = SPIRVSpecification.buildSPIRVGrammar(constants.majorVersion, constants.minorVersion);
         openclImport = SPIRVExternalImport.importExternal("opencl.std");
 
-        ensureDirExists(path);
+        rootDir = path;
+        ensureDirExists(rootDir);
 
         instructionsDir = new File(path, "instructions");
         ensureDirExists(instructionsDir);
@@ -79,6 +85,15 @@ public class Generator {
         generateAsmExtInstMapper();
         generateDisExtInstMapper();
         generateInstRecognizer();
+        generateConstants();
+    }
+
+    private void generateConstants() throws Exception {
+        Template constTemplate = config.getTemplate("gen-constants.ftl");
+        Writer out = createWriter("GeneratorConstants", rootDir);
+        constTemplate.process(constants, out);
+        out.flush();
+        out.close();
     }
 
     private void generateDisExtInstMapper() throws Exception {

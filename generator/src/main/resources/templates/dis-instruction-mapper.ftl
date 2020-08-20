@@ -6,7 +6,9 @@ import uk.ac.manchester.spirvproto.lib.instructions.operands.*;
 
 import java.util.Arrays;
 import java.util.Iterator;
+import javax.annotation.Generated;
 
+@Generated("beehive-lab.spirv-proto.generator")
 public class SPIRVInstMapper {
     public static SPIRVInstruction createInst(SPIRVLine line, SPIRVInstScope scope) throws InvalidSPIRVOpcodeException {
         SPIRVInstruction instruction;

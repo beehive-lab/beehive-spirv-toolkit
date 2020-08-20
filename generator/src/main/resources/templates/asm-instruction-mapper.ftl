@@ -6,7 +6,9 @@ import uk.ac.manchester.spirvproto.lib.instructions.operands.*;
 
 import java.util.Arrays;
 import java.util.Iterator;
+import javax.annotation.Generated;
 
+@Generated("beehive-lab.spirv-proto.generator")
 class SPIRVInstMapper {
     public static SPIRVInstruction createInst(SPIRVToken instruction, SPIRVToken[] tokens, SPIRVInstScope scope) {
         Iterator<SPIRVToken> tokenIterator = Arrays.stream(tokens).iterator();

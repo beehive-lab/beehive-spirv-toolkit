@@ -13,7 +13,7 @@ public class AssemblerTest {
 
     @Test
     public void testSPIRVModule() throws InvalidSPIRVModuleException {
-        SPIRVModule module = new SPIRVModule(new SPIRVHeader(1, 2, Assembler.GenNumber, 0, 0));
+        SPIRVModule module = new SPIRVModule(new SPIRVHeader(1, 2, 0, 0, 0));
         SPIRVInstScope functionScope;
         SPIRVInstScope blockScope;
 

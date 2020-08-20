@@ -2,7 +2,9 @@ package uk.ac.manchester.spirvproto.lib.assembler;
 
 import java.util.HashSet;
 import java.util.Set;
+import javax.annotation.Generated;
 
+@Generated("beehive-lab.spirv-proto.generator")
 class SPIRVInstRecognizer {
     private final Set<String> instructions;
 

@@ -1,7 +1,9 @@
 package uk.ac.manchester.spirvproto.lib.assembler;
 
 import java.util.HashMap;
+import javax.annotation.Generated;
 
+@Generated("beehive-lab.spirv-proto.generator")
 class SPIRVExtInstMapper {
 
     private static HashMap<String, Integer> extInstNameMap;
