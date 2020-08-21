@@ -22,7 +22,7 @@ public class SPIRV${name} extends ${superClass} {
     </#if>
 
     public SPIRV${name}(<#if operands??><#list  operands as operand><#if operand.quantifier == '*'>SPIRVMultipleOperands<<#elseif operand.quantifier == '?'>SPIRVOptionalOperand<</#if>SPIRV${operand.kind}<#if operand.quantifier == '*' || operand.quantifier == '?'>></#if> ${operand.name}<#sep>, </#list></#if>) {
-        super(${opCode?string.computer}, <#if operands??><#list  operands as operand>${operand.name}.getWordCount() + </#list></#if>1, "${name}");
+        super(${opCode?string.computer}, <#if operands??><#list  operands as operand>${operand.name}.getWordCount() + </#list></#if>1, "${name}"<#if capabilities ??><#list capabilities as capability>, SPIRVCapability.${capability}()</#list></#if>);
         <#if operands??>
         <#list operands as operand>
         this.${operand.name} = ${operand.name};
@@ -56,6 +56,22 @@ public class SPIRV${name} extends ${superClass} {
         <#else>
         return null;
         </#if>
+    }
+
+    @Override
+    public SPIRVCapability[] getAllCapabilities() {
+        SPIRVCapability[] allCapabilities = new SPIRVCapability[this.capabilities.length<#if operands ??><#list operands as operand> + ${operand.name}.getCapabilities().length</#list></#if>];
+        int capPos = 0;
+        for (SPIRVCapability capability : this.capabilities) {
+            allCapabilities[capPos++] = capability;
+        }
+        <#if operands ??><#list operands as operand>
+        for (SPIRVCapability capability : ${operand.name}.getCapabilities()) {
+            allCapabilities[capPos++] = capability;
+        }
+        </#list></#if>
+
+        return allCapabilities;
     }
 
     @Override

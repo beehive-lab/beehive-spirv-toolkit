@@ -7,11 +7,13 @@ import java.nio.ByteBuffer;
 
 public class SPIRVId implements SPIRVOperand {
     public final int id;
+    public SPIRVCapability[] capabilities;
     private String name;
 
     public SPIRVId(int id) {
         this.id = id;
         name = null;
+        capabilities = new SPIRVCapability[0];
     }
 
     @Override
@@ -22,6 +24,11 @@ public class SPIRVId implements SPIRVOperand {
     @Override
     public int getWordCount() {
         return 1;
+    }
+
+    @Override
+    public SPIRVCapability[] getCapabilities() {
+        return capabilities;
     }
 
     @Override

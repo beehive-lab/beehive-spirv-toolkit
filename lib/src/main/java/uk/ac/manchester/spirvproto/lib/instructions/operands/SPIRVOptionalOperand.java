@@ -6,14 +6,17 @@ import java.io.PrintStream;
 import java.nio.ByteBuffer;
 
 public class SPIRVOptionalOperand<T extends SPIRVOperand> implements SPIRVOperand {
+    public SPIRVCapability[] capabilities;
     private T operand;
 
     public SPIRVOptionalOperand() {
         operand = null;
+        capabilities = new SPIRVCapability[0];
     }
 
     public SPIRVOptionalOperand(T operand) {
         this.operand = operand;
+        this.capabilities = operand.getCapabilities();
     }
 
     @Override
@@ -24,6 +27,11 @@ public class SPIRVOptionalOperand<T extends SPIRVOperand> implements SPIRVOperan
     @Override
     public int getWordCount() {
         return operand == null ? 0: operand.getWordCount();
+    }
+
+    @Override
+    public SPIRVCapability[] getCapabilities() {
+        return capabilities;
     }
 
     @Override

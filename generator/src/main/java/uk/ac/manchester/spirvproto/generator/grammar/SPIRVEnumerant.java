@@ -14,6 +14,9 @@ public class SPIRVEnumerant {
     @JsonProperty("parameters")
     public SPIRVOperandParameter[] parameters;
 
+    @JsonProperty("capabilities")
+    public String[] capabilities;
+
     public String getName() {
         return name;
     }
@@ -24,5 +27,9 @@ public class SPIRVEnumerant {
 
     public SPIRVOperandParameter[] getParameters() {
         return parameters;
+    }
+
+    public String[] getCapabilities() {
+        return capabilities;
     }
 }

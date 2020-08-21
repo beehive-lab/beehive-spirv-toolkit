@@ -1,7 +1,7 @@
 package uk.ac.manchester.spirvproto.lib;
 
 import org.junit.Test;
-import uk.ac.manchester.spirvproto.lib.assembler.*;
+import uk.ac.manchester.spirvproto.lib.assembler.Assembler;
 import uk.ac.manchester.spirvproto.lib.instructions.*;
 import uk.ac.manchester.spirvproto.lib.instructions.operands.*;
 
@@ -17,11 +17,11 @@ public class AssemblerTest {
         SPIRVInstScope functionScope;
         SPIRVInstScope blockScope;
 
-        module.add(new SPIRVOpMemoryModel(SPIRVAddressingModel.Physical32(), SPIRVMemoryModel.OpenCL()));
-
         module.add(new SPIRVOpCapability(SPIRVCapability.Addresses()));
         module.add(new SPIRVOpCapability(SPIRVCapability.Linkage()));
         module.add(new SPIRVOpCapability(SPIRVCapability.Kernel()));
+
+        module.add(new SPIRVOpMemoryModel(SPIRVAddressingModel.Physical32(), SPIRVMemoryModel.OpenCL()));
 
         SPIRVId opTypeInt = module.getNextId();
         module.add(new SPIRVOpTypeInt(opTypeInt, new SPIRVLiteralInteger(32), new SPIRVLiteralInteger(0)));

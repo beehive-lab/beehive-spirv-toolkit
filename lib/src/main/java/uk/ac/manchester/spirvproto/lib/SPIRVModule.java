@@ -1,12 +1,17 @@
 package uk.ac.manchester.spirvproto.lib;
 
+import uk.ac.manchester.spirvproto.lib.disassembler.CLIHighlighter;
 import uk.ac.manchester.spirvproto.lib.disassembler.SPIRVPrintingOptions;
 import uk.ac.manchester.spirvproto.lib.instructions.*;
+import uk.ac.manchester.spirvproto.lib.instructions.operands.SPIRVCapability;
 import uk.ac.manchester.spirvproto.lib.instructions.operands.SPIRVGlobalInst;
 import uk.ac.manchester.spirvproto.lib.instructions.operands.SPIRVId;
 
+import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
+import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -49,6 +54,8 @@ public class SPIRVModule implements SPIRVInstScope {
     }
 
     public SPIRVInstScope add(SPIRVInstruction instruction) {
+        ensureCapabilitiesPresent(instruction);
+
         if (instruction instanceof SPIRVOpCapability) capabilities.add((SPIRVOpCapability) instruction);
         else if (instruction instanceof SPIRVOpExtension) extensions.add((SPIRVOpExtension) instruction);
         else if (instruction instanceof SPIRVOpExtInstImport) imports.add((SPIRVOpExtInstImport) instruction);
@@ -143,6 +150,31 @@ public class SPIRVModule implements SPIRVInstScope {
     @Override
     public SPIRVId getOrAddId(int id) {
         return idGen.getOrAddId(id);
+    }
+
+    @Override
+    public void ensureCapabilitiesPresent(SPIRVInstruction instruction) {
+        for (SPIRVCapability capability : instruction.getAllCapabilities()) {
+            SPIRVOpCapability opCapability = new SPIRVOpCapability(capability);
+            if (!capabilities.contains(opCapability)) {
+                if (this.header.genMagicNumber == GeneratorConstants.SPIRVGenMagicNumber) {
+                    this.add(opCapability);
+                }
+                else {
+                    String inst;
+                    try {
+                        final ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                        final String utf8 = StandardCharsets.UTF_8.name();
+                        PrintStream ps = new PrintStream(baos, true, utf8);
+                        instruction.print(ps, new SPIRVPrintingOptions(new CLIHighlighter(false), 0, false, true));
+                        inst = baos.toString(utf8);
+                    } catch (UnsupportedEncodingException e) {
+                        inst = instruction.name;
+                    }
+                    throw new RuntimeException("Instruction: " + inst + "requires capability: " + capability.name);
+                }
+            }
+        }
     }
 
     public class SPIRVModuleWriter {

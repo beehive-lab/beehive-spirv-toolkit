@@ -12,9 +12,19 @@ public class SPIRV${kind} implements SPIRVOperand {
     private final SPIRV${base} member${base?counter};
     </#list>
 
-    public SPIRV${kind}(<#list bases as base>SPIRV${base} member${base?counter}<#sep> ,</#sep></#list>) {
+    public final SPIRVCapability[] capabilities;
+
+    public SPIRV${kind}(<#list bases as base>SPIRV${base} member${base?counter}<#sep>, </#sep></#list>) {
         <#list bases as base>
         this.member${base?counter} = member${base?counter};
+        </#list>
+
+        capabilities = new SPIRVCapability[<#list bases as base>member${base?counter}.getCapabilities().length<#sep> + </#sep></#list>];
+        int capPos = 0;
+        <#list bases as base>
+        for (SPIRVCapability capability : member${base?counter}.getCapabilities()) {
+            capabilities[capPos++] = capability;
+        }
         </#list>
     }
 
@@ -40,5 +50,10 @@ public class SPIRV${kind} implements SPIRVOperand {
         </#sep>
         </#list>
         if (!options.turnOffGrouping) output.print("}");
+    }
+
+    @Override
+    public SPIRVCapability[] getCapabilities() {
+        return capabilities;
     }
 }

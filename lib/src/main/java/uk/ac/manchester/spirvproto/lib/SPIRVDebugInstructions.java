@@ -9,7 +9,7 @@ import java.util.function.Consumer;
 public class SPIRVDebugInstructions {
     private final List<SPIRVSourceInst> sourceInstructions;
     private final List<SPIRVNameInst> nameInstructions;
-    private final List<SPIRVModuleProcessedInst> modules;
+    private final List<SPIRVOpModuleProcessed> modules;
 
     public SPIRVDebugInstructions() {
         sourceInstructions = new ArrayList<>();
@@ -24,8 +24,8 @@ public class SPIRVDebugInstructions {
         else if (instruction instanceof  SPIRVNameInst) {
             nameInstructions.add((SPIRVNameInst) instruction);
         }
-        else if (instruction instanceof SPIRVModuleProcessedInst) {
-            modules.add((SPIRVModuleProcessedInst) instruction);
+        else if (instruction instanceof SPIRVOpModuleProcessed) {
+            modules.add((SPIRVOpModuleProcessed) instruction);
         }
         else {
             throw new IllegalArgumentException("Instruction: " + instruction.getClass().getName() + " is not a valid debug instruction");

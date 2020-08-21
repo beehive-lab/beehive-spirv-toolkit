@@ -7,9 +7,11 @@ import java.nio.ByteBuffer;
 
 public class SPIRVLiteralString implements SPIRVOperand {
     public final String value;
+    public final SPIRVCapability[] capabilities;
 
     public SPIRVLiteralString(String value) {
         this.value = value;
+        capabilities = new SPIRVCapability[0];
     }
 
     @Override
@@ -26,6 +28,11 @@ public class SPIRVLiteralString implements SPIRVOperand {
     @Override
     public int getWordCount() {
         return (value.length() / 4) + 1;
+    }
+
+    @Override
+    public SPIRVCapability[] getCapabilities() {
+        return capabilities;
     }
 
     @Override

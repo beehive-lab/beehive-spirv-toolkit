@@ -4,8 +4,6 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.Mockito;
 import uk.ac.manchester.spirvproto.lib.disassembler.*;
-import uk.ac.manchester.spirvproto.lib.disassembler.InvalidSPIRVEnumerantException;
-import uk.ac.manchester.spirvproto.lib.disassembler.InvalidSPIRVOpcodeException;
 
 import java.io.PrintStream;
 import java.nio.ByteOrder;

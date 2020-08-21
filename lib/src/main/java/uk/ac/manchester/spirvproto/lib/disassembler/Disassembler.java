@@ -1,9 +1,9 @@
 package uk.ac.manchester.spirvproto.lib.disassembler;
 
 import uk.ac.manchester.spirvproto.lib.SPIRVHeader;
-import uk.ac.manchester.spirvproto.lib.SPIRVTool;
 import uk.ac.manchester.spirvproto.lib.SPIRVInstScope;
 import uk.ac.manchester.spirvproto.lib.SPIRVModule;
+import uk.ac.manchester.spirvproto.lib.SPIRVTool;
 import uk.ac.manchester.spirvproto.lib.instructions.SPIRVInstruction;
 import uk.ac.manchester.spirvproto.lib.instructions.SPIRVOpExtInstImport;
 

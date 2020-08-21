@@ -51,4 +51,6 @@ public interface SPIRVInstScope {
      * @return the SPIRVId object with the given value.
      */
     SPIRVId getOrAddId(int id);
+
+    void ensureCapabilitiesPresent(SPIRVInstruction instruction);
 }

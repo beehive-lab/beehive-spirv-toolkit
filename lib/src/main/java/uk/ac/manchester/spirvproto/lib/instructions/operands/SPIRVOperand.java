@@ -8,6 +8,7 @@ import java.nio.ByteBuffer;
 public interface SPIRVOperand {
     void write(ByteBuffer output);
     int getWordCount();
+    SPIRVCapability[] getCapabilities();
 
     void print(PrintStream output, SPIRVPrintingOptions options);
 }

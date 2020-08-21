@@ -7,26 +7,40 @@ public class SPIRVInstructionSuperClassMapping extends HashMap<String, String> {
     public SPIRVInstructionSuperClassMapping() {
         super(53);
 
-        put("OpCapability", "SPIRVCapabilityInst");
-        put("OpExtension", "SPIRVExtensionInst");
-        put("OpExtInstImport", "SPIRVImportInst");
-        put("OpMemoryModel", "SPIRVMemoryModelInst");
-        put("OpEntryPoint", "SPIRVEntryPointInst");
-        put("OpModuleProcessed", "SPIRVModuleProcessedInst");
-        put("OpVariable", "SPIRVVariableInst");
-        put("OpFunction", "SPIRVFunctionInst");
-        put("OpFunctionParameter", "SPIRVFunctionParameterInst");
-        put("OpFunctionEnd", "SPIRVFunctionEndInst");
-        put("OpLabel", "SPIRVLabelInst");
+        put("OpModuleProcessed", "SPIRVDebugInst");
 
-        put("OpConstant", "SPIRVConstantInst");
-        put("OpConstantTrue", "SPIRVConstantInst");
-        put("OpConstantFalse", "SPIRVConstantInst");
-        put("OpConstantComposite", "SPIRVConstantInst");
-        put("OpConstantSampler", "SPIRVConstantInst");
-        put("OpConstantNull", "SPIRVConstantInst");
-        put("OpConstantPipeStorage", "SPIRVConstantInst");
-        put("OpUndef", "SPIRVConstantInst");
+        put("OpVariable", "SPIRVGlobalInst");
+        put("OpConstant", "SPIRVGlobalInst");
+        put("OpConstantTrue", "SPIRVGlobalInst");
+        put("OpConstantFalse", "SPIRVGlobalInst");
+        put("OpConstantComposite", "SPIRVGlobalInst");
+        put("OpConstantSampler", "SPIRVGlobalInst");
+        put("OpConstantNull", "SPIRVGlobalInst");
+        put("OpConstantPipeStorage", "SPIRVGlobalInst");
+        put("OpUndef", "SPIRVGlobalInst");
+        put("OpTypeVoid", "SPIRVGlobalInst");
+        put("OpTypeBool", "SPIRVGlobalInst");
+        put("OpTypeInt", "SPIRVGlobalInst");
+        put("OpTypeFloat", "SPIRVGlobalInst");
+        put("OpTypeVector", "SPIRVGlobalInst");
+        put("OpTypeMatrix", "SPIRVGlobalInst");
+        put("OpTypeImage", "SPIRVGlobalInst");
+        put("OpTypeSampler", "SPIRVGlobalInst");
+        put("OpTypeSampledImage", "SPIRVGlobalInst");
+        put("OpTypeArray", "SPIRVGlobalInst");
+        put("OpTypeRuntimeArray", "SPIRVGlobalInst");
+        put("OpTypeStruct", "SPIRVGlobalInst");
+        put("OpTypeOpaque", "SPIRVGlobalInst");
+        put("OpTypePointer", "SPIRVGlobalInst");
+        put("OpTypeFunction", "SPIRVGlobalInst");
+        put("OpTypeEvent", "SPIRVGlobalInst");
+        put("OpTypeDeviceEvent", "SPIRVGlobalInst");
+        put("OpTypeReserveId", "SPIRVGlobalInst");
+        put("OpTypeQueue", "SPIRVGlobalInst");
+        put("OpTypePipe", "SPIRVGlobalInst");
+        put("OpTypeForwardPointer", "SPIRVGlobalInst");
+        put("OpTypePipeStorage", "SPIRVGlobalInst");
+        put("OpTypeNamedBarrier", "SPIRVGlobalInst");
 
         put("OpExecutionMode", "SPIRVExecutionModeInst");
         put("OpExecutionModeId", "SPIRVExecutionModeInst");
@@ -52,29 +66,5 @@ public class SPIRVInstructionSuperClassMapping extends HashMap<String, String> {
         put("OpReturnValue", "SPIRVTerminationInst");
         put("OpKill", "SPIRVTerminationInst");
         put("OpUnreachable", "SPIRVTerminationInst");
-
-        put("OpTypeVoid", "SPIRVTypeInst");
-        put("OpTypeBool", "SPIRVTypeInst");
-        put("OpTypeInt", "SPIRVTypeInst");
-        put("OpTypeFloat", "SPIRVTypeInst");
-        put("OpTypeVector", "SPIRVTypeInst");
-        put("OpTypeMatrix", "SPIRVTypeInst");
-        put("OpTypeImage", "SPIRVTypeInst");
-        put("OpTypeSampler", "SPIRVTypeInst");
-        put("OpTypeSampledImage", "SPIRVTypeInst");
-        put("OpTypeArray", "SPIRVTypeInst");
-        put("OpTypeRuntimeArray", "SPIRVTypeInst");
-        put("OpTypeStruct", "SPIRVTypeInst");
-        put("OpTypeOpaque", "SPIRVTypeInst");
-        put("OpTypePointer", "SPIRVTypeInst");
-        put("OpTypeFunction", "SPIRVTypeInst");
-        put("OpTypeEvent", "SPIRVTypeInst");
-        put("OpTypeDeviceEvent", "SPIRVTypeInst");
-        put("OpTypeReserveId", "SPIRVTypeInst");
-        put("OpTypeQueue", "SPIRVTypeInst");
-        put("OpTypePipe", "SPIRVTypeInst");
-        put("OpTypeForwardPointer", "SPIRVTypeInst");
-        put("OpTypePipeStorage", "SPIRVTypeInst");
-        put("OpTypeNamedBarrier", "SPIRVTypeInst");
     }
 }

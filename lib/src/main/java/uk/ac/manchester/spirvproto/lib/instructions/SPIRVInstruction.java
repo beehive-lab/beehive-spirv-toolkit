@@ -1,6 +1,7 @@
 package uk.ac.manchester.spirvproto.lib.instructions;
 
 import uk.ac.manchester.spirvproto.lib.disassembler.SPIRVPrintingOptions;
+import uk.ac.manchester.spirvproto.lib.instructions.operands.SPIRVCapability;
 import uk.ac.manchester.spirvproto.lib.instructions.operands.SPIRVId;
 
 import java.io.PrintStream;
@@ -9,12 +10,14 @@ import java.nio.ByteBuffer;
 public abstract class SPIRVInstruction {
     protected final int opCode;
     protected final int wordCount;
-    protected final String name;
+    public final String name;
+    public final SPIRVCapability[] capabilities;
 
-    protected SPIRVInstruction(int opCode, int wordCount, String name) {
+    protected SPIRVInstruction(int opCode, int wordCount, String name, SPIRVCapability... capabilities) {
         this.opCode = opCode;
         this.wordCount = wordCount;
         this.name = name;
+        this.capabilities = capabilities;
     }
 
     public int getWordCount() {
@@ -59,4 +62,6 @@ public abstract class SPIRVInstruction {
     protected abstract void printOperands(PrintStream output, SPIRVPrintingOptions options);
 
     public abstract SPIRVId getResultId();
+
+    public abstract SPIRVCapability[] getAllCapabilities();
 }

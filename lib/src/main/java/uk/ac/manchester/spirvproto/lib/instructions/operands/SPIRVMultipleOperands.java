@@ -8,10 +8,15 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 public class SPIRVMultipleOperands<T extends SPIRVOperand> extends ArrayList<T> implements SPIRVOperand {
+    public final SPIRVCapability[] capabilities;
 
     @SafeVarargs
     public SPIRVMultipleOperands(T... operands) {
         Collections.addAll(this, operands);
+
+        // Since these operands need to be the same type they will have the same capabilities
+        if (operands.length > 0) capabilities = operands[0].getCapabilities();
+        else capabilities = new SPIRVCapability[0];
     }
 
     @Override
@@ -22,6 +27,11 @@ public class SPIRVMultipleOperands<T extends SPIRVOperand> extends ArrayList<T> 
     @Override
     public int getWordCount() {
         return this.stream().mapToInt(SPIRVOperand::getWordCount).sum();
+    }
+
+    @Override
+    public SPIRVCapability[] getCapabilities() {
+        return new SPIRVCapability[0];
     }
 
     @Override

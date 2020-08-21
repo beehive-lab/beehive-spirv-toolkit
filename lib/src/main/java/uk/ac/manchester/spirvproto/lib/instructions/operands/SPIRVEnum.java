@@ -8,13 +8,15 @@ import java.util.List;
 
 public abstract class SPIRVEnum implements SPIRVOperand {
     protected int value;
-    protected String name;
+    public String name;
     protected List<SPIRVOperand> parameters;
+    public SPIRVCapability[] capabilities;
 
-    protected SPIRVEnum(int value, String name, List<SPIRVOperand> parameters) {
+    protected SPIRVEnum(int value, String name, List<SPIRVOperand> parameters, SPIRVCapability... capabilities) {
         this.value = value;
         this.name = name;
         this.parameters = parameters;
+        this.capabilities = capabilities;
     }
 
     @Override
@@ -49,5 +51,10 @@ public abstract class SPIRVEnum implements SPIRVOperand {
         }
 
         return super.equals(other);
+    }
+
+    @Override
+    public SPIRVCapability[] getCapabilities() {
+        return capabilities;
     }
 }

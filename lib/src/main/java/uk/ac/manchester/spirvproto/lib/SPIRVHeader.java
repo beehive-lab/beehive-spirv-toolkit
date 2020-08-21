@@ -16,7 +16,7 @@ public class SPIRVHeader {
     }
 
     public SPIRVHeader(int majorVersion, int minorVersion, int genMagicNumber, int bound, int schema) {
-        this.genMagicNumber = genMagicNumber >> 16;
+        this.genMagicNumber = genMagicNumber;
         this.bound = bound;
         this.schema = schema;
         this.majorVersion = majorVersion;
@@ -28,7 +28,7 @@ public class SPIRVHeader {
 
         return String.format("; MagicNumber: 0x%x\n", magicNumber) +
                 String.format("; Version: %d.%d\n", majorVersion, minorVersion) +
-                String.format("; Generator ID: %d\n", genMagicNumber) +
+                String.format("; Generator ID: %d\n", genMagicNumber >> 16) +
                 String.format("; Bound: %d\n", bound) +
                 String.format("; Schema: %d\n", schema);
     }

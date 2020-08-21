@@ -4610,7 +4610,6 @@
           "value" : 0,
           "capabilities" : [
             "Kernel",
-            "StorageUniformBufferBlock16",
             "StorageUniform16",
             "StoragePushConstant16",
             "StorageInputOutput16"
@@ -4621,7 +4620,6 @@
           "value" : 1,
           "capabilities" : [
             "Kernel",
-            "StorageUniformBufferBlock16",
             "StorageUniform16",
             "StoragePushConstant16",
             "StorageInputOutput16"
@@ -4632,7 +4630,6 @@
           "value" : 2,
           "capabilities" : [
             "Kernel",
-            "StorageUniformBufferBlock16",
             "StorageUniform16",
             "StoragePushConstant16",
             "StorageInputOutput16"
@@ -4643,7 +4640,6 @@
           "value" : 3,
           "capabilities" : [
             "Kernel",
-            "StorageUniformBufferBlock16",
             "StorageUniform16",
             "StoragePushConstant16",
             "StorageInputOutput16"
@@ -4963,7 +4959,6 @@
           "value" : 39,
           "capabilities" : [
             "Kernel",
-            "StorageUniformBufferBlock16",
             "StorageUniform16",
             "StoragePushConstant16",
             "StorageInputOutput16"
@@ -5772,8 +5767,7 @@
           "enumerant" : "StorageUniform16",
           "value" : 4434,
           "capabilities" : [
-            "StorageBuffer16BitAccess",
-            "StorageUniformBufferBlock16"
+            "StorageBuffer16BitAccess"
           ],
           "extensions" : [ "SPV_KHR_16bit_storage" ]
         },
@@ -5865,7 +5859,7 @@
         {
           "enumerant" : "ShaderViewportMaskNV",
           "value" : 5255,
-          "capabilities" : [ "ShaderViewportIndexLayerNV" ],
+          "capabilities" : [ "ShaderViewportIndexLayerEXT" ],
           "extensions" : [ "SPV_NV_viewport_array2" ]
         },
         {

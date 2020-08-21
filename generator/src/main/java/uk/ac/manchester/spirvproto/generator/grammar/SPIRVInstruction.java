@@ -14,6 +14,9 @@ public class SPIRVInstruction {
     @JsonProperty("operands")
     public SPIRVOperand[] operands;
 
+    @JsonProperty("capabilities")
+    public String[] capabilities;
+
     public String superClass;
 
     public boolean hasReturnType;
@@ -52,5 +55,9 @@ public class SPIRVInstruction {
 
     public boolean getHasResult() {
         return hasResult;
+    }
+
+    public String[] getCapabilities() {
+        return capabilities;
     }
 }

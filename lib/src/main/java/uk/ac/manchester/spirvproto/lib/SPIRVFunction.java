@@ -30,6 +30,8 @@ public class SPIRVFunction implements SPIRVInstScope {
 
     @Override
     public SPIRVInstScope add(SPIRVInstruction instruction) {
+        ensureCapabilitiesPresent(instruction);
+
         if (instruction instanceof SPIRVOpFunctionParameter) {
             parameters.add((SPIRVOpFunctionParameter) instruction);
             idToInstMap.put(instruction.getResultId(), instruction);
@@ -77,6 +79,11 @@ public class SPIRVFunction implements SPIRVInstScope {
     @Override
     public SPIRVId getOrAddId(int id) {
         return idGen.getOrAddId(id);
+    }
+
+    @Override
+    public void ensureCapabilitiesPresent(SPIRVInstruction instruction) {
+        enclosingScope.ensureCapabilitiesPresent(instruction);
     }
 
     public boolean hasBlocks() {

@@ -1,7 +1,9 @@
 package uk.ac.manchester.spirvproto.lib.instructions;
 
+import uk.ac.manchester.spirvproto.lib.instructions.operands.SPIRVCapability;
+
 public abstract class SPIRVLabelInst extends SPIRVInstruction {
-    protected SPIRVLabelInst(int opCode, int wordCount, String name) {
-        super(opCode, wordCount, name);
+    protected SPIRVLabelInst(int opCode, int wordCount, String name, SPIRVCapability... capabilities) {
+        super(opCode, wordCount, name, capabilities);
     }
 }
