@@ -2,7 +2,7 @@ package uk.ac.manchester.spirvproto.lib;
 
 import uk.ac.manchester.spirvproto.lib.disassembler.SPIRVPrintingOptions;
 import uk.ac.manchester.spirvproto.lib.instructions.*;
-import uk.ac.manchester.spirvproto.lib.instructions.operands.SPIRVGlobal;
+import uk.ac.manchester.spirvproto.lib.instructions.operands.SPIRVGlobalInst;
 import uk.ac.manchester.spirvproto.lib.instructions.operands.SPIRVId;
 
 import java.io.PrintStream;
@@ -17,15 +17,15 @@ import java.util.stream.Collectors;
 public class SPIRVModule implements SPIRVInstScope {
     private final SPIRVHeader header;
 
-    private final List<SPIRVCapabilityInst> capabilities;
-    private final List<SPIRVExtensionInst> extensions;
-    private final List<SPIRVImportInst> imports;
-    private SPIRVMemoryModelInst memoryModel;
-    private final List<SPIRVEntryPointInst> entryPoints;
+    private final List<SPIRVOpCapability> capabilities;
+    private final List<SPIRVOpExtension> extensions;
+    private final List<SPIRVOpExtInstImport> imports;
+    private SPIRVOpMemoryModel memoryModel;
+    private final List<SPIRVOpEntryPoint> entryPoints;
     private final List<SPIRVExecutionModeInst> executionModes;
     private final SPIRVDebugInstructions debugInstructions;
     private final List<SPIRVAnnotationInst> annotations;
-    private final List<SPIRVGlobal> globals;
+    private final List<SPIRVGlobalInst> globals;
     private final List<SPIRVFunction> functions;
 
     private final SPIRVIdGenerator idGen;
@@ -49,16 +49,16 @@ public class SPIRVModule implements SPIRVInstScope {
     }
 
     public SPIRVInstScope add(SPIRVInstruction instruction) {
-        if (instruction instanceof SPIRVCapabilityInst) capabilities.add((SPIRVCapabilityInst) instruction);
-        else if (instruction instanceof SPIRVExtensionInst) extensions.add((SPIRVExtensionInst) instruction);
-        else if (instruction instanceof SPIRVImportInst) imports.add((SPIRVImportInst) instruction);
-        else if (instruction instanceof SPIRVEntryPointInst) entryPoints.add((SPIRVEntryPointInst) instruction);
+        if (instruction instanceof SPIRVOpCapability) capabilities.add((SPIRVOpCapability) instruction);
+        else if (instruction instanceof SPIRVOpExtension) extensions.add((SPIRVOpExtension) instruction);
+        else if (instruction instanceof SPIRVOpExtInstImport) imports.add((SPIRVOpExtInstImport) instruction);
+        else if (instruction instanceof SPIRVOpEntryPoint) entryPoints.add((SPIRVOpEntryPoint) instruction);
         else if (instruction instanceof SPIRVExecutionModeInst) executionModes.add((SPIRVExecutionModeInst) instruction);
         else if (instruction instanceof SPIRVDebugInst) debugInstructions.add((SPIRVDebugInst) instruction);
         else if (instruction instanceof SPIRVAnnotationInst) annotations.add((SPIRVAnnotationInst) instruction);
-        else if (instruction instanceof SPIRVGlobal) globals.add((SPIRVGlobal) instruction);
-        else if (instruction instanceof SPIRVMemoryModelInst) memoryModel = (SPIRVMemoryModelInst) instruction;
-        else if (instruction instanceof SPIRVFunctionInst) return createFunction(instruction);
+        else if (instruction instanceof SPIRVGlobalInst) globals.add((SPIRVGlobalInst) instruction);
+        else if (instruction instanceof SPIRVOpMemoryModel) memoryModel = (SPIRVOpMemoryModel) instruction;
+        else if (instruction instanceof SPIRVOpFunction) return createFunction((SPIRVOpFunction) instruction);
         else throw new IllegalArgumentException("Instruction: " + instruction.getClass().getName() + " is not a valid global instruction");
 
         SPIRVId resultId = instruction.getResultId();
@@ -67,8 +67,8 @@ public class SPIRVModule implements SPIRVInstScope {
         return this;
     }
 
-    private SPIRVInstScope createFunction(SPIRVInstruction instruction) {
-        SPIRVFunction function = new SPIRVFunction((SPIRVFunctionInst) instruction, this);
+    private SPIRVInstScope createFunction(SPIRVOpFunction instruction) {
+        SPIRVFunction function = new SPIRVFunction(instruction, this);
         functions.add(function);
         return function;
     }

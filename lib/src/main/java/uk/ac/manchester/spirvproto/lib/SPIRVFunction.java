@@ -13,12 +13,12 @@ public class SPIRVFunction implements SPIRVInstScope {
     protected final List<SPIRVBlock> blocks;
     protected final SPIRVInstScope enclosingScope;
     protected final SPIRVIdGenerator idGen;
-    protected SPIRVFunctionInst functionDeclaration;
-    protected List<SPIRVFunctionParameterInst> parameters;
-    protected SPIRVFunctionEndInst end;
+    protected SPIRVOpFunction functionDeclaration;
+    protected List<SPIRVOpFunctionParameter> parameters;
+    protected SPIRVOpFunctionEnd end;
     private final Map<SPIRVId, SPIRVInstruction> idToInstMap;
 
-    public SPIRVFunction(SPIRVFunctionInst instruction, SPIRVInstScope enclosingScope) {
+    public SPIRVFunction(SPIRVOpFunction instruction, SPIRVInstScope enclosingScope) {
         functionDeclaration = instruction;
         parameters = new ArrayList<>();
         blocks = new ArrayList<>();
@@ -30,16 +30,16 @@ public class SPIRVFunction implements SPIRVInstScope {
 
     @Override
     public SPIRVInstScope add(SPIRVInstruction instruction) {
-        if (instruction instanceof SPIRVFunctionParameterInst) {
-            parameters.add((SPIRVFunctionParameterInst) instruction);
+        if (instruction instanceof SPIRVOpFunctionParameter) {
+            parameters.add((SPIRVOpFunctionParameter) instruction);
             idToInstMap.put(instruction.getResultId(), instruction);
             return this;
-        } else if (instruction instanceof SPIRVFunctionEndInst) {
-            end = (SPIRVFunctionEndInst) instruction;
+        } else if (instruction instanceof SPIRVOpFunctionEnd) {
+            end = (SPIRVOpFunctionEnd) instruction;
             return enclosingScope;
         }
-        else if (instruction instanceof SPIRVLabelInst) {
-            SPIRVBlock newBlock = new SPIRVBlock((SPIRVLabelInst) instruction, this);
+        else if (instruction instanceof SPIRVOpLabel) {
+            SPIRVBlock newBlock = new SPIRVBlock((SPIRVOpLabel) instruction, this);
             blocks.add(newBlock);
             return newBlock;
         }

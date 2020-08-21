@@ -1,7 +1,7 @@
 package uk.ac.manchester.spirvproto.lib;
 
 import uk.ac.manchester.spirvproto.lib.instructions.SPIRVInstruction;
-import uk.ac.manchester.spirvproto.lib.instructions.SPIRVLabelInst;
+import uk.ac.manchester.spirvproto.lib.instructions.SPIRVOpLabel;
 import uk.ac.manchester.spirvproto.lib.instructions.SPIRVTerminationInst;
 import uk.ac.manchester.spirvproto.lib.instructions.operands.SPIRVId;
 
@@ -12,14 +12,14 @@ import java.util.Map;
 import java.util.function.Consumer;
 
 public class SPIRVBlock implements SPIRVInstScope {
-    private final SPIRVLabelInst label;
+    private final SPIRVOpLabel label;
     private final SPIRVIdGenerator idGen;
     private final SPIRVInstScope enclosingScope;
     private final List<SPIRVInstruction> instructions;
     private SPIRVTerminationInst end;
     private final Map<SPIRVId, SPIRVInstruction> idToInstMap;
 
-    public SPIRVBlock(SPIRVLabelInst instruction, SPIRVInstScope enclosingScope) {
+    public SPIRVBlock(SPIRVOpLabel instruction, SPIRVInstScope enclosingScope) {
         label = instruction;
         this.enclosingScope = enclosingScope;
         this.idGen = enclosingScope.getIdGen();
