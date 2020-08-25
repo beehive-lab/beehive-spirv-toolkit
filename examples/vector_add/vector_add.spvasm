@@ -1,0 +1,92 @@
+; MagicNumber: 0x7230203
+; Version: 1.0
+; Generator ID: 6
+; Bound: 45
+; Schema: 0
+
+      OpCapability Addresses
+      OpCapability Linkage
+      OpCapability Kernel
+      OpCapability Float64
+ %1 = OpExtInstImport "OpenCL.std"
+      OpMemoryModel Physical32 OpenCL
+      OpEntryPoint Kernel %10 "vecAdd" %5 
+      OpExecutionMode %10 ContractionOff
+%43 = OpString "kernel_arg_type.vecAdd.double*,double*,double*,uint,"
+      OpSource OpenCL_C 100000  
+      OpName %5 "__spirv_BuiltInGlobalInvocationId"
+      OpName %11 "a"
+      OpName %12 "b"
+      OpName %13 "c"
+      OpName %14 "n"
+      OpName %15 "entry"
+      OpName %16 "if.then"
+      OpName %17 "if.end"
+      OpName %19 "a.addr"
+      OpName %20 "b.addr"
+      OpName %21 "c.addr"
+      OpName %23 "n.addr"
+      OpName %24 "id"
+      OpName %26 "call"
+      OpName %30 "cmp"
+      OpName %33 "arrayidx"
+      OpName %37 "arrayidx1"
+      OpName %39 "add"
+      OpName %42 "arrayidx2"
+      OpDecorate %44 Alignment 4
+%44 = OpDecorationGroup 
+      OpDecorate %5 BuiltIn GlobalInvocationId
+      OpDecorate %5 Constant
+      OpDecorate %5 LinkageAttributes "__spirv_BuiltInGlobalInvocationId" Import
+      OpGroupDecorate %44 %19 %20 %21 %23 %24 
+ %2 = OpTypeInt 32 0
+ %3 = OpTypeVector %2 3
+ %4 = OpTypePointer Input %3
+ %6 = OpTypeVoid 
+ %7 = OpTypeFloat 64
+ %8 = OpTypePointer CrossWorkgroup %7
+ %9 = OpTypeFunction %6 %8 %8 %8 %2 
+%18 = OpTypePointer Function %8
+%22 = OpTypePointer Function %2
+%29 = OpTypeBool 
+ %5 = OpVariable %4 Input 
+%10 = OpFunction %6 DontInline %9
+%11 = OpFunctionParameter %8 
+%12 = OpFunctionParameter %8 
+%13 = OpFunctionParameter %8 
+%14 = OpFunctionParameter %2 
+%15 = OpLabel 
+%19 = OpVariable %18 Function 
+%20 = OpVariable %18 Function 
+%21 = OpVariable %18 Function 
+%23 = OpVariable %22 Function 
+%24 = OpVariable %22 Function 
+      OpStore %19 %11 Aligned 4
+      OpStore %20 %12 Aligned 4
+      OpStore %21 %13 Aligned 4
+      OpStore %23 %14 Aligned 4
+%25 = OpLoad %3 %5 Aligned 16
+%26 = OpCompositeExtract %2 %25 0 
+      OpStore %24 %26 Aligned 4
+%27 = OpLoad %2 %24 Aligned 4
+%28 = OpLoad %2 %23 Aligned 4
+%30 = OpULessThan %29 %27 %28
+      OpBranchConditional %30 %16 %17 
+%16 = OpLabel 
+%31 = OpLoad %8 %19 Aligned 4
+%32 = OpLoad %2 %24 Aligned 4
+%33 = OpInBoundsPtrAccessChain %8 %31 %32 
+%34 = OpLoad %7 %33 Aligned 8
+%35 = OpLoad %8 %20 Aligned 4
+%36 = OpLoad %2 %24 Aligned 4
+%37 = OpInBoundsPtrAccessChain %8 %35 %36 
+%38 = OpLoad %7 %37 Aligned 8
+%39 = OpFAdd %7 %34 %38
+%40 = OpLoad %8 %21 Aligned 4
+%41 = OpLoad %2 %24 Aligned 4
+%42 = OpInBoundsPtrAccessChain %8 %40 %41 
+      OpStore %42 %39 Aligned 8
+      OpBranch %17
+%17 = OpLabel 
+      OpReturn 
+      OpFunctionEnd 

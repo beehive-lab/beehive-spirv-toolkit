@@ -6,3 +6,4 @@ target
 *.bin
 dependency-reduced-pom.xml
 *.dis
+*.spv

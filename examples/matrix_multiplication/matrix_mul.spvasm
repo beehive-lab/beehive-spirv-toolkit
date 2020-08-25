@@ -1,0 +1,205 @@
+; MagicNumber: 0x7230203
+; Version: 1.0
+; Generator ID: 6
+; Bound: 105
+; Schema: 0
+
+       OpCapability Addresses
+       OpCapability Linkage
+       OpCapability Kernel
+  %1 = OpExtInstImport "OpenCL.std"
+       OpMemoryModel Physical32 OpenCL
+       OpEntryPoint Kernel %11 "matrix_mul" %5 %6 
+%102 = OpString "kernel_arg_type.matrix_mul.float*,float*,float*,uint,"
+       OpSource OpenCL_C 102000  
+       OpName %5 "__spirv_BuiltInGlobalInvocationId"
+       OpName %6 "__spirv_BuiltInGlobalSize"
+       OpName %12 "A"
+       OpName %13 "B"
+       OpName %14 "C"
+       OpName %15 "size"
+       OpName %16 "entry"
+       OpName %17 "for.cond"
+       OpName %18 "for.body"
+       OpName %19 "for.cond4"
+       OpName %20 "for.body6"
+       OpName %21 "for.cond7"
+       OpName %22 "for.body9"
+       OpName %23 "for.inc"
+       OpName %24 "for.end"
+       OpName %25 "for.inc17"
+       OpName %26 "for.end19"
+       OpName %27 "for.inc20"
+       OpName %28 "for.end22"
+       OpName %30 "A.addr"
+       OpName %31 "B.addr"
+       OpName %32 "C.addr"
+       OpName %34 "size.addr"
+       OpName %35 "idX"
+       OpName %36 "strideX"
+       OpName %37 "idY"
+       OpName %38 "strideY"
+       OpName %39 "i"
+       OpName %40 "j"
+       OpName %42 "sum"
+       OpName %43 "k"
+       OpName %45 "call"
+       OpName %47 "call1"
+       OpName %49 "call2"
+       OpName %51 "call3"
+       OpName %56 "cmp"
+       OpName %60 "cmp5"
+       OpName %65 "cmp8"
+       OpName %69 "mul"
+       OpName %71 "add"
+       OpName %72 "arrayidx"
+       OpName %77 "mul10"
+       OpName %79 "add11"
+       OpName %80 "arrayidx12"
+       OpName %87 "inc"
+       OpName %92 "mul14"
+       OpName %94 "add15"
+       OpName %95 "arrayidx16"
+       OpName %98 "add18"
+       OpName %101 "add21"
+       OpDecorate %103 Constant
+%103 = OpDecorationGroup 
+       OpDecorate %104 Alignment 4
+%104 = OpDecorationGroup 
+       OpDecorate %5 BuiltIn GlobalInvocationId
+       OpDecorate %6 BuiltIn GlobalSize
+       OpDecorate %6 LinkageAttributes "__spirv_BuiltInGlobalSize" Import
+       OpDecorate %5 LinkageAttributes "__spirv_BuiltInGlobalInvocationId" Import
+       OpGroupDecorate %103 %5 %6 
+       OpGroupDecorate %104 %30 %31 %32 %34 %35 %36 %37 %38 %39 %40 %42 %43 
+  %2 = OpTypeInt 32 0
+ %62 = OpConstant %2 0
+ %86 = OpConstant %2 1
+  %3 = OpTypeVector %2 3
+  %4 = OpTypePointer Input %3
+  %7 = OpTypeVoid 
+  %8 = OpTypeFloat 32
+  %9 = OpTypePointer CrossWorkgroup %8
+ %10 = OpTypeFunction %7 %9 %9 %9 %2 
+ %29 = OpTypePointer Function %9
+ %33 = OpTypePointer Function %2
+ %41 = OpTypePointer Function %8
+ %55 = OpTypeBool 
+  %5 = OpVariable %4 Input 
+  %6 = OpVariable %4 Input 
+ %61 = OpConstant %8 0
+ %11 = OpFunction %7 DontInline %10
+ %12 = OpFunctionParameter %9 
+ %13 = OpFunctionParameter %9 
+ %14 = OpFunctionParameter %9 
+ %15 = OpFunctionParameter %2 
+ %16 = OpLabel 
+ %30 = OpVariable %29 Function 
+ %31 = OpVariable %29 Function 
+ %32 = OpVariable %29 Function 
+ %34 = OpVariable %33 Function 
+ %35 = OpVariable %33 Function 
+ %36 = OpVariable %33 Function 
+ %37 = OpVariable %33 Function 
+ %38 = OpVariable %33 Function 
+ %39 = OpVariable %33 Function 
+ %40 = OpVariable %33 Function 
+ %42 = OpVariable %41 Function 
+ %43 = OpVariable %33 Function 
+       OpStore %30 %12 Aligned 4
+       OpStore %31 %13 Aligned 4
+       OpStore %32 %14 Aligned 4
+       OpStore %34 %15 Aligned 4
+ %44 = OpLoad %3 %5 Aligned 16
+ %45 = OpCompositeExtract %2 %44 0 
+       OpStore %35 %45 Aligned 4
+ %46 = OpLoad %3 %6 Aligned 16
+ %47 = OpCompositeExtract %2 %46 0 
+       OpStore %36 %47 Aligned 4
+ %48 = OpLoad %3 %5 Aligned 16
+ %49 = OpCompositeExtract %2 %48 1 
+       OpStore %37 %49 Aligned 4
+ %50 = OpLoad %3 %6 Aligned 16
+ %51 = OpCompositeExtract %2 %50 1 
+       OpStore %38 %51 Aligned 4
+ %52 = OpLoad %2 %35 Aligned 4
+       OpStore %39 %52 Aligned 4
+       OpBranch %17
+ %17 = OpLabel 
+ %53 = OpLoad %2 %39 Aligned 4
+ %54 = OpLoad %2 %34 Aligned 4
+ %56 = OpULessThan %55 %53 %54
+       OpBranchConditional %56 %18 %28 
+ %18 = OpLabel 
+ %57 = OpLoad %2 %37 Aligned 4
+       OpStore %40 %57 Aligned 4
+       OpBranch %19
+ %19 = OpLabel 
+ %58 = OpLoad %2 %40 Aligned 4
+ %59 = OpLoad %2 %34 Aligned 4
+ %60 = OpULessThan %55 %58 %59
+       OpBranchConditional %60 %20 %26 
+ %20 = OpLabel 
+       OpStore %42 %61 Aligned 4
+       OpStore %43 %62 Aligned 4
+       OpBranch %21
+ %21 = OpLabel 
+ %63 = OpLoad %2 %43 Aligned 4
+ %64 = OpLoad %2 %34 Aligned 4
+ %65 = OpULessThan %55 %63 %64
+       OpBranchConditional %65 %22 %24 
+ %22 = OpLabel 
+ %66 = OpLoad %9 %30 Aligned 4
+ %67 = OpLoad %2 %39 Aligned 4
+ %68 = OpLoad %2 %34 Aligned 4
+ %69 = OpIMul %2 %67 %68
+ %70 = OpLoad %2 %43 Aligned 4
+ %71 = OpIAdd %2 %69 %70
+ %72 = OpInBoundsPtrAccessChain %9 %66 %71 
+ %73 = OpLoad %8 %72 Aligned 4
+ %74 = OpLoad %9 %31 Aligned 4
+ %75 = OpLoad %2 %43 Aligned 4
+ %76 = OpLoad %2 %34 Aligned 4
+ %77 = OpIMul %2 %75 %76
+ %78 = OpLoad %2 %40 Aligned 4
+ %79 = OpIAdd %2 %77 %78
+ %80 = OpInBoundsPtrAccessChain %9 %74 %79 
+ %81 = OpLoad %8 %80 Aligned 4
+ %82 = OpLoad %8 %42 Aligned 4
+ %83 = OpFMul %8 %73 %81
+ %84 = OpFAdd %8 %83 %82
+       OpStore %42 %84 Aligned 4
+       OpBranch %23
+ %23 = OpLabel 
+ %85 = OpLoad %2 %43 Aligned 4
+ %87 = OpIAdd %2 %85 %86
+       OpStore %43 %87 Aligned 4
+       OpBranch %21
+ %24 = OpLabel 
+ %88 = OpLoad %8 %42 Aligned 4
+ %89 = OpLoad %9 %32 Aligned 4
+ %90 = OpLoad %2 %39 Aligned 4
+ %91 = OpLoad %2 %34 Aligned 4
+ %92 = OpIMul %2 %90 %91
+ %93 = OpLoad %2 %40 Aligned 4
+ %94 = OpIAdd %2 %92 %93
+ %95 = OpInBoundsPtrAccessChain %9 %89 %94 
+       OpStore %95 %88 Aligned 4
+       OpBranch %25
+ %25 = OpLabel 
+ %96 = OpLoad %2 %38 Aligned 4
+ %97 = OpLoad %2 %40 Aligned 4
+ %98 = OpIAdd %2 %97 %96
+       OpStore %40 %98 Aligned 4
+       OpBranch %19
+ %26 = OpLabel 
+       OpBranch %27
+ %27 = OpLabel 
+ %99 = OpLoad %2 %36 Aligned 4
+%100 = OpLoad %2 %39 Aligned 4
+%101 = OpIAdd %2 %100 %99
+       OpStore %39 %101 Aligned 4
+       OpBranch %17
+ %28 = OpLabel 
+       OpReturn 
+       OpFunctionEnd 

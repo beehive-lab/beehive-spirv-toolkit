@@ -1,11 +1,13 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <math.h>
 #include <CL/opencl.h>
+#include <stdbool.h>
+
+#define ERROR_MARGIN 0.000001f
 
 int main( int argc, char* argv[] )
 {
-	FILE *f = fopen("vector_add.cl", "rb");
+	FILE *f = fopen(argv[1], "rb");
 	fseek(f, 0, SEEK_END);
 	long fsize = ftell(f);
 	fseek(f, 0, SEEK_SET);
@@ -17,13 +19,14 @@ int main( int argc, char* argv[] )
 	string[fsize] = 0;
 
     // Length of vectors
-    unsigned int n = 100000;
+    unsigned int n = 64;
+    unsigned int vec_size = n * n;
  
     // Host input vectors
-    double *h_a;
-    double *h_b;
+    float *h_a;
+    float *h_b;
     // Host output vector
-    double *h_c;
+    float *h_c;
  
     // Device input buffers
     cl_mem d_a;
@@ -38,29 +41,31 @@ int main( int argc, char* argv[] )
     cl_kernel kernel;                 // kernel
  
     // Size, in bytes, of each vector
-    size_t bytes = n*sizeof(double);
+    size_t bytes = vec_size * sizeof(float);
  
     // Allocate memory for each vector on host
-    h_a = (double*)malloc(bytes);
-    h_b = (double*)malloc(bytes);
-    h_c = (double*)malloc(bytes);
+    h_a = (float*)malloc(bytes);
+    h_b = (float*)malloc(bytes);
+    h_c = (float*)malloc(bytes);
  
     // Initialize vectors on host
     int i;
-    for( i = 0; i < n; i++ )
+    for( i = 0; i < vec_size; i++ )
     {
-        h_a[i] = sinf(i)*sinf(i);
-        h_b[i] = cosf(i)*cosf(i);
+        h_a[i] = 1.0f;
+        h_b[i] = 2.0f;
     }
  
-    size_t globalSize, localSize;
+    size_t globalSize[2], localSize[2];
     cl_int err;
  
     // Number of work items in each local work group
-    localSize = 64;
+    localSize[0] = 16;
+    localSize[1] = 16;
  
     // Number of total work items - localSize must be devisor
-    globalSize = ceil(n/(float)localSize)*localSize;
+    globalSize[0] = n;
+    globalSize[1] = n;
  
     // Bind to platform
     cl_uint num_platforms;
@@ -85,14 +90,31 @@ int main( int argc, char* argv[] )
     queue = clCreateCommandQueue(context, device_id, 0, &err);
  
     // Create the compute program from the source buffer
-    program = clCreateProgramWithSource(context, 1,
-                            (const char **) & string, &fsize, &err);
+    program = clCreateProgramWithIL(context, string, fsize, &err);
+    if (err != CL_SUCCESS) {
+        printf("Failed to create program (%d)\n", err);
+    }
+    else {
+        printf("Successfully created program (%d)\n", err);
+    }
  
     // Build the program executable
-    clBuildProgram(program, 0, NULL, NULL, NULL, NULL);
+    err = clBuildProgram(program, 0, NULL, NULL, NULL, NULL);
+    if (err != CL_SUCCESS) {
+        printf("Failed to build program (%d)\n", err);
+    }
+    else {
+        printf("Successfully build program (%d)\n", err);
+    }
  
     // Create the compute kernel in the program we wish to run
-    kernel = clCreateKernel(program, "vecAdd", &err);
+    kernel = clCreateKernel(program, "matrix_mul", &err);
+    if (err != CL_SUCCESS) {
+        printf("Failed to create kernel (%d)\n", err);
+    }
+    else {
+        printf("Successfully created kernel (%d)\n", err);
+    }
  
     // Create the input and output arrays in device memory for our calculation
     d_a = clCreateBuffer(context, CL_MEM_READ_ONLY, bytes, NULL, NULL);
@@ -111,22 +133,25 @@ int main( int argc, char* argv[] )
     err |= clSetKernelArg(kernel, 2, sizeof(cl_mem), &d_c);
     err |= clSetKernelArg(kernel, 3, sizeof(unsigned int), &n);
  
-    // Execute the kernel over the entire range of the data set 
-    err = clEnqueueNDRangeKernel(queue, kernel, 1, NULL, &globalSize, &localSize,
+    // Execute the kernel over the entire range of the data set
+    err = clEnqueueNDRangeKernel(queue, kernel, 2, NULL, &globalSize, &localSize,
                                                               0, NULL, NULL);
  
     // Wait for the command queue to get serviced before reading back results
     clFinish(queue);
  
     // Read the results from the device
-    clEnqueueReadBuffer(queue, d_c, CL_TRUE, 0,
-                                bytes, h_c, 0, NULL, NULL );
+    clEnqueueReadBuffer(queue, d_c, CL_TRUE, 0, bytes, h_c, 0, NULL, NULL );
  
     //Sum up vector c and print result divided by n, this should equal 1 within error
-    double sum = 0;
-    for(i=0; i<n; i++)
-        sum += h_c[i];
-    printf("final result: %f\n", sum/n);
+    bool is_correct = true;
+    for(i=0; i < vec_size; i++) {
+        if (abs(h_c[i] - 128.0f) > ERROR_MARGIN) {
+            is_correct = false;
+        }
+    }
+
+    printf("final result: %s\n", is_correct ? "correct" : "wrong");
  
     // release OpenCL resources
     clReleaseMemObject(d_a);
