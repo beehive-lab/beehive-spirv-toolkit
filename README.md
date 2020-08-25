@@ -25,8 +25,47 @@ Run maven build:
 ```bash
 $ mvn clean package
 ```
- 
-This should create 3 Jar files: the first one is located in `spirv-proto/lib/dist` and contains all the classes necessary to assemble and disassemble SPIR-V modules.  The second jar-file is located in `spirv-proto/runner/dist` and it contains a standalone application that can use the aforementioned library. The last one is in `spirv-proto/dist`, and it contains both jars.
+
+#### Structure
+There are 3 modules: `generator`, `lib`, `runner`.
+
+The `generator` module is a standalone program that reads the included SPIR-V grammar files and writes classes needed 
+by `lib` to the specified output directory.
+This happens as part of the build controlled by the module's pom file.
+In order to change any of the behaviour the following snippet needs to be changed:
+```xml
+<plugin>
+  <groupId>org.codehaus.mojo</groupId>
+  <artifactId>exec-maven-plugin</artifactId>
+  <version>1.6.0</version>
+  <executions>
+    <execution>
+      <phase>package</phase>
+      <goals>
+        <goal>java</goal>
+      </goals>
+      <configuration>
+        <skip>${maven.exec.skip}</skip>
+        <mainClass>uk.ac.manchester.spirvproto.generator.Runner</mainClass>
+        <arguments>
+          <argument>${project.parent.basedir}/lib/src/main/java/uk/ac/manchester/spirvproto/lib</argument>
+          <argument>${spirv.gen.majorversion}</argument>
+          <argument>${spirv.gen.minorversion}</argument>
+          <argument>${spirv.gen.magicnumber}</argument>
+        </arguments>
+      </configuration>
+    </execution>
+  </executions>
+</plugin>
+```
+
+The `lib` module holds all of the SPIR-V related logic and code. 
+It is able to assemble and disassemble SPIR-V files.
+
+The `runner` module is the "front-end" for the `lib` module.
+It only handles CLI argument parsing, calling the selected tool and error reporting.
+
+Maven will create a fat-jar, that includes both `lib` and `runner` in the dist directory.
 
 ## Usage
 
@@ -65,10 +104,10 @@ Tools needed:
 - clang (version 10.0.0 or higher) (To install: `$ sudo apt-get install clang`)
 - llvm-spirv (See build instructions [here](https://github.com/KhronosGroup/SPIRV-LLVM) )
 
-Go into the examples folder:
+Go into the vector add example folder:
 
 ```bash
-$ cd examples
+$ cd examples/vector_add
 ```
 
 First, the kernel (.cl file) needs to be compiled to LLVM IR:
@@ -84,7 +123,7 @@ $ llvm-spirv vector_add.bc -o vector_add.spv
 Now there is at least one SPIR-V module available.
 
 An OpenCL program can then read this module using `clCreateProgramWithIL();`
-Such an application is provided in the examples folder and can be compiled with make (this should also create a SPIR-V module):
+Such an application is included in the example and can be compiled with make (this should also create a SPIR-V module):
 
 ```bash
 $ make build
@@ -96,7 +135,7 @@ $ make run
 ```
 OR
 ```bash
-$ ./vector_add_il.bin ./vector_add.spv
+$ ./vector_add.bin ./vector_add.spv
 ```
 
 This requires at least one device with a driver that supports OpenCL 2.1 or higher (Intel Graphics or the experimental Intel CPU driver) and an OpenCL ICD Loader that supports OpenCL 2.1 or higher. 
