@@ -118,7 +118,7 @@ public class AssemblerTest {
 
     @Test
     public void testAssembler() throws IOException, InvalidSPIRVModuleException {
-        SPIRVModule module = new Assembler(new FileReader(new File("../examples/vector_add.spv.dis"))).assemble();
+        SPIRVModule module = new Assembler(new FileReader(new File("../examples/vector_add/vector_add.spvasm"))).assemble();
         TestUtils.writeModuleToFile(module, "../examples/asm-vector_add.spv");
     }
 
