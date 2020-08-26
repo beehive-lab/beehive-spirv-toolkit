@@ -2,6 +2,7 @@
 
 This is a prototype written in Java to disassemble and assemble SPIR-V binary modules.
 More information on the format of SPIR-V can be found [here](docs/SPIRV.md).
+To see an example kernel in SPIR-V go [here](docs/EXAMPLE.md).
 
 ## Build
 
@@ -16,7 +17,7 @@ Clone the repository:
 $ git clone https://github.com/beehive-lab/spirv-proto.git
 ```
 
-Go to the root folder:
+Go to the root directory:
 ```bash
 $ cd spirv-proto
 ```
@@ -85,26 +86,38 @@ spirv-proto [OPTIONS] <filepath>
 To run the disassembler:
 
 ```bash
-$ ./spirv-proto examples/vector_add.spv
+$ ./spirv-proto examples/vector_add/vector_add.spv
 ```
 
 Alternatively, you can run the dissablembler using the provided jar-file:
 
 ```bash
-$ java -jar dist/spirv-proto.jar examples/vector_add.spv
+$ java -jar dist/spirv-proto.jar examples/vector_add/vector_add.spv
 ```
+## Examples
 
-## Creating SPIR-V modules for testing
+There are some examples included:
+1. A simple vector addition
+2. A simple matrix multiplication
+3. From the [rodinia benchmarks](https://github.com/yuhc/gpu-rodinia) lud was modified to use a SPIR-V kernel instead of an OpenCL C kernel.
 
-This is a compiled version of what the Khronos Group recommends. The original can be found [here](https://www.khronos.org/blog/offline-compilation-of-opencl-kernels-into-spir-v-using-open-source-tooling).
- There are some example kernels provided in the examples directory.
+All of these can be found in the `examples` directory. 
+In order to run any of the examples at least one OpenCL 2.1 or higher platform is needed (e.g. Intel iGPU).
+
+### Creating SPIR-V modules for testing
+
+To try the tool with different kernels either a binary SPIR-V module is needed or one that was hand written in the assembly language of SPIR-V.
+Since the assembly language is not very human friendly it is recommended that anything worth testing is first written in OpenCL C and then compiled to SPIR-V.
+
+To achieve this a compiled version of what the Khronos Group recommends follows. The original can be found [here](https://www.khronos.org/blog/offline-compilation-of-opencl-kernels-into-spir-v-using-open-source-tooling).
+There are some example kernels provided in the examples directory.
 
 Tools needed:
 
 - clang (version 10.0.0 or higher) (To install: `$ sudo apt-get install clang`)
 - llvm-spirv (See build instructions [here](https://github.com/KhronosGroup/SPIRV-LLVM) )
 
-Go into the vector add example folder:
+Go into the vector add example directory:
 
 ```bash
 $ cd examples/vector_add
@@ -123,7 +136,7 @@ $ llvm-spirv vector_add.bc -o vector_add.spv
 Now there is at least one SPIR-V module available.
 
 An OpenCL program can then read this module using `clCreateProgramWithIL();`
-Such an application is included in the example and can be compiled with make (this should also create a SPIR-V module):
+To demonstrate with vector_add:
 
 ```bash
 $ make build

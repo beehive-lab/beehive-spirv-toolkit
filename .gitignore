@@ -7,3 +7,5 @@ target
 dependency-reduced-pom.xml
 *.dis
 *.spv
+/examples/rodinia-test/asm/
+/examples/rodinia-test/proto/
