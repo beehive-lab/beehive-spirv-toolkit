@@ -1,4 +1,5 @@
-// #define 16 16
+#define BLOCK_SIZE 16
+
 __kernel void 
 lud_diagonal(__global float *m, 
 			 __local  float *shadow,
@@ -9,34 +10,34 @@ lud_diagonal(__global float *m,
 	int tx = get_local_id(0);
 
 	int array_offset = offset*matrix_dim+offset;
-	for(i=0; i < 16; i++){
-		shadow[i * 16 + tx]=m[array_offset + tx];
+	for(i=0; i < BLOCK_SIZE; i++){
+		shadow[i * BLOCK_SIZE + tx]=m[array_offset + tx];
 		array_offset += matrix_dim;
 	}
   
 	barrier(CLK_LOCAL_MEM_FENCE);
   
-	for(i=0; i < 16-1; i++) {
+	for(i=0; i < BLOCK_SIZE-1; i++) {
 
     if (tx>i){
       for(j=0; j < i; j++)
-        shadow[tx * 16 + i] -= shadow[tx * 16 + j] * shadow[j * 16 + i];
-		shadow[tx * 16 + i] /= shadow[i * 16 + i];
+        shadow[tx * BLOCK_SIZE + i] -= shadow[tx * BLOCK_SIZE + j] * shadow[j * BLOCK_SIZE + i];
+		shadow[tx * BLOCK_SIZE + i] /= shadow[i * BLOCK_SIZE + i];
     }
 
 	barrier(CLK_LOCAL_MEM_FENCE);
     if (tx>i){
 
       for(j=0; j < i+1; j++)
-        shadow[(i+1) * 16 + tx] -= shadow[(i+1) * 16 + j]*shadow[j * 16 + tx];
+        shadow[(i+1) * BLOCK_SIZE + tx] -= shadow[(i+1) * BLOCK_SIZE + j]*shadow[j * BLOCK_SIZE + tx];
     }
     
 	barrier(CLK_LOCAL_MEM_FENCE);
     }
 
     array_offset = (offset+1)*matrix_dim+offset;
-    for(i=1; i < 16; i++){
-      m[array_offset+tx]=shadow[i * 16 + tx];
+    for(i=1; i < BLOCK_SIZE; i++){
+      m[array_offset+tx]=shadow[i * BLOCK_SIZE + tx];
       array_offset += matrix_dim;
     }
   
@@ -56,67 +57,67 @@ lud_perimeter(__global float *m,
     int  bx = get_group_id(0);	
     int  tx = get_local_id(0);
 
-    if (tx < 16) {
+    if (tx < BLOCK_SIZE) {
       idx = tx;
       array_offset = offset*matrix_dim+offset;
-      for (i=0; i < 16/2; i++){
-      dia[i * 16 + idx]=m[array_offset+idx];
+      for (i=0; i < BLOCK_SIZE/2; i++){
+      dia[i * BLOCK_SIZE + idx]=m[array_offset+idx];
       array_offset += matrix_dim;
       }
     
     array_offset = offset*matrix_dim+offset;
-    for (i=0; i < 16; i++) {
-      peri_row[i * 16+ idx]=m[array_offset+(bx+1)*16+idx];
+    for (i=0; i < BLOCK_SIZE; i++) {
+      peri_row[i * BLOCK_SIZE+ idx]=m[array_offset+(bx+1)*BLOCK_SIZE+idx];
       array_offset += matrix_dim;
     }
 
     } else {
-    idx = tx-16;
+    idx = tx-BLOCK_SIZE;
     
-    array_offset = (offset+16/2)*matrix_dim+offset;
-    for (i=16/2; i < 16; i++){
-      dia[i * 16 + idx]=m[array_offset+idx];
+    array_offset = (offset+BLOCK_SIZE/2)*matrix_dim+offset;
+    for (i=BLOCK_SIZE/2; i < BLOCK_SIZE; i++){
+      dia[i * BLOCK_SIZE + idx]=m[array_offset+idx];
       array_offset += matrix_dim;
     }
     
-    array_offset = (offset+(bx+1)*16)*matrix_dim+offset;
-    for (i=0; i < 16; i++) {
-      peri_col[i * 16 + idx] = m[array_offset+idx];
+    array_offset = (offset+(bx+1)*BLOCK_SIZE)*matrix_dim+offset;
+    for (i=0; i < BLOCK_SIZE; i++) {
+      peri_col[i * BLOCK_SIZE + idx] = m[array_offset+idx];
       array_offset += matrix_dim;
     }
   
    }
     barrier(CLK_LOCAL_MEM_FENCE);
 
-    if (tx < 16) { //peri-row
+    if (tx < BLOCK_SIZE) { //peri-row
      idx=tx;
-      for(i=1; i < 16; i++){
+      for(i=1; i < BLOCK_SIZE; i++){
       for (j=0; j < i; j++)
-        peri_row[i * 16 + idx]-=dia[i * 16+ j]*peri_row[j * 16 + idx];
+        peri_row[i * BLOCK_SIZE + idx]-=dia[i * BLOCK_SIZE+ j]*peri_row[j * BLOCK_SIZE + idx];
     }
     } else { //peri-col
-     idx=tx - 16;
-     for(i=0; i < 16; i++){
+     idx=tx - BLOCK_SIZE;
+     for(i=0; i < BLOCK_SIZE; i++){
       for(j=0; j < i; j++)
-        peri_col[idx * 16 + i]-=peri_col[idx * 16+ j]*dia[j * 16 + i];
-      peri_col[idx * 16 + i] /= dia[i * 16+ i];
+        peri_col[idx * BLOCK_SIZE + i]-=peri_col[idx * BLOCK_SIZE+ j]*dia[j * BLOCK_SIZE + i];
+      peri_col[idx * BLOCK_SIZE + i] /= dia[i * BLOCK_SIZE+ i];
      }
    }
 
 	barrier(CLK_LOCAL_MEM_FENCE);
     
-  if (tx < 16) { //peri-row
+  if (tx < BLOCK_SIZE) { //peri-row
     idx=tx;
     array_offset = (offset+1)*matrix_dim+offset;
-    for(i=1; i < 16; i++){
-      m[array_offset+(bx+1)*16+idx] = peri_row[i*16+idx];
+    for(i=1; i < BLOCK_SIZE; i++){
+      m[array_offset+(bx+1)*BLOCK_SIZE+idx] = peri_row[i*BLOCK_SIZE+idx];
       array_offset += matrix_dim;
     }
   } else { //peri-col
-    idx=tx - 16;
-    array_offset = (offset+(bx+1)*16)*matrix_dim+offset;
-    for(i=0; i < 16; i++){
-      m[array_offset+idx] =  peri_col[i*16+idx];
+    idx=tx - BLOCK_SIZE;
+    array_offset = (offset+(bx+1)*BLOCK_SIZE)*matrix_dim+offset;
+    for(i=0; i < BLOCK_SIZE; i++){
+      m[array_offset+idx] =  peri_col[i*BLOCK_SIZE+idx];
       array_offset += matrix_dim;
     }
   }
@@ -140,17 +141,17 @@ lud_internal(__global float *m,
   int i;
   float sum;
 
-  int global_row_id = offset + (by+1)*16;
-  int global_col_id = offset + (bx+1)*16;
+  int global_row_id = offset + (by+1)*BLOCK_SIZE;
+  int global_col_id = offset + (bx+1)*BLOCK_SIZE;
 
-  peri_row[ty * 16 + tx] = m[(offset+ty)*matrix_dim+global_col_id+tx];
-  peri_col[ty * 16 + tx] = m[(global_row_id+ty)*matrix_dim+offset+tx];
+  peri_row[ty * BLOCK_SIZE + tx] = m[(offset+ty)*matrix_dim+global_col_id+tx];
+  peri_col[ty * BLOCK_SIZE + tx] = m[(global_row_id+ty)*matrix_dim+offset+tx];
 
   barrier(CLK_LOCAL_MEM_FENCE);
 
   sum = 0;
-  for (i=0; i < 16; i++)
-    sum += peri_col[ty * 16 + i] * peri_row[i * 16 + tx];
+  for (i=0; i < BLOCK_SIZE; i++)
+    sum += peri_col[ty * BLOCK_SIZE + i] * peri_row[i * BLOCK_SIZE + tx];
   m[(global_row_id+ty)*matrix_dim+global_col_id+tx] -= sum;
 
 

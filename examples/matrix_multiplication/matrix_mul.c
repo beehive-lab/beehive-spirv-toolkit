@@ -3,6 +3,8 @@
 #include <CL/opencl.h>
 #include <stdbool.h>
 
+#include "../util.h"
+
 #define ERROR_MARGIN 0.000001f
 
 int main( int argc, char* argv[] )
@@ -72,9 +74,14 @@ int main( int argc, char* argv[] )
     err = clGetPlatformIDs(1, NULL, &num_platforms);
     cl_platform_id all_platforms[num_platforms];
     err = clGetPlatformIDs(num_platforms, &all_platforms, NULL);
+    int selected_platform_id = get_platform_with_2_1(all_platforms, num_platforms);
+    if (selected_platform_id < 0) {
+        puts("ERROR: could not find OCL platform with version 2.1 or higher");
+        return -1;
+    }
  
     // Get ID for the device
-    err = clGetDeviceIDs(all_platforms[num_platforms - 1], CL_DEVICE_TYPE_GPU, 1, &device_id, NULL);
+    err = clGetDeviceIDs(all_platforms[selected_platform_id], CL_DEVICE_TYPE_GPU, 1, &device_id, NULL);
 
     //Print name of the device
     size_t name_size;
