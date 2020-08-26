@@ -1,11 +1,6 @@
 package uk.ac.manchester.spirvproto.lib.assembler;
 
-import uk.ac.manchester.spirvproto.lib.GeneratorConstants;
-import uk.ac.manchester.spirvproto.lib.InvalidSPIRVModuleException;
-import uk.ac.manchester.spirvproto.lib.SPIRVHeader;
-import uk.ac.manchester.spirvproto.lib.SPIRVInstScope;
-import uk.ac.manchester.spirvproto.lib.SPIRVModule;
-import uk.ac.manchester.spirvproto.lib.SPIRVTool;
+import uk.ac.manchester.spirvproto.lib.*;
 import uk.ac.manchester.spirvproto.lib.instructions.SPIRVInstruction;
 import uk.ac.manchester.spirvproto.lib.instructions.SPIRVOpExtInstImport;
 
@@ -38,9 +33,9 @@ public class Assembler implements SPIRVTool {
      */
     public SPIRVModule assemble() {
         SPIRVModule module = new SPIRVModule(new SPIRVHeader(
-                GeneratorConstants.SPIRVMajorVersion,
-                GeneratorConstants.SPIRVMinorVersion,
-                GeneratorConstants.SPIRVGenMagicNumber,
+                SPIRVGeneratorConstants.SPIRVMajorVersion,
+                SPIRVGeneratorConstants.SPIRVMinorVersion,
+                SPIRVGeneratorConstants.SPIRVGenMagicNumber,
                 0,
                 0
         ));

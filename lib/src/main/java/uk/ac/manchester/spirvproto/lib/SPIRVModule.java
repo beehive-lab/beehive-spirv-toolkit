@@ -157,7 +157,7 @@ public class SPIRVModule implements SPIRVInstScope {
         for (SPIRVCapability capability : instruction.getAllCapabilities()) {
             SPIRVOpCapability opCapability = new SPIRVOpCapability(capability);
             if (!capabilities.contains(opCapability)) {
-                if (this.header.genMagicNumber == GeneratorConstants.SPIRVGenMagicNumber) {
+                if (this.header.genMagicNumber == SPIRVGeneratorConstants.SPIRVGenMagicNumber) {
                     this.add(opCapability);
                 }
                 else {
