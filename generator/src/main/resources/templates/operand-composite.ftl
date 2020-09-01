@@ -42,14 +42,14 @@ public class SPIRV${kind} implements SPIRVOperand {
 
     @Override
     public void print(PrintStream output, SPIRVPrintingOptions options) {
-        if (!options.turnOffGrouping) output.print("{");
+        if (options.shouldGroup) output.print("{");
         <#list bases as base>
         member${base?counter}.print(output, options);
         <#sep>
         output.print(" ");
         </#sep>
         </#list>
-        if (!options.turnOffGrouping) output.print("}");
+        if (options.shouldGroup) output.print("}");
     }
 
     @Override

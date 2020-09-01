@@ -5,7 +5,7 @@ FILES=${1:-$(find ../rodinia -type f -name "*.spv")}
 # Check all files
 for FILE in $FILES; do
 	# Assemble
-	java -jar ../../dist/spirv-proto.jar -d --no-grouping $FILE -o proto/out.spvasm
+	java -jar ../../dist/spirv-proto.jar -d $FILE -o proto/out.spvasm
 	java -jar ../../dist/spirv-proto.jar -d --tool asm -o proto/out.spv proto/out.spvasm
 
 	# Validate

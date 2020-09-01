@@ -108,7 +108,7 @@ public class Disassembler implements SPIRVTool {
             if (assignSize > indent[0]) indent[0] = assignSize;
         });
 
-        SPIRVPrintingOptions printingOptions = new SPIRVPrintingOptions(highlighter, indent[0], options.shouldInlineNames, options.turnOffGrouping);
+        SPIRVPrintingOptions printingOptions = new SPIRVPrintingOptions(highlighter, indent[0], options.shouldInlineNames, options.shouldGroup);
 
         module.print(output, printingOptions);
     }

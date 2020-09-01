@@ -75,7 +75,7 @@ spirv-proto [OPTIONS] <filepath>
  -c,--no-color       Do not use coloured output
  -d,--debug          Print debug information
  -e,--no-header      Do not print the header
- -g,--no-grouping    Do not group composites together
+ -g,--grouping       Group composites together
  -h,--help           Prints this message
  -i,--no-indent      Turn off indentation
  -n,--inline-names   Inline names of nodes where possible

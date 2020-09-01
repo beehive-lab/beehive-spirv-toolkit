@@ -37,8 +37,8 @@ public class SPIRVToolRunner {
 		options.addOption("h", "help", false,"Prints this message");
 		options.addOption("d", "debug", false, "Print debug information");
 		options.addOption("n", "inline-names", false, "Inline names of nodes where possible");
+		options.addOption("g", "grouping", false, "Group composites together");
 		options.addOption("i", "no-indent", false, "Turn off indentation");
-		options.addOption("g", "no-grouping", false, "Do not group composites together");
 		options.addOption("e", "no-header", false, "Do not print the header");
 		options.addOption("c", "no-color", false, "Do not use coloured output");
 
