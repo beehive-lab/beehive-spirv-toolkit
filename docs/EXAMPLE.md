@@ -39,13 +39,19 @@ In SPIR-V it is:
 ```
 ; Declare an entry point with it's name and interface. For more info see: https://www.khronos.org/registry/spir-v/specs/unified1/SPIRV.html#OpEntryPoint
                                      OpEntryPoint Kernel %10 "matrix_mul" %__spirv_BuiltInGlobalInvocationId
+                                     OpDecorate %72 Alignment 4 ; Decorate %72 (which is a group) as having an alignemnt of 4 bytes
+                               %72 = OpDecorationGroup 
+                                     OpGroupDecorate %72 %A.addr %B.addr %C.addr %size.addr %idX %idY %sum %k ; Decorate the group 
+                                     OpDecorate %__spirv_BuiltInGlobalInvocationId BuiltIn GlobalInvocationId ; Decorate variable as the built-in global id
+                                     OpDecorate %__spirv_BuiltInGlobalInvocationId Constant
+                                     OpDecorate %__spirv_BuiltInGlobalInvocationId LinkageAttributes "__spirv_BuiltInGlobalInvocationId" Import ; Import the built-in variable
                              %uint = OpTypeInt 32 0 ; Declare an unsigned 32 bit integer type
                              %void = OpTypeVoid ; Declare a void type
                             %float = OpTypeFloat 32 ; Declare a 32 bit floating point number type
                         %ptr_float = OpTypePointer CrossWorkgroup %float ; Declare a pointer type that points to floats in global memory
                          %v_uint_3 = OpTypeVector %uint 3 ; Declare a vector type that is comprised of 3 unsigned 32 bit integers
                      %ptr_v_uint_3 = OpTypePointer Input %v_uint_3 ; Declare a pointer type that points to vectors in the input from pipeline
-%__spirv_BuiltInGlobalInvocationId = OpVariable %ptr_v_uint_3 Input ; Declare a variable of type vector pointer residing in the input from pipeline
+%__spirv_BuiltInGlobalInvocationId = OpVariable %ptr_v_uint_3 Input ; Declare a global variable of type vector pointer residing in the input from pipeline
 ; Declare the type of the function, where the function returns void, and takes parameters of type: float pointer, float pointer, float pointer, unsigned integer
                                 %9 = OpTypeFunction %void %ptr_float %ptr_float %ptr_float %uint
                                %10 = OpFunction %void DontInline %9 ; Declare a function, which returns void, and has type %9
@@ -68,7 +74,7 @@ Although in OpenCL C this looks like a function call in SPIR-V this is translate
 ; Load a vector with 3 unsigned integer elements from the variable holding their location (declared as part of the interface of the function)
   %idX = OpVariable %ptr_uint Function ; Declare variable %idX residing in function local memory
   %idY = OpVariable %ptr_uint Function ; Declare variable %idY residing in function local memory
-   %31 = OpLoad %v_uint_3 %__spirv_BuiltInGlobalInvocationId Aligned 16
+   %31 = OpLoad %v_uint_3 %__spirv_BuiltInGlobalInvocationId Aligned 16 ; Load the value pointed to by the built-in 
  %call = OpCompositeExtract %uint %31 0 ; Extract the first element of the vector loaded previously
          OpStore %idX %call Aligned 4 ; Save the first element extracted above into variable %idX
 %call1 = OpCompositeExtract %uint %33 1 ; Extract the second element of the vector loaded above
