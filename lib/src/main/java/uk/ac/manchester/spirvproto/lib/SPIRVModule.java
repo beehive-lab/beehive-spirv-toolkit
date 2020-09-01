@@ -28,7 +28,9 @@ public class SPIRVModule implements SPIRVInstScope {
     private SPIRVOpMemoryModel memoryModel;
     private final List<SPIRVOpEntryPoint> entryPoints;
     private final List<SPIRVExecutionModeInst> executionModes;
-    private final SPIRVDebugInstructions debugInstructions;
+    private final List<SPIRVSourceInst> srcInstructions;
+    private final List<SPIRVNameInst> nameInstructions;
+    private final List<SPIRVOpModuleProcessed> modules;
     private final List<SPIRVAnnotationInst> annotations;
     private final List<SPIRVGlobalInst> globals;
     private final List<SPIRVFunction> functions;
@@ -44,7 +46,9 @@ public class SPIRVModule implements SPIRVInstScope {
         this.memoryModel = null;
         entryPoints = new ArrayList<>();
         executionModes = new ArrayList<>();
-        debugInstructions = new SPIRVDebugInstructions();
+        srcInstructions = new ArrayList<>();
+        nameInstructions = new ArrayList<>();
+        modules = new ArrayList<>();
         annotations = new ArrayList<>();
         globals = new ArrayList<>();
         functions = new ArrayList<>();
@@ -61,7 +65,9 @@ public class SPIRVModule implements SPIRVInstScope {
         else if (instruction instanceof SPIRVOpExtInstImport) imports.add((SPIRVOpExtInstImport) instruction);
         else if (instruction instanceof SPIRVOpEntryPoint) entryPoints.add((SPIRVOpEntryPoint) instruction);
         else if (instruction instanceof SPIRVExecutionModeInst) executionModes.add((SPIRVExecutionModeInst) instruction);
-        else if (instruction instanceof SPIRVDebugInst) debugInstructions.add((SPIRVDebugInst) instruction);
+        else if (instruction instanceof SPIRVSourceInst) srcInstructions.add((SPIRVSourceInst) instruction);
+        else if (instruction instanceof SPIRVNameInst) nameInstructions.add((SPIRVNameInst) instruction);
+        else if (instruction instanceof SPIRVOpModuleProcessed) modules.add((SPIRVOpModuleProcessed) instruction);
         else if (instruction instanceof SPIRVAnnotationInst) annotations.add((SPIRVAnnotationInst) instruction);
         else if (instruction instanceof SPIRVGlobalInst) globals.add((SPIRVGlobalInst) instruction);
         else if (instruction instanceof SPIRVOpMemoryModel) memoryModel = (SPIRVOpMemoryModel) instruction;
@@ -128,7 +134,9 @@ public class SPIRVModule implements SPIRVInstScope {
         instructionConsumer.accept(memoryModel);
         entryPoints.forEach(instructionConsumer);
         executionModes.forEach(instructionConsumer);
-        debugInstructions.forEachInstruction(instructionConsumer);
+        srcInstructions.forEach(instructionConsumer);
+        nameInstructions.forEach(instructionConsumer);
+        modules.forEach(instructionConsumer);
         annotations.forEach(instructionConsumer);
         globals.forEach(instructionConsumer);
 
