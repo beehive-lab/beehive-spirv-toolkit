@@ -14,14 +14,27 @@ class SPIRVIdGenerator {
         idNameMap = new HashMap<>();
     }
 
+    /**
+     * Get the next ID that is guaranteed to be different from the previous IDs
+     * @return The new SPIRVId
+     */
     public SPIRVId getNextId() {
         return new SPIRVId(currentId++);
     }
 
+    /**
+     * Get the current bound.
+     * @return The current bound that is guaranteed to be larger than all IDs
+     */
     public int getCurrentBound() {
         return currentId;
     }
 
+    /**
+     * Retrieve the ID mapped to the given name, if it does not exist it is created
+     * @param name The name the ID is mapped to
+     * @return The ID mapped to the given name
+     */
     public SPIRVId getOrCreateId(String name) {
         SPIRVId id;
         int key = name.hashCode();
@@ -34,7 +47,11 @@ class SPIRVIdGenerator {
         }
         return id;
     }
-
+    /**
+     * Retrieve the ID mapped to the given number, if it does not exist it is created
+     * @param id The number the ID is mapped to
+     * @return The ID mapped to the given number
+     */
     public SPIRVId getOrAddId(int id) {
         SPIRVId idObj;
         if (idNameMap.containsKey(id)) {

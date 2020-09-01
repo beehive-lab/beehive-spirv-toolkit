@@ -63,6 +63,15 @@ public class Disassembler implements SPIRVTool {
         print(module);
     }
 
+    /**
+     * Read all the words related to this instruction, map the instruction and add it to the current scope
+     * @param firstWord The first word of the instruction encoding the operation and the length
+     * @param scope The current scope
+     * @return The new current scope
+     * @throws IOException
+     * @throws InvalidSPIRVOpcodeException
+     * @throws InvalidSPIRVWordCountException
+     */
     private SPIRVInstScope processLine(int firstWord, SPIRVInstScope scope) throws IOException, InvalidSPIRVOpcodeException, InvalidSPIRVWordCountException {
         int opCode = firstWord & 0xFFFF;
         int wordcount = firstWord >> 16;
@@ -87,6 +96,10 @@ public class Disassembler implements SPIRVTool {
         }
     }
 
+    /**
+     * Custom extra processing that only happens in the disaasembler
+     * @param instruction The instruction to process
+     */
     private void processInstruction(SPIRVInstruction instruction) {
         if (instruction instanceof SPIRVOpExtInstImport) {
             String name = ((SPIRVOpExtInstImport) instruction)._name.value;

@@ -46,10 +46,20 @@ public class Assembler implements SPIRVTool {
         return module;
     }
 
+    /**
+     * Tokenize the current line, discard comments, map the instruction and add
+     * it to the current scope
+     * @param line The line to process
+     * @param scope The current scope
+     * @return The new current scope resulting from adding a new instruction
+     */
     private SPIRVInstScope processLine(String line, SPIRVInstScope scope) {
         SPIRVToken[] tokens = tokenize(line);
         if (tokens.length <= 0) return scope;
 
+        // Discard everything after comment token
+        // Get the instruction token
+        // Construct the list of operands
         SPIRVToken instruction = null;
         List<SPIRVToken> operands = new ArrayList<>();
         for (SPIRVToken token : tokens) {
@@ -66,6 +76,10 @@ public class Assembler implements SPIRVTool {
         return scope.add(instructionNode);
     }
 
+    /**
+     * Do custom processing that is only needed in the assembler
+     * @param instruction The instruction to process
+     */
     private void processInstruction(SPIRVInstruction instruction) {
         if (instruction instanceof SPIRVOpExtInstImport) {
             String name = ((SPIRVOpExtInstImport) instruction)._name.value;

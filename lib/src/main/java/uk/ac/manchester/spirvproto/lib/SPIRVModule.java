@@ -86,6 +86,11 @@ public class SPIRVModule implements SPIRVInstScope {
         return function;
     }
 
+    /**
+     * Validate the module in it's current state and get a reference to the writer
+     * @return The class that can write this module
+     * @throws InvalidSPIRVModuleException
+     */
     public SPIRVModuleWriter validate() throws InvalidSPIRVModuleException {
         if (capabilities.size() < 1) {
             throw new InvalidSPIRVModuleException("There were no capabilities declared");
@@ -105,6 +110,10 @@ public class SPIRVModule implements SPIRVInstScope {
         return new SPIRVModuleWriter();
     }
 
+    /**
+     * Get the length of this module if written in binary format
+     * @return The length of the binary
+     */
     public int getByteCount() {
         final int[] wordCount = {0};
         this.forEachInstruction(i -> wordCount[0] += i.getWordCount());
@@ -146,6 +155,11 @@ public class SPIRVModule implements SPIRVInstScope {
         functionGroups.get(true).forEach(f -> f.forEachInstruction(instructionConsumer));
     }
 
+    /**
+     * Print the disassembly of this module.
+     * @param output The PrintStream to print the output to
+     * @param options PrintingOptions that determine how the output should be formatted
+     */
     public void print(PrintStream output, SPIRVPrintingOptions options) {
         this.forEachInstruction(i -> i.print(output, options));
     }
@@ -188,6 +202,10 @@ public class SPIRVModule implements SPIRVInstScope {
     public class SPIRVModuleWriter {
         protected SPIRVModuleWriter() { }
 
+        /**
+         * Write the module in binary format.
+         * @param output The ByteBuffer where the module should be written
+         */
         public void write(ByteBuffer output) {
             header.write(output);
             forEachInstruction(i -> i.write(output));

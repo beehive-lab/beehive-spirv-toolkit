@@ -52,5 +52,9 @@ public interface SPIRVInstScope {
      */
     SPIRVId getOrAddId(int id);
 
+    /**
+     * Ensure that the corresponding capabilities are present
+     * @param instruction The instruction that has the capabilities
+     */
     void ensureCapabilitiesPresent(SPIRVInstruction instruction);
 }
