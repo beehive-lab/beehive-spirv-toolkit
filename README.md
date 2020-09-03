@@ -155,4 +155,20 @@ This requires at least one device with a driver that supports OpenCL 2.1 or high
 
 The application tries to run the program on the first device of the last OCL Platform (check `clinfo` to see, which one that is). Your setup might be different and you might have to change that [here](https://github.com/beehive-lab/spirv-proto/blob/665a19e9527f2bf5121ecc23c19e17656bfbf0a2/examples/vector_add_il.c#L72)
 
-In a lot of cases vendors include their own ICD Loader (libOpenCL.so) in their driver package, which means that an outdated ICD Loader might be in use on your system and you won't be able to run the example as `OPENCL_2_1 cannot be found`. To see more information on this visit the [ArchWiki page](https://wiki.archlinux.org/index.php/GPGPU)
+In a lot of cases vendors include their own ICD Loader (libOpenCL.so) in their driver package, which means that an outdated ICD Loader might be in use on your system and you won't be able to run the example as `OPENCL_2_1 cannot be found`. 
+In this case you might have to install an updated icd-loader package or configure the ld path to load the updated one.
+To see more information on this visit the [ArchWiki page](https://wiki.archlinux.org/index.php/GPGPU)
+
+### Driver support
+
+Unfortunately driver support for SPIR-V is lacking. 
+I have found that Intel is supporting OpenCL 2.1 on their iGPU and CPU devices.
+Ubuntu should already have the updated graphics version in apt however you can also download the [latest](https://github.com/intel/compute-runtime/releases) or build from [source](https://github.com/intel/compute-runtime/blob/master/BUILD.md).
+There are some guides on how to build from source online as well: https://gist.github.com/Brainiarc7/1d13c7f432ba03a8e38720c83cd973d5. 
+In my case I had to build the igc (Intel Graphics Compiler) and gmm (Graphics Memory Management) from source and install them (with `make install`) as the apt provided versions were out of date.
+This way the standalone igc compiler will be available to run on any related files.
+
+
+Intel's latest OpenCL CPU runtime also supports SPIR-V.
+It can be installed from [here](https://software.intel.com/content/www/us/en/develop/articles/opencl-drivers.html#cpu-section).
+This has not been tested while developing this tools, however it *should* work as expected.
