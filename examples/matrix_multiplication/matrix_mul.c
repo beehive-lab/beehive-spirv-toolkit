@@ -81,7 +81,7 @@ int main( int argc, char* argv[] )
     }
  
     // Get ID for the device
-    err = clGetDeviceIDs(all_platforms[selected_platform_id], CL_DEVICE_TYPE_GPU, 1, &device_id, NULL);
+    err = clGetDeviceIDs(all_platforms[selected_platform_id], CL_DEVICE_TYPE_ALL, 1, &device_id, NULL);
 
     //Print name of the device
     size_t name_size;
