@@ -4,15 +4,36 @@
 #include <iostream>
 #include <string>
 #include <cstring>
-
-#include "util.h"
+#include "CL/opencl.h"
 
 using namespace std;
 
 #define CL_TARGET_OPENCL_VERSION 2_1
 
-int main( int argc, char* argv[] )
-{
+/**
+ * Selects last device with OpenCL 2.1
+ */
+int get_platform_with_2_1(cl_platform_id *ids, int num_platforms) {
+	int deviceNumber = -1;
+	for (int i = 0; i < num_platforms; i++) {
+		size_t version_length;
+		if (clGetPlatformInfo(ids[i], CL_PLATFORM_VERSION, 0, NULL, &version_length) != CL_SUCCESS) {
+			puts("ERROR: clGetPlatformInfo failed"); return -1;
+		}
+		char version[version_length];
+		if (clGetPlatformInfo(ids[i], CL_PLATFORM_VERSION, version_length, version, &version_length) != CL_SUCCESS) {
+				puts("ERROR: clGetPlatformInfo failed"); return -1;
+		}
+		if (strlen(version) >= 10 && (strncmp(version, "OpenCL 2.1", 10) == 0)) {
+			//return i;
+			deviceNumber = i;
+		}
+	}
+	return deviceNumber;
+}
+
+int main( int argc, char** argv) {
+
 	FILE *f = fopen(argv[1], "rb");
 	fseek(f, 0, SEEK_END);
 	long fsize = ftell(f);
