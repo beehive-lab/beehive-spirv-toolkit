@@ -8,32 +8,24 @@ To see an example kernel in SPIR-V go [here](docs/EXAMPLE.md).
 
 Dependencies:
 
-- Java
-- Maven
+- Java (JDK 8)
+- Maven (>= 3.6.3)
 
 Clone the repository:
 
 ```bash
 $ git clone https://github.com/beehive-lab/spirv-proto.git
-```
-
-Go to the root directory:
-```bash
 $ cd spirv-proto
-```
-
-Run maven build:
-```bash
 $ mvn clean package
 ```
 
 #### Structure
 There are 3 modules: `generator`, `lib`, `runner`.
 
-The `generator` module is a standalone program that reads the included SPIR-V grammar files and writes classes needed 
-by `lib` to the specified output directory.
-This happens as part of the build controlled by the module's pom file.
-In order to change any of the behaviour the following snippet needs to be changed:
+The `generator` module is a standalone program that reads the included SPIR-V grammar files and writes classes needed by `lib` to the specified output directory.
+
+This happens as part of the build controlled by the module's pom file. In order to change any of the behaviour the following snippet needs to be changed:
+
 ```xml
 <plugin>
   <groupId>org.codehaus.mojo</groupId>
@@ -60,11 +52,9 @@ In order to change any of the behaviour the following snippet needs to be change
 </plugin>
 ```
 
-The `lib` module holds all of the SPIR-V related logic and code. 
-It is able to assemble and disassemble SPIR-V files.
+The `lib` module holds all of the SPIR-V related logic and code. It is able to assemble and disassemble SPIR-V files.
 
-The `runner` module is the "front-end" for the `lib` module.
-It only handles CLI argument parsing, calling the selected tool and error reporting.
+The `runner` module is the "front-end" for the `lib` module. It only handles CLI argument parsing, calling the selected tool and error reporting.
 
 Maven will create a fat-jar, that includes both `lib` and `runner` in the dist directory.
 

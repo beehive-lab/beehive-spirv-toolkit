@@ -1,9 +1,15 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
-#include <CL/opencl.h>
+#include <iostream>
+#include <string>
+#include <cstring>
 
-#include "../util.h"
+#include "util.h"
+
+using namespace std;
+
+#define CL_TARGET_OPENCL_VERSION 2_1
 
 int main( int argc, char* argv[] )
 {
@@ -12,7 +18,7 @@ int main( int argc, char* argv[] )
 	long fsize = ftell(f);
 	fseek(f, 0, SEEK_SET);
 
-	char *string = malloc(fsize + 1);
+	char *string = (char *)malloc(fsize + 1);
 	fread(string, 1, fsize, f);
 	fclose(f);
 
@@ -68,8 +74,9 @@ int main( int argc, char* argv[] )
     cl_uint num_platforms;
     err = clGetPlatformIDs(1, NULL, &num_platforms);
     cl_platform_id all_platforms[num_platforms];
-    err = clGetPlatformIDs(num_platforms, &all_platforms, NULL);
+    err = clGetPlatformIDs(num_platforms, all_platforms, NULL);
     int selected_platform_id = get_platform_with_2_1(all_platforms, num_platforms);
+
     if (selected_platform_id < 0) {
         puts("ERROR: could not find OCL platform with version 2.1 or higher");
         return -1;
