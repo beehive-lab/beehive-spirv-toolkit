@@ -162,3 +162,16 @@ This way the standalone igc compiler will be available to run on any related fil
 Intel's latest OpenCL CPU runtime also supports SPIR-V.
 It can be installed from [here](https://software.intel.com/content/www/us/en/develop/articles/opencl-drivers.html#cpu-section).
 This has not been tested while developing this tools, however it *should* work as expected.
+
+
+## Dissasembler 
+
+How to?
+
+```bash
+java -jar dist/spirv-proto.jar -d test.spv -o test.spirvText
+java -jar dist/spirv-proto.jar -d  --tool asm -o out.spv test.spirvText
+```
+
+
+
