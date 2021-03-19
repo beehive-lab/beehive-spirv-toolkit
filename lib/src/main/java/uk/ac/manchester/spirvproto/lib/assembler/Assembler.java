@@ -33,10 +33,17 @@ public class Assembler implements SPIRVTool {
      * @return An instance of SPIRVModule representing the instructions from the input.
      */
     public SPIRVModule assemble() {
+//        SPIRVModule module = new SPIRVModule(new SPIRVHeader(
+//                SPIRVGeneratorConstants.SPIRVMajorVersion,
+//                SPIRVGeneratorConstants.SPIRVMinorVersion,
+//                SPIRVGeneratorConstants.SPIRVGenMagicNumber,
+//                0,
+//                0
+//        ));
         SPIRVModule module = new SPIRVModule(new SPIRVHeader(
-                SPIRVGeneratorConstants.SPIRVMajorVersion,
-                SPIRVGeneratorConstants.SPIRVMinorVersion,
-                SPIRVGeneratorConstants.SPIRVGenMagicNumber,
+                1,
+                5,
+                29,
                 0,
                 0
         ));
