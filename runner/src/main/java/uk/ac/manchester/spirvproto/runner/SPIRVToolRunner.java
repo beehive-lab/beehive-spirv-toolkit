@@ -1,6 +1,11 @@
 package uk.ac.manchester.spirvproto.runner;
 
-import org.apache.commons.cli.*;
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.DefaultParser;
+import org.apache.commons.cli.HelpFormatter;
+import org.apache.commons.cli.Options;
+import org.apache.commons.cli.ParseException;
 import uk.ac.manchester.spirvproto.lib.SPIRVTool;
 import uk.ac.manchester.spirvproto.lib.assembler.Assembler;
 import uk.ac.manchester.spirvproto.lib.disassembler.Disassembler;
@@ -13,26 +18,25 @@ import java.io.PrintStream;
 
 public class SPIRVToolRunner {
 
-	public static Configuration state;
+	public static Configuration configuration;
 
 	public static void main(String[] args) {
 		try {
-			state = getArguments(args);
-			state.tool.run();
+			configuration = parseArguments(args);
+			configuration.getTool().run();
 		}
 		catch (Exception e) {
 			System.err.println(e.getMessage());
-			if (state == null || state.debug) {
+			if (configuration == null || configuration.isDebug()) {
 				e.printStackTrace(System.err);
-			}
-			else {
+			} else {
 				System.err.println("An error occurred, please run with the -d|--debug flag to see the exact error");
 			}
 			System.exit(1);
 		}
 	}
 
-	private static Configuration getArguments(String[] args) throws Exception {
+	private static Configuration parseArguments(String[] args) throws Exception {
 		Options options = new Options();
 		options.addOption("h", "help", false,"Prints this message");
 		options.addOption("d", "debug", false, "Print debug information");
@@ -65,8 +69,7 @@ public class SPIRVToolRunner {
 			PrintStream output;
 			if (!cmd.hasOption('o')) {
 				output = System.out;
-			}
-			else {
+			} else {
 				File outputFile = new File(cmd.getOptionValue('o'));
 				if (outputFile.isDirectory()) {
 					outputFile = new File(outputFile, inputFile.getName() + ".dis");
@@ -82,20 +85,17 @@ public class SPIRVToolRunner {
 					cmd.hasOption('e')
 			);
 			spirvTool = new Disassembler(reader, output, disassemblerOptions);
-		}
-		else if (tool.equals("asm")) {
+		} else if (tool.equals("asm")) {
 			File output;
 			if (!cmd.hasOption('o')) {
 				String inputFileName = inputFile.getAbsolutePath();
 				int indexOfExtension = inputFileName.lastIndexOf(".");
 				output = new File(inputFileName.substring(0, indexOfExtension) + ".spv");
-			}
-			else {
+			} else {
 				output = new File(cmd.getOptionValue('o'));
 			}
 			spirvTool = new Assembler(new FileReader(inputFile), output);
-		}
-		else {
+		} else {
 			System.err.println("Unrecognized tool: " + tool);
 			handleError(options);
 		}

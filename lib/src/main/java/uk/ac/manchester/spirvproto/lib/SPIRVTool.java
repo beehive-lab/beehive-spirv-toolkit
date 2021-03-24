@@ -3,6 +3,7 @@ package uk.ac.manchester.spirvproto.lib;
 /**
  * A tool that processes SPIR-V modules in some format.
  */
+@FunctionalInterface
 public interface SPIRVTool {
 
     /**

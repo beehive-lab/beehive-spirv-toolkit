@@ -29,13 +29,21 @@ public class Assembler implements SPIRVTool {
 
     /**
      * Read all lines from the input and construct a SPIRVModule.
+     *
      * @return An instance of SPIRVModule representing the instructions from the input.
      */
     public SPIRVModule assemble() {
+//        SPIRVModule module = new SPIRVModule(new SPIRVHeader(
+//                SPIRVGeneratorConstants.SPIRVMajorVersion,
+//                SPIRVGeneratorConstants.SPIRVMinorVersion,
+//                SPIRVGeneratorConstants.SPIRVGenMagicNumber,
+//                0,
+//                0
+//        ));
         SPIRVModule module = new SPIRVModule(new SPIRVHeader(
-                SPIRVGeneratorConstants.SPIRVMajorVersion,
-                SPIRVGeneratorConstants.SPIRVMinorVersion,
-                SPIRVGeneratorConstants.SPIRVGenMagicNumber,
+                1,
+                5,
+                29,
                 0,
                 0
         ));
@@ -55,7 +63,9 @@ public class Assembler implements SPIRVTool {
      */
     private SPIRVInstScope processLine(String line, SPIRVInstScope scope) {
         SPIRVToken[] tokens = tokenize(line);
-        if (tokens.length <= 0) return scope;
+        if (tokens.length <= 0) {
+            return scope;
+        }
 
         // Discard everything after comment token
         // Get the instruction token
@@ -63,12 +73,19 @@ public class Assembler implements SPIRVTool {
         SPIRVToken instruction = null;
         List<SPIRVToken> operands = new ArrayList<>();
         for (SPIRVToken token : tokens) {
-            if (token.type == SPIRVTokenType.COMMENT) break;
-            else if (token.type == SPIRVTokenType.INSTRUCTION) instruction = token;
-            else if (token.isOperand()) operands.add(token);
+            if (token.type == SPIRVTokenType.COMMENT) {
+                break;
+            } else if (token.type == SPIRVTokenType.INSTRUCTION) {
+                instruction = token;
+            }
+            else if (token.isOperand()) {
+                operands.add(token);
+            }
         }
 
-        if (instruction == null) return scope;
+        if (instruction == null) {
+            return scope;
+        }
 
         SPIRVInstruction instructionNode = SPIRVInstMapper.createInst(instruction, operands.toArray(new SPIRVToken[0]), scope);
 
@@ -100,10 +117,18 @@ public class Assembler implements SPIRVTool {
                 .toArray(SPIRVToken[]::new);
     }
 
+    private void writeBuffer(ByteBuffer buffer) throws IOException {
+        buffer.flip();
+        FileChannel channel = new FileOutputStream(out, false).getChannel();
+        channel.write(buffer);
+        channel.close();
+    }
+
     /**
-     * Transform the input into a binary SPIR-V module and write it out to the given file.
-     * @throws InvalidSPIRVModuleException
-     * @throws IOException
+     * Transform the input SPIRV text form into a SPIR-V binary module and write it out to the given file.
+     *
+     * @throws {@link InvalidSPIRVModuleException}
+     * @throws {@link IOException}
      */
     @Override
     public void run() throws InvalidSPIRVModuleException, IOException {
@@ -113,9 +138,6 @@ public class Assembler implements SPIRVTool {
 
         if (out == null) return;
 
-        buffer.flip();
-        FileChannel channel = new FileOutputStream(out, false).getChannel();
-        channel.write(buffer);
-        channel.close();
+        writeBuffer(buffer);
     }
 }

@@ -21,7 +21,7 @@ public class AssemblerTest {
         module.add(new SPIRVOpCapability(SPIRVCapability.Linkage()));
         module.add(new SPIRVOpCapability(SPIRVCapability.Kernel()));
 
-        module.add(new SPIRVOpMemoryModel(SPIRVAddressingModel.Physical32(), SPIRVMemoryModel.OpenCL()));
+        module.add(new SPIRVOpMemoryModel(SPIRVAddressingModel.Physical64(), SPIRVMemoryModel.OpenCL()));
 
         SPIRVId opTypeInt = module.getNextId();
         module.add(new SPIRVOpTypeInt(opTypeInt, new SPIRVLiteralInteger(32), new SPIRVLiteralInteger(0)));

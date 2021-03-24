@@ -4,12 +4,11 @@ Since OpenCL C compiles to SPIR-V it is beneficial to see how C maps to SPIR-V.
 In this example a simple matrix multiplication kernel is compiled to SPIR-V and the disassembly is inspected.
 
 The whole kernel is as follows:
-```c
+```opencl
 __kernel void matrix_mul(__global float A[], 
                          __global float B[], 
                          __global float C[], 
-                         unsigned int size)
-{
+                         unsigned int size) {
 	size_t idX = get_global_id(0);
 	size_t idY = get_global_id(1);
 
@@ -28,6 +27,7 @@ In SPIR-V this would require nodes for the return type of the function and for t
 The module also needs to provide the name of the kernel/function and the signature.
 
 It looks like this:
+
 ```c
 __kernel void matrix_mul(__global float A[], 
                          __global float B[], 
@@ -36,7 +36,8 @@ __kernel void matrix_mul(__global float A[],
 ```
 
 In SPIR-V it is:
-```
+
+```c
 ; Declare an entry point with it's name and interface. For more info see: https://www.khronos.org/registry/spir-v/specs/unified1/SPIRV.html#OpEntryPoint
                                      OpEntryPoint Kernel %10 "matrix_mul" %__spirv_BuiltInGlobalInvocationId
                                      OpDecorate %72 Alignment 4 ; Decorate %72 (which is a group) as having an alignemnt of 4 bytes
@@ -70,7 +71,8 @@ size_t idY = get_global_id(1);
 ```
 
 Although in OpenCL C this looks like a function call in SPIR-V this is translated to a read from a special memory location given through `Input`:
-```
+
+```c
 ; Load a vector with 3 unsigned integer elements from the variable holding their location (declared as part of the interface of the function)
   %idX = OpVariable %ptr_uint Function ; Declare variable %idX residing in function local memory
   %idY = OpVariable %ptr_uint Function ; Declare variable %idY residing in function local memory
@@ -87,7 +89,8 @@ float sum = 0.0f;
 ```
 
 In SPIR-V this translates to:
-```
+
+```c
 %35 = OpConstant %float 0
 ...
 %sum = OpVariable %ptr_float Function 
@@ -102,7 +105,8 @@ for (int k = 0; k < size; k++) {
 ```
 
 In SPIR-V this translates to:
-```
+
+```c
        %61 = OpConstant %uint 1 ; Declare a constant with value 1
              ...
  %for.cond = OpLabel ; Create a new block
@@ -126,7 +130,8 @@ sum += A[(idX * size) + k] * B[(k * size) + idY];
 ```
 
 The loop body in SPIR-V;
-```
+
+```c
  %for.body = OpLabel  ; Create a new block
        %41 = OpLoad %ptr_float %A.addr Aligned 4 ; Load the value pointed to by %A.addr
        %42 = OpLoad %uint %idX Aligned 4 ; Load the value pointed to by %idX
@@ -156,12 +161,14 @@ Get the pointer which has a base pointed to by %B.addr (aka %B, which is itself 
 ```
 
 Last the result is stored:
+
 ```c
 C[(idX * size) + idY] = sum;
 ```
 
 In SPIR-V:
-```
+
+```c
        %63 = OpLoad %float %sum Aligned 4       ; Load the result
        %64 = OpLoad %ptr_float %C.addr Aligned 4 ; Load the pointer
        %65 = OpLoad %uint %idX Aligned 4 ; Load idX

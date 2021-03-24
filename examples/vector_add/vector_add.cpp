@@ -1,18 +1,45 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
-#include <CL/opencl.h>
+#include <iostream>
+#include <string>
+#include <cstring>
+#include "CL/opencl.h"
 
-#include "../util.h"
+using namespace std;
 
-int main( int argc, char* argv[] )
-{
+#define CL_TARGET_OPENCL_VERSION 2_1
+
+/**
+ * Selects last device with OpenCL 2.1
+ */
+int get_platform_with_2_1(cl_platform_id *ids, int num_platforms) {
+	int deviceNumber = -1;
+	for (int i = 0; i < num_platforms; i++) {
+		size_t version_length;
+		if (clGetPlatformInfo(ids[i], CL_PLATFORM_VERSION, 0, NULL, &version_length) != CL_SUCCESS) {
+			puts("ERROR: clGetPlatformInfo failed"); return -1;
+		}
+		char version[version_length];
+		if (clGetPlatformInfo(ids[i], CL_PLATFORM_VERSION, version_length, version, &version_length) != CL_SUCCESS) {
+				puts("ERROR: clGetPlatformInfo failed"); return -1;
+		}
+		if (strlen(version) >= 10 && (strncmp(version, "OpenCL 3.0", 10) == 0)) {
+			return i;
+			//deviceNumber = i;
+		}
+	}
+	return deviceNumber;
+}
+
+int main( int argc, char** argv) {
+
 	FILE *f = fopen(argv[1], "rb");
 	fseek(f, 0, SEEK_END);
 	long fsize = ftell(f);
 	fseek(f, 0, SEEK_SET);
 
-	char *string = malloc(fsize + 1);
+	char *string = (char *)malloc(fsize + 1);
 	fread(string, 1, fsize, f);
 	fclose(f);
 
@@ -68,8 +95,9 @@ int main( int argc, char* argv[] )
     cl_uint num_platforms;
     err = clGetPlatformIDs(1, NULL, &num_platforms);
     cl_platform_id all_platforms[num_platforms];
-    err = clGetPlatformIDs(num_platforms, &all_platforms, NULL);
+    err = clGetPlatformIDs(num_platforms, all_platforms, NULL);
     int selected_platform_id = get_platform_with_2_1(all_platforms, num_platforms);
+
     if (selected_platform_id < 0) {
         puts("ERROR: could not find OCL platform with version 2.1 or higher");
         return -1;
