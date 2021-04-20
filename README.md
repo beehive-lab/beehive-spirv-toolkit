@@ -175,3 +175,10 @@ java -jar dist/spirv-proto.jar -d  --tool asm -o out.spv test.spirvText
 
 
 
+### Test Dissasembler
+
+
+```bash 
+java -cp lib/target/spirv-lib-1.0-SNAPSHOT.jar uk.ac.manchester.spirvproto.lib.tests.TestRunnerAssembler
+```
+
