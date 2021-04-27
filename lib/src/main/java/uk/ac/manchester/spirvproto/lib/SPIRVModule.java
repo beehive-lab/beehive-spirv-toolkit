@@ -122,6 +122,16 @@ public class SPIRVModule implements SPIRVInstScope {
     }
 
     /**
+     * Writes the ID max in the SPIRV Header and returns a reference to the writer.
+     * This method does not perform validation of the SPIRV module.
+     *
+     */
+    public SPIRVModuleWriter close() {
+        header.setBound(idGen.getCurrentBound());
+        return new SPIRVModuleWriter();
+    }
+
+    /**
      * Get the length of this module if written in binary format
      * @return The length of the binary
      */

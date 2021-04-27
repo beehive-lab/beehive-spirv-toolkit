@@ -11,7 +11,7 @@ import javax.annotation.Generated;
 @Generated("beehive-lab.spirv-proto.generator")
 class SPIRVExtInstMapper {
 
-    private static HashMap<String, Integer> extInstNameMap;
+    private static HashMap<String , Integer> extInstNameMap;
 
     /**
      * Get the number of the function mapped to the given name.
