@@ -13,7 +13,6 @@ import uk.ac.manchester.spirvproto.lib.instructions.SPIRVOpExtInstImport;
 import uk.ac.manchester.spirvproto.lib.instructions.SPIRVOpFunction;
 import uk.ac.manchester.spirvproto.lib.instructions.SPIRVOpFunctionEnd;
 import uk.ac.manchester.spirvproto.lib.instructions.SPIRVOpFunctionParameter;
-import uk.ac.manchester.spirvproto.lib.instructions.SPIRVOpIAdd;
 import uk.ac.manchester.spirvproto.lib.instructions.SPIRVOpInBoundsPtrAccessChain;
 import uk.ac.manchester.spirvproto.lib.instructions.SPIRVOpLabel;
 import uk.ac.manchester.spirvproto.lib.instructions.SPIRVOpLoad;
@@ -33,13 +32,11 @@ import uk.ac.manchester.spirvproto.lib.instructions.operands.SPIRVAddressingMode
 import uk.ac.manchester.spirvproto.lib.instructions.operands.SPIRVBuiltIn;
 import uk.ac.manchester.spirvproto.lib.instructions.operands.SPIRVCapability;
 import uk.ac.manchester.spirvproto.lib.instructions.operands.SPIRVContextDependentInt;
-import uk.ac.manchester.spirvproto.lib.instructions.operands.SPIRVContextDependentLong;
 import uk.ac.manchester.spirvproto.lib.instructions.operands.SPIRVDecoration;
 import uk.ac.manchester.spirvproto.lib.instructions.operands.SPIRVExecutionModel;
 import uk.ac.manchester.spirvproto.lib.instructions.operands.SPIRVFunctionControl;
 import uk.ac.manchester.spirvproto.lib.instructions.operands.SPIRVId;
 import uk.ac.manchester.spirvproto.lib.instructions.operands.SPIRVLinkageType;
-import uk.ac.manchester.spirvproto.lib.instructions.operands.SPIRVLiteralContextDependentNumber;
 import uk.ac.manchester.spirvproto.lib.instructions.operands.SPIRVLiteralInteger;
 import uk.ac.manchester.spirvproto.lib.instructions.operands.SPIRVLiteralString;
 import uk.ac.manchester.spirvproto.lib.instructions.operands.SPIRVMemoryAccess;
@@ -283,7 +280,6 @@ public class TestVector {
 
         blockScope.add(new SPIRVOpReturn());
         functionScope.add(new SPIRVOpFunctionEnd());
-
 
         writeModuleToFile(module,"/tmp/testSPIRV.spv");
     }
