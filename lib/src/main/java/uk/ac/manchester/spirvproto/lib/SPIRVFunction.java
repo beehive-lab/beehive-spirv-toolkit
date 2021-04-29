@@ -70,8 +70,7 @@ public class SPIRVFunction implements SPIRVInstScope {
     public SPIRVInstruction getInstruction(SPIRVId id) {
         if (idToInstMap.containsKey(id)) {
             return idToInstMap.get(id);
-        }
-        else {
+        } else {
             return enclosingScope.getInstruction(id);
         }
     }
