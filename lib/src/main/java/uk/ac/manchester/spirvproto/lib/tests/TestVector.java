@@ -453,6 +453,7 @@ public class TestVector {
         blockScope.add(new SPIRVOpCompositeExtract(ulong, call, id19, new SPIRVMultipleOperands<>(new SPIRVLiteralInteger(0))));
 
         SPIRVId conv = module.getNextId();
+        // SPIRVOpUConvert: Convert unsigned width. This is either a truncate or a zero extend.
         blockScope.add(new SPIRVOpUConvert(uint, conv, call));
 
         // Store the globalIdx into idx variable
@@ -475,6 +476,7 @@ public class TestVector {
                 new SPIRVOptionalOperand<>(SPIRVMemoryAccess.Aligned(new SPIRVLiteralInteger(4)))
         ));
         SPIRVId idxprom = module.getNextId();
+        // SPIRVOpSConvert: Convert signed width. This is either a truncate or a sign extend.
         blockScope.add(new SPIRVOpSConvert(ulong, idxprom, id23));
 
         SPIRVId ptridx = module.getNextId();
