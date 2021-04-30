@@ -50,9 +50,11 @@ int main( int argc, char** argv) {
  
     // Host input vectors
     int *h_a;
+    int *h_b;
  
     // Device input buffers
     cl_mem d_a;
+    cl_mem d_b;
  
     cl_device_id device_id;           // device ID
     cl_context context;               // context
@@ -65,10 +67,11 @@ int main( int argc, char** argv) {
  
     // Allocate memory for each vector on host
     h_a = (int*)malloc(bytes);
+    h_b = (int*)malloc(bytes);
  
     // Initialize vectors on host
     for(int i = 0; i < n; i++) {
-        h_a[i] = 0;
+        h_b[i] = 120;
     }
  
     size_t globalSize, localSize;
@@ -125,7 +128,7 @@ int main( int argc, char** argv) {
     }
  
     // Create the compute kernel in the program we wish to run
-    kernel = clCreateKernel(program, "testVectorInit", &err);
+    kernel = clCreateKernel(program, "testVectorCopy", &err);
     if (err != CL_SUCCESS) {
         printf("Failed to create kernel (%d)\n", err);
     }
@@ -134,13 +137,15 @@ int main( int argc, char** argv) {
     }
  
     // Create the input and output arrays in device memory for our calculation
-    d_a = clCreateBuffer(context, CL_MEM_READ_WRITE, bytes, NULL, NULL);
+    d_a = clCreateBuffer(context, CL_MEM_WRITE_ONLY, bytes, NULL, NULL);
+    d_b = clCreateBuffer(context, CL_MEM_READ_ONLY, bytes, NULL, NULL);
  
     // Write our data set into the input array in device memory
-    //err = clEnqueueWriteBuffer(queue, d_a, CL_TRUE, 0, bytes, h_a, 0, NULL, NULL);
+    err = clEnqueueWriteBuffer(queue, d_b, CL_TRUE, 0, bytes, h_b, 0, NULL, NULL);
  
     // Set the arguments to our compute kernel
     err  = clSetKernelArg(kernel, 0, sizeof(cl_mem), &d_a);
+    err  = clSetKernelArg(kernel, 1, sizeof(cl_mem), &d_b);
  
     // Execute the kernel over the entire range of the data set 
     err = clEnqueueNDRangeKernel(queue, kernel, 1, NULL, &globalSize, NULL, 0, NULL, NULL);
@@ -153,7 +158,7 @@ int main( int argc, char** argv) {
 
     bool isCorrect = true;
     for (int i = 0; i < n; i++) {
-        if (h_a[i] != 50) {
+        if (h_a[i] != 120) {
             std::cout << "ERROR - result not correct" << std::endl;
             isCorrect = false;
             break;
