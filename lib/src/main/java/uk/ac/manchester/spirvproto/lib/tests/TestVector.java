@@ -77,17 +77,17 @@ public class TestVector {
     }
 
     /**
-     * SPIRV CODE for the following OpenCL kernel:
+     * SPIR-V CODE for the following OpenCL kernel:
      *
      * <code>
-     *     __kernel void vectorAdd(__global int* a) {
+     *     __kernel void testVectorInit(__global int* a) {
      *          int idx = get_global_id(0);
      * 	        a[idx] = 50;
      *     }
      * </code>
      *
      */
-    public static void testVector()  {
+    public static void testVectorInit()  {
 
         // SPIRV Header
         SPIRVModule module = new SPIRVModule(
@@ -192,7 +192,7 @@ public class TestVector {
         module.add(new SPIRVOpEntryPoint(
                 SPIRVExecutionModel.Kernel(),
                 functionDef,
-                new SPIRVLiteralString("vectorAdd"),
+                new SPIRVLiteralString("testVectorInit"),
                 new SPIRVMultipleOperands<>(idName)
         ));
 
@@ -285,7 +285,7 @@ public class TestVector {
     }
 
     public static void main(String[] args) throws InvalidSPIRVModuleException {
-        testVector();
+        testVectorInit();
     }
 
 }
