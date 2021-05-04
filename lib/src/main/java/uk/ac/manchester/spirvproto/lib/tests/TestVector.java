@@ -903,6 +903,15 @@ public class TestVector {
         SPIRVId ul0 = module.getNextId();
         SPIRVId ul1 = module.getNextId();
         SPIRVId frame = module.getNextId();
+
+        // OpNames are not mandatory, but they help to debug
+        // We can also add all variables within the kernel in this section
+        module.add(new SPIRVOpName(heapBaseAddr, new SPIRVLiteralString("heapBaseAddr")));
+        module.add(new SPIRVOpName(frameBaseAddr, new SPIRVLiteralString("frameBaseAddr")));
+        module.add(new SPIRVOpName(ul0, new SPIRVLiteralString("ul0")));
+        module.add(new SPIRVOpName(ul1, new SPIRVLiteralString("ul1")));
+        module.add(new SPIRVOpName(frame, new SPIRVLiteralString("frame")));
+
         module.add(new SPIRVOpDecorate(heapBaseAddr, SPIRVDecoration.Alignment(new SPIRVLiteralInteger(8))));
         module.add(new SPIRVOpDecorate(frameBaseAddr, SPIRVDecoration.Alignment(new SPIRVLiteralInteger(8))));
         module.add(new SPIRVOpDecorate(ul0, SPIRVDecoration.Alignment(new SPIRVLiteralInteger(8))));
