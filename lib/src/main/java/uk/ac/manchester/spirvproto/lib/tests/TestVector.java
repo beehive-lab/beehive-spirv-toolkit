@@ -5,6 +5,8 @@ import uk.ac.manchester.spirvproto.lib.SPIRVHeader;
 import uk.ac.manchester.spirvproto.lib.SPIRVInstScope;
 import uk.ac.manchester.spirvproto.lib.SPIRVModule;
 import uk.ac.manchester.spirvproto.lib.instructions.SPIRVOpBitcast;
+import uk.ac.manchester.spirvproto.lib.instructions.SPIRVOpBranch;
+import uk.ac.manchester.spirvproto.lib.instructions.SPIRVOpBranchConditional;
 import uk.ac.manchester.spirvproto.lib.instructions.SPIRVOpCapability;
 import uk.ac.manchester.spirvproto.lib.instructions.SPIRVOpCompositeExtract;
 import uk.ac.manchester.spirvproto.lib.instructions.SPIRVOpConstant;
@@ -16,6 +18,7 @@ import uk.ac.manchester.spirvproto.lib.instructions.SPIRVOpFunction;
 import uk.ac.manchester.spirvproto.lib.instructions.SPIRVOpFunctionEnd;
 import uk.ac.manchester.spirvproto.lib.instructions.SPIRVOpFunctionParameter;
 import uk.ac.manchester.spirvproto.lib.instructions.SPIRVOpIAdd;
+import uk.ac.manchester.spirvproto.lib.instructions.SPIRVOpIEqual;
 import uk.ac.manchester.spirvproto.lib.instructions.SPIRVOpInBoundsPtrAccessChain;
 import uk.ac.manchester.spirvproto.lib.instructions.SPIRVOpLabel;
 import uk.ac.manchester.spirvproto.lib.instructions.SPIRVOpLoad;
@@ -25,6 +28,7 @@ import uk.ac.manchester.spirvproto.lib.instructions.SPIRVOpReturn;
 import uk.ac.manchester.spirvproto.lib.instructions.SPIRVOpSConvert;
 import uk.ac.manchester.spirvproto.lib.instructions.SPIRVOpSource;
 import uk.ac.manchester.spirvproto.lib.instructions.SPIRVOpStore;
+import uk.ac.manchester.spirvproto.lib.instructions.SPIRVOpTypeBool;
 import uk.ac.manchester.spirvproto.lib.instructions.SPIRVOpTypeFunction;
 import uk.ac.manchester.spirvproto.lib.instructions.SPIRVOpTypeInt;
 import uk.ac.manchester.spirvproto.lib.instructions.SPIRVOpTypePointer;
@@ -1113,11 +1117,208 @@ public class TestVector {
         writeModuleToFile(module,"/tmp/testSPIRV4.spv");
     }
 
+
+    /**
+     * <code>
+     *     __kernel void copyTestZero(__global int* arrayI)
+     * {
+     *
+     * 	if (arrayI[0] == 0) {
+     * 		arrayI[0] = 40;
+     *        } else {
+     * 		arrayI[0] = 40;
+     *    }
+     * }
+     *
+     * </code>
+     */
+    public static void testIfCondition() {
+
+        // SPIRV Header
+        SPIRVModule module = new SPIRVModule(
+                new SPIRVHeader(
+                        1,
+                        2,
+                        29,
+                        0,
+                        0));
+        SPIRVInstScope functionScope;
+        SPIRVInstScope blockScope;
+
+        module.add(new SPIRVOpCapability(SPIRVCapability.Addresses()));     // Uses physical addressing, non-logical addressing modes.
+        module.add(new SPIRVOpCapability(SPIRVCapability.Linkage()));       // Uses partially linked modules and libraries. (e.g., OpenCL)
+        module.add(new SPIRVOpCapability(SPIRVCapability.Kernel()));        // Uses the Kernel Execution Model.
+        module.add(new SPIRVOpCapability(SPIRVCapability.Int64()));
+
+        // Extension for Import "OpenCL.std"
+        SPIRVId idExtension = module.getNextId();
+        module.add(new SPIRVOpExtInstImport(idExtension, new SPIRVLiteralString("OpenCL.std")));
+
+        // OpenCL Version Set
+        module.add(new SPIRVOpSource(SPIRVSourceLanguage.OpenCL_C(), new SPIRVLiteralInteger(100000), new SPIRVOptionalOperand<>(), new SPIRVOptionalOperand<>()));
+
+        // Indicates a 64-bit module, where the address width is equal to 64 bits.
+        module.add(new SPIRVOpMemoryModel(SPIRVAddressingModel.Physical64(), SPIRVMemoryModel.OpenCL()));
+
+
+        SPIRVId arrayI = module.getNextId();
+        module.add(new SPIRVOpName(arrayI, new SPIRVLiteralString("arrayI")));
+
+        SPIRVId entry = module.getNextId();
+        module.add(new SPIRVOpName(entry, new SPIRVLiteralString("entry")));
+
+        SPIRVId ifThen = module.getNextId();
+        module.add(new SPIRVOpName(ifThen, new SPIRVLiteralString("ifThen")));
+
+        SPIRVId ifElse = module.getNextId();
+        module.add(new SPIRVOpName(ifElse, new SPIRVLiteralString("ifElse")));
+
+        SPIRVId ifEnd = module.getNextId();
+        module.add(new SPIRVOpName(ifEnd, new SPIRVLiteralString("ifEnd")));
+
+        SPIRVId aAddrName = module.getNextId();
+        module.add(new SPIRVOpName(aAddrName, new SPIRVLiteralString("a.addr")));
+
+        // Decorates
+        module.add(new SPIRVOpDecorate(aAddrName, SPIRVDecoration.Alignment(new SPIRVLiteralInteger(8))));
+
+        // Int 32
+        SPIRVId uint = module.getNextId();
+        module.add(new SPIRVOpTypeInt(uint, new SPIRVLiteralInteger(32), new SPIRVLiteralInteger(0)));
+
+        // Int 64
+        SPIRVId ulong = module.getNextId();
+        module.add(new SPIRVOpTypeInt(ulong, new SPIRVLiteralInteger(64), new SPIRVLiteralInteger(0)));
+
+        // OpConstants
+        // Type, result, value
+        SPIRVId constant0 = module.getNextId();
+        module.add(new SPIRVOpConstant(ulong, constant0, new SPIRVContextDependentLong(BigInteger.valueOf(0))));
+
+        SPIRVId constant0Int = module.getNextId();
+        module.add(new SPIRVOpConstant(uint, constant0Int, new SPIRVContextDependentInt(BigInteger.valueOf(0))));
+
+        SPIRVId constant40Int = module.getNextId();
+        module.add(new SPIRVOpConstant(uint, constant40Int, new SPIRVContextDependentInt(BigInteger.valueOf(40))));
+
+        SPIRVId constant50t = module.getNextId();
+        module.add(new SPIRVOpConstant(uint, constant50t, new SPIRVContextDependentInt(BigInteger.valueOf(50))));
+
+        SPIRVId boolType = module.getNextId();
+        module.add(new SPIRVOpTypeBool(boolType));
+
+        // Type Void
+        SPIRVId voidType = module.getNextId();
+        module.add(new SPIRVOpTypeVoid(voidType));
+
+        SPIRVId ptrCrossWorkGroupUInt = module.getNextId();
+        module.add(new SPIRVOpTypePointer(ptrCrossWorkGroupUInt, SPIRVStorageClass.CrossWorkgroup(), uint));
+
+        // Function declaration
+        SPIRVId mainFunctionPre = module.getNextId();
+        module.add(new SPIRVOpTypeFunction(mainFunctionPre, voidType, new SPIRVMultipleOperands<>(ptrCrossWorkGroupUInt)));
+
+        SPIRVId ptrFunctionPtrCrossWorkGroup = module.getNextId();
+        module.add(new SPIRVOpTypePointer(ptrFunctionPtrCrossWorkGroup, SPIRVStorageClass.Function(), uint));
+
+        SPIRVId functionTypePtr = module.getNextId();
+        module.add(new SPIRVOpTypePointer(functionTypePtr, SPIRVStorageClass.Function(), ptrCrossWorkGroupUInt));
+
+        SPIRVId functionDef = module.getNextId();
+        functionScope = module.add(new SPIRVOpFunction(voidType, functionDef, SPIRVFunctionControl.DontInline(), mainFunctionPre));
+        functionScope.add(new SPIRVOpFunctionParameter(functionTypePtr, arrayI));
+
+        // Entry point is define at the module level, not at the function level
+        module.add(new SPIRVOpEntryPoint(
+                SPIRVExecutionModel.Kernel(),
+                functionDef,
+                new SPIRVLiteralString("ifCheck"),
+                new SPIRVMultipleOperands<>()
+        ));
+
+        SPIRVOpLabel entryLabel = new SPIRVOpLabel(entry);
+        blockScope = functionScope.add(entryLabel);
+        blockScope.add(new SPIRVOpVariable(functionTypePtr, aAddrName, SPIRVStorageClass.Function(), new SPIRVOptionalOperand<>()));
+
+        blockScope.add(new SPIRVOpStore(aAddrName, arrayI, new SPIRVOptionalOperand<>(SPIRVMemoryAccess.Aligned(new SPIRVLiteralInteger(8)))));
+
+        SPIRVId load14 = module.getNextId();
+        blockScope.add(new SPIRVOpLoad(ptrCrossWorkGroupUInt, load14, aAddrName,  new SPIRVOptionalOperand<>(SPIRVMemoryAccess.Aligned(new SPIRVLiteralInteger(8)))));
+
+        SPIRVId ptridx = module.getNextId();
+        blockScope.add(new SPIRVOpInBoundsPtrAccessChain(
+                ptrCrossWorkGroupUInt,
+                ptridx,
+                load14,
+                constant0, new SPIRVMultipleOperands<>()
+        ));
+
+        SPIRVId load18 = module.getNextId();
+        blockScope.add(new SPIRVOpLoad(uint, load18, ptridx,  new SPIRVOptionalOperand<>(SPIRVMemoryAccess.Aligned(new SPIRVLiteralInteger(8)))));
+
+        SPIRVId cmp = module.getNextId();
+        blockScope.add(new SPIRVOpIEqual(boolType, cmp, load18, constant0));
+
+        SPIRVInstScope branchConditional = blockScope.add(new SPIRVOpBranchConditional(cmp, ifThen, ifElse, new SPIRVMultipleOperands<>()));
+
+        /////////////////////////////////
+        // IF THEN SCOPE
+        /////////////////////////////////
+        SPIRVInstScope branchScope = branchConditional.add(new SPIRVOpLabel(ifThen));
+        SPIRVId load22 = module.getNextId();
+        branchScope.add(new SPIRVOpLoad(functionTypePtr, load22, aAddrName, new SPIRVOptionalOperand<>(SPIRVMemoryAccess.Aligned(new SPIRVLiteralInteger(8)))));
+        SPIRVId ptridx1 = module.getNextId();
+        branchScope.add(new SPIRVOpInBoundsPtrAccessChain(
+                ptrCrossWorkGroupUInt,
+                ptridx1,
+                load22,
+                constant0, new SPIRVMultipleOperands<>()
+        ));
+        branchScope.add(new SPIRVOpStore(ptridx1, constant40Int, new SPIRVOptionalOperand<>(SPIRVMemoryAccess.Aligned(new SPIRVLiteralInteger(4)))));
+        SPIRVInstScope branch2 = branchScope.add(new SPIRVOpBranch(ifEnd));
+
+        /////////////////////////////////
+        // IF ELSE
+        SPIRVInstScope ifElseScope = branchConditional.add(new SPIRVOpLabel(ifElse));
+        SPIRVId load24 = module.getNextId();
+        ifElseScope.add(new SPIRVOpLoad(functionTypePtr, load24, aAddrName, new SPIRVOptionalOperand<>(SPIRVMemoryAccess.Aligned(new SPIRVLiteralInteger(8)))));
+        SPIRVId ptridx2 = module.getNextId();
+        ifElseScope.add(new SPIRVOpInBoundsPtrAccessChain(
+                ptrCrossWorkGroupUInt,
+                ptridx2,
+                load24,
+                constant50t, new SPIRVMultipleOperands<>()
+        ));
+        ifElseScope.add(new SPIRVOpStore(ptridx1, constant40Int, new SPIRVOptionalOperand<>(SPIRVMemoryAccess.Aligned(new SPIRVLiteralInteger(4)))));
+        ifElseScope.add(new SPIRVOpBranch(ifEnd));
+
+        /////////////////////////////////
+        // IF END
+        SPIRVInstScope ifEndScope = branchConditional.add(new SPIRVOpLabel(ifEnd));
+        ifEndScope.add(new SPIRVOpReturn());
+
+        functionScope.add(new SPIRVOpFunctionEnd());
+
+        writeModuleToFile(module,"/tmp/testSPIRV5.spv");
+    }
+
+    /**
+     * How to run it?
+     *
+     * <code>
+     *     java -cp lib/target/spirv-lib-1.0-SNAPSHOT.jar uk.ac.manchester.spirvproto.lib.tests.TestVector
+     * </code>
+     *
+     * @param args
+     * @throws InvalidSPIRVModuleException
+     */
     public static void main(String[] args) throws InvalidSPIRVModuleException {
         //testVectorInit();
         //testVectorCopy();
         //testVectorAdd();
-        testAssignWithLookUpBuffer();
+        //testAssignWithLookUpBuffer();
+
+        testIfCondition();
     }
 
 }
