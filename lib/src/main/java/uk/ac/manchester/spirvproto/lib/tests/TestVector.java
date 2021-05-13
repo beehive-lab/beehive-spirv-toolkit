@@ -1303,6 +1303,151 @@ public class TestVector {
     }
 
     /**
+     * <code>
+     * __kernel void copyTestZero(__global int* arrayI)
+     * {
+     *
+     * 	for (int i = 0; i < 10; i++) {
+     * 		arrayI[i] = 40;
+     *        }
+     * }
+     * </code>
+     */
+    public static void testCheckFor() {
+
+        // SPIRV Header
+        SPIRVModule module = new SPIRVModule(
+                new SPIRVHeader(
+                        1,
+                        2,
+                        29,
+                        0,
+                        0));
+        SPIRVInstScope functionScope;
+        SPIRVInstScope blockScope;
+
+        module.add(new SPIRVOpCapability(SPIRVCapability.Addresses()));     // Uses physical addressing, non-logical addressing modes.
+        module.add(new SPIRVOpCapability(SPIRVCapability.Linkage()));       // Uses partially linked modules and libraries. (e.g., OpenCL)
+        module.add(new SPIRVOpCapability(SPIRVCapability.Kernel()));        // Uses the Kernel Execution Model.
+        module.add(new SPIRVOpCapability(SPIRVCapability.Int64()));
+
+        // Extension for Import "OpenCL.std"
+        SPIRVId idExtension = module.getNextId();
+        module.add(new SPIRVOpExtInstImport(idExtension, new SPIRVLiteralString("OpenCL.std")));
+
+        // OpenCL Version Set
+        module.add(new SPIRVOpSource(SPIRVSourceLanguage.OpenCL_C(), new SPIRVLiteralInteger(100000), new SPIRVOptionalOperand<>(), new SPIRVOptionalOperand<>()));
+
+        // Indicates a 64-bit module, where the address width is equal to 64 bits.
+        module.add(new SPIRVOpMemoryModel(SPIRVAddressingModel.Physical64(), SPIRVMemoryModel.OpenCL()));
+
+
+        SPIRVId arrayI = module.getNextId();
+        module.add(new SPIRVOpName(arrayI, new SPIRVLiteralString("arrayI")));
+
+        SPIRVId entry = module.getNextId();
+        module.add(new SPIRVOpName(entry, new SPIRVLiteralString("entry")));
+
+        SPIRVId forCond = module.getNextId();
+        module.add(new SPIRVOpName(forCond, new SPIRVLiteralString("for.Cond")));
+
+        SPIRVId forBody = module.getNextId();
+        module.add(new SPIRVOpName(forBody, new SPIRVLiteralString("for.Body")));
+
+        SPIRVId forEnd = module.getNextId();
+        module.add(new SPIRVOpName(forEnd, new SPIRVLiteralString("forEnd")));
+
+        SPIRVId aAddrName = module.getNextId();
+        module.add(new SPIRVOpName(aAddrName, new SPIRVLiteralString("a.addr")));
+
+        // Decorates
+        module.add(new SPIRVOpDecorate(aAddrName, SPIRVDecoration.Alignment(new SPIRVLiteralInteger(8))));
+
+        // Int 32
+        SPIRVId uint = module.getNextId();
+        module.add(new SPIRVOpTypeInt(uint, new SPIRVLiteralInteger(32), new SPIRVLiteralInteger(0)));
+
+        // Int 64
+        SPIRVId ulong = module.getNextId();
+        module.add(new SPIRVOpTypeInt(ulong, new SPIRVLiteralInteger(64), new SPIRVLiteralInteger(0)));
+
+        // OpConstants
+        // Type, result, value
+        SPIRVId constant0 = module.getNextId();
+        module.add(new SPIRVOpConstant(ulong, constant0, new SPIRVContextDependentLong(BigInteger.valueOf(0))));
+
+        SPIRVId constant0Int = module.getNextId();
+        module.add(new SPIRVOpConstant(uint, constant0Int, new SPIRVContextDependentInt(BigInteger.valueOf(0))));
+
+        SPIRVId constant40Int = module.getNextId();
+        module.add(new SPIRVOpConstant(uint, constant40Int, new SPIRVContextDependentInt(BigInteger.valueOf(40))));
+
+        SPIRVId constant50t = module.getNextId();
+        module.add(new SPIRVOpConstant(uint, constant50t, new SPIRVContextDependentInt(BigInteger.valueOf(50))));
+
+        SPIRVId constant10Int = module.getNextId();
+        module.add(new SPIRVOpConstant(uint, constant10Int, new SPIRVContextDependentInt(BigInteger.valueOf(10))));
+
+        SPIRVId constant1 = module.getNextId();
+        module.add(new SPIRVOpConstant(uint, constant1, new SPIRVContextDependentInt(BigInteger.valueOf(1))));
+
+        SPIRVId boolType = module.getNextId();
+        module.add(new SPIRVOpTypeBool(boolType));
+
+        // Type Void
+        SPIRVId voidType = module.getNextId();
+        module.add(new SPIRVOpTypeVoid(voidType));
+
+        SPIRVId ptrCrossWorkGroupUInt = module.getNextId();
+        module.add(new SPIRVOpTypePointer(ptrCrossWorkGroupUInt, SPIRVStorageClass.CrossWorkgroup(), uint));
+
+        // Function declaration
+        SPIRVId mainFunctionPre = module.getNextId();
+        module.add(new SPIRVOpTypeFunction(mainFunctionPre, voidType, new SPIRVMultipleOperands<>(ptrCrossWorkGroupUInt)));
+
+        SPIRVId ptrFunctionPtrCrossWorkGroup = module.getNextId();
+        module.add(new SPIRVOpTypePointer(ptrFunctionPtrCrossWorkGroup, SPIRVStorageClass.Function(), uint));
+
+        SPIRVId ptrFunctionPtrCrossWorkGroupUInt = module.getNextId();
+        module.add(new SPIRVOpTypePointer(ptrFunctionPtrCrossWorkGroupUInt, SPIRVStorageClass.Function(), ptrCrossWorkGroupUInt));
+
+        SPIRVId ptrFunctionUInt = module.getNextId();
+        module.add(new SPIRVOpTypePointer(ptrFunctionUInt, SPIRVStorageClass.Function(), uint));
+
+        SPIRVId functionDef = module.getNextId();
+        functionScope = module.add(new SPIRVOpFunction(voidType, functionDef, SPIRVFunctionControl.DontInline(), mainFunctionPre));
+        functionScope.add(new SPIRVOpFunctionParameter(ptrFunctionPtrCrossWorkGroupUInt, arrayI));
+
+        // Entry point is define at the module level, not at the function level
+        module.add(new SPIRVOpEntryPoint(
+                SPIRVExecutionModel.Kernel(),
+                functionDef,
+                new SPIRVLiteralString("ifCheck"),
+                new SPIRVMultipleOperands<>()
+        ));
+
+        SPIRVOpLabel entryLabel = new SPIRVOpLabel(entry);
+        blockScope = functionScope.add(entryLabel);
+        blockScope.add(new SPIRVOpVariable(ptrFunctionPtrCrossWorkGroupUInt, aAddrName, SPIRVStorageClass.Function(), new SPIRVOptionalOperand<>()));
+        SPIRVId i = module.getNextId();
+        blockScope.add(new SPIRVOpVariable(ptrFunctionUInt,  i, SPIRVStorageClass.Function(), new SPIRVOptionalOperand<>()));
+
+        blockScope.add(new SPIRVOpStore(aAddrName, arrayI, new SPIRVOptionalOperand<>(SPIRVMemoryAccess.Aligned(new SPIRVLiteralInteger(8)))));
+
+        blockScope.add(new SPIRVOpStore(i, constant0, new SPIRVOptionalOperand<>(SPIRVMemoryAccess.Aligned(new SPIRVLiteralInteger(4)))));
+
+        SPIRVId load14 = module.getNextId();
+        blockScope.add(new SPIRVOpLoad(ptrCrossWorkGroupUInt, load14, aAddrName,  new SPIRVOptionalOperand<>(SPIRVMemoryAccess.Aligned(new SPIRVLiteralInteger(8)))));
+
+
+        blockScope.add(new SPIRVOpReturn());
+
+        functionScope.add(new SPIRVOpFunctionEnd());
+
+        writeModuleToFile(module,"/tmp/testSPIRV5.spv");
+    }
+
+    /**
      * How to run it?
      *
      * <code>
@@ -1318,7 +1463,8 @@ public class TestVector {
         //testVectorAdd();
         //testAssignWithLookUpBuffer();
 
-        testIfCondition();
+        //testIfCondition();
+        testCheckFor();
     }
 
 }
