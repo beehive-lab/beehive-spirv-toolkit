@@ -26,6 +26,7 @@ import uk.ac.manchester.spirvproto.lib.instructions.SPIRVOpMemoryModel;
 import uk.ac.manchester.spirvproto.lib.instructions.SPIRVOpName;
 import uk.ac.manchester.spirvproto.lib.instructions.SPIRVOpReturn;
 import uk.ac.manchester.spirvproto.lib.instructions.SPIRVOpSConvert;
+import uk.ac.manchester.spirvproto.lib.instructions.SPIRVOpSLessThan;
 import uk.ac.manchester.spirvproto.lib.instructions.SPIRVOpSource;
 import uk.ac.manchester.spirvproto.lib.instructions.SPIRVOpStore;
 import uk.ac.manchester.spirvproto.lib.instructions.SPIRVOpTypeBool;
@@ -1436,11 +1437,21 @@ public class TestVector {
 
         blockScope.add(new SPIRVOpStore(i, constant0, new SPIRVOptionalOperand<>(SPIRVMemoryAccess.Aligned(new SPIRVLiteralInteger(4)))));
 
-        SPIRVId load14 = module.getNextId();
-        blockScope.add(new SPIRVOpLoad(ptrCrossWorkGroupUInt, load14, aAddrName,  new SPIRVOptionalOperand<>(SPIRVMemoryAccess.Aligned(new SPIRVLiteralInteger(8)))));
+        SPIRVInstScope branchLoop = blockScope.add(new SPIRVOpBranch(forCond));
 
+        SPIRVInstScope forCondition = branchLoop.add(new SPIRVOpLabel(forCond));
 
-        blockScope.add(new SPIRVOpReturn());
+        SPIRVId load18 = module.getNextId();
+        forCondition.add(new SPIRVOpLoad(uint, load18, i,  new SPIRVOptionalOperand<>(SPIRVMemoryAccess.Aligned(new SPIRVLiteralInteger(4)))));
+        SPIRVId conditionLoop = module.getNextId();
+        forCondition.add(new SPIRVOpSLessThan(boolType, conditionLoop, load18, constant10Int));
+        SPIRVInstScope branchConditional = forCondition.add(new SPIRVOpBranchConditional(conditionLoop, forBody, forEnd, new SPIRVMultipleOperands<>()));
+
+        SPIRVInstScope forBodyScope = branchLoop.add(new SPIRVOpLabel(forBody));
+        forBodyScope.add(new SPIRVOpBranch(forCond));
+
+        SPIRVInstScope forBodyEnd = branchLoop.add(new SPIRVOpLabel(forEnd));
+        forBodyEnd.add(new SPIRVOpReturn());
 
         functionScope.add(new SPIRVOpFunctionEnd());
 
