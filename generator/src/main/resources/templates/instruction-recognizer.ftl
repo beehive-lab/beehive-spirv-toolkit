@@ -1,10 +1,10 @@
-package uk.ac.manchester.spirvproto.lib.assembler;
+package uk.ac.manchester.spirvbeehivetoolkit.lib.assembler;
 
 import java.util.HashSet;
 import java.util.Set;
 import javax.annotation.Generated;
 
-@Generated("beehive-lab.spirv-proto.generator")
+@Generated("beehive-lab.spirvbeehivetoolkit.generator")
 class SPIRVInstRecognizer {
     private final Set<String> instructions;
 

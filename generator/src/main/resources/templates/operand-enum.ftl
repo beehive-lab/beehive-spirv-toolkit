@@ -1,11 +1,11 @@
-package uk.ac.manchester.spirvproto.lib.instructions.operands;
+package uk.ac.manchester.spirvbeehivetoolkit.lib.instructions.operands;
 
 import javax.annotation.Generated;
 import java.util.List;
 import java.util.ArrayList;
 import java.nio.ByteBuffer;
 
-@Generated("beehive-lab.spirv-proto.generator")
+@Generated("beehive-lab.spirvbeehivetoolkit.generator")
 public class SPIRV${kind} extends SPIRVEnum {
 
     protected SPIRV${kind}(int value, String name, List<SPIRVOperand> parameters, SPIRVCapability... capabilities) {

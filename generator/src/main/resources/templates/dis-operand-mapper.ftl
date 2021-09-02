@@ -1,16 +1,16 @@
-package uk.ac.manchester.spirvproto.lib.disassembler;
+package uk.ac.manchester.spirvbeehivetoolkit.lib.disassembler;
 
-import uk.ac.manchester.spirvproto.lib.SPIRVInstScope;
-import uk.ac.manchester.spirvproto.lib.instructions.SPIRVInstruction;
-import uk.ac.manchester.spirvproto.lib.instructions.SPIRVOpTypeFloat;
-import uk.ac.manchester.spirvproto.lib.instructions.SPIRVOpTypeInt;
-import uk.ac.manchester.spirvproto.lib.instructions.operands.*;
+import uk.ac.manchester.spirvbeehivetoolkit.lib.SPIRVInstScope;
+import uk.ac.manchester.spirvbeehivetoolkit.lib.instructions.SPIRVInstruction;
+import uk.ac.manchester.spirvbeehivetoolkit.lib.instructions.SPIRVOpTypeFloat;
+import uk.ac.manchester.spirvbeehivetoolkit.lib.instructions.SPIRVOpTypeInt;
+import uk.ac.manchester.spirvbeehivetoolkit.lib.instructions.operands.*;
 
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
 import javax.annotation.Generated;
 
-@Generated("beehive-lab.spirv-proto.generator")
+@Generated("beehive-lab.spirvbeehivetoolkit.generator")
 public class SPIRVOperandMapper {
     public static SPIRVId mapId(SPIRVLine operands, SPIRVInstScope scope) {
         return scope.getOrAddId(operands.next());

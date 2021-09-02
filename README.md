@@ -1,4 +1,4 @@
-# SPIR-V Prototype
+# SPIR-V Beehive Toolkit
 
 This is a prototype written in Java to disassemble and assemble SPIR-V binary modules.
 More information on the format of SPIR-V can be found [here](docs/SPIRV.md).
@@ -14,8 +14,8 @@ Dependencies:
 Clone the repository:
 
 ```bash
-$ git clone https://github.com/beehive-lab/spirv-proto.git
-$ cd spirv-proto
+$ git clone https://github.com/beehive-lab/spirv-beehive-toolkit.git
+$ cd spirv-beehive-toolkit
 $ mvn clean package
 ```
 
@@ -39,9 +39,9 @@ This happens as part of the build controlled by the module's pom file. In order 
       </goals>
       <configuration>
         <skip>${maven.exec.skip}</skip>
-        <mainClass>uk.ac.manchester.spirvproto.generator.Runner</mainClass>
+        <mainClass>Runner</mainClass>
         <arguments>
-          <argument>${project.parent.basedir}/lib/src/main/java/uk/ac/manchester/spirvproto/lib</argument>
+          <argument>${project.parent.basedir}/lib/src/main/java/uk/ac/manchester/spirvbeehivetoolkit/lib</argument>
           <argument>${spirv.gen.majorversion}</argument>
           <argument>${spirv.gen.minorversion}</argument>
           <argument>${spirv.gen.magicnumber}</argument>
@@ -61,7 +61,7 @@ Maven will create a fat-jar, that includes both `lib` and `runner` in the dist d
 ## Usage
 
 ```bash
-spirv-proto [OPTIONS] <filepath>
+spirv-beehive-toolkit [OPTIONS] <filepath>
  -c,--no-color       Do not use coloured output
  -d,--debug          Print debug information
  -e,--no-header      Do not print the header
@@ -76,13 +76,13 @@ spirv-proto [OPTIONS] <filepath>
 To run the disassembler:
 
 ```bash
-$ ./spirv-proto examples/vector_add/vector_add.spv
+$ ./spirv-beehive-toolkit examples/vector_add/vector_add.spv
 ```
 
 Alternatively, you can run the dissablembler using the provided jar-file:
 
 ```bash
-$ java -jar dist/spirv-proto.jar examples/vector_add/vector_add.spv
+$ java -jar dist/spirv-beehive-toolkit.jar examples/vector_add/vector_add.spv
 ```
 ## Examples
 
@@ -143,7 +143,7 @@ $ ./vector_add.bin ./vector_add.spv
 
 This requires at least one device with a driver that supports OpenCL 2.1 or higher (Intel Graphics or the experimental Intel CPU driver) and an OpenCL ICD Loader that supports OpenCL 2.1 or higher. 
 
-The application tries to run the program on the first device of the last OCL Platform (check `clinfo` to see, which one that is). Your setup might be different and you might have to change that [here](https://github.com/beehive-lab/spirv-proto/blob/665a19e9527f2bf5121ecc23c19e17656bfbf0a2/examples/vector_add_il.c#L72)
+The application tries to run the program on the first device of the last OCL Platform (check `clinfo` to see, which one that is). Your setup might be different and you might have to change that [here](https://github.com/beehive-lab/spirv-beehive-toolkit/blob/665a19e9527f2bf5121ecc23c19e17656bfbf0a2/examples/vector_add_il.c#L72)
 
 In a lot of cases vendors include their own ICD Loader (libOpenCL.so) in their driver package, which means that an outdated ICD Loader might be in use on your system and you won't be able to run the example as `OPENCL_2_1 cannot be found`. 
 In this case you might have to install an updated icd-loader package or configure the ld path to load the updated one.
@@ -169,16 +169,15 @@ This has not been tested while developing this tools, however it *should* work a
 How to?
 
 ```bash
-java -jar dist/spirv-proto.jar -d test.spv -o test.spirvText
-java -jar dist/spirv-proto.jar -d  --tool asm -o out.spv test.spirvText
+java -jar dist/spirv-beehive-toolkit.jar -d test.spv -o test.spirvText
+java -jar dist/spirv-beehive-toolkit.jar -d  --tool asm -o out.spv test.spirvText
 ```
-
 
 
 ### Test Dissasembler
 
-
 ```bash 
-java -cp lib/target/spirv-lib-1.0-SNAPSHOT.jar uk.ac.manchester.spirvproto.lib.tests.TestRunnerAssembler
+java -cp lib/target/spirv-lib-1.0-SNAPSHOT.jar uk.ac.manchester.spirvbeehivetoolkit.lib.tests.TestRunnerAssembler
+spirv-dis /tmp/testSPIRV.spv
 ```
 

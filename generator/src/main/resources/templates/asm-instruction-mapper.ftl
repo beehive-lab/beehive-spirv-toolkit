@@ -1,14 +1,14 @@
-package uk.ac.manchester.spirvproto.lib.assembler;
+package uk.ac.manchester.spirvbeehivetoolkit.lib.assembler;
 
-import uk.ac.manchester.spirvproto.lib.SPIRVInstScope;
-import uk.ac.manchester.spirvproto.lib.instructions.*;
-import uk.ac.manchester.spirvproto.lib.instructions.operands.*;
+import uk.ac.manchester.spirvbeehivetoolkit.lib.SPIRVInstScope;
+import uk.ac.manchester.spirvbeehivetoolkit.lib.instructions.*;
+import uk.ac.manchester.spirvbeehivetoolkit.lib.instructions.operands.*;
 
 import java.util.Arrays;
 import java.util.Iterator;
 import javax.annotation.Generated;
 
-@Generated("beehive-lab.spirv-proto.generator")
+@Generated("beehive-lab.spirvbeehivetoolkit.generator")
 class SPIRVInstMapper {
     public static SPIRVInstruction createInst(SPIRVToken instruction, SPIRVToken[] tokens, SPIRVInstScope scope) {
         Iterator<SPIRVToken> tokenIterator = Arrays.stream(tokens).iterator();

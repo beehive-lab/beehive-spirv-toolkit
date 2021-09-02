@@ -1,8 +1,8 @@
-package uk.ac.manchester.spirvproto.lib;
+package uk.ac.manchester.spirvbeehivetoolkit.lib;
 
 import javax.annotation.Generated;
 
-@Generated("beehive-lab.spirv-proto.generator")
+@Generated("beehive-lab.spirvbeehivetoolkit.generator")
 public class SPIRVGeneratorConstants {
     public static int SPIRVMajorVersion = ${majorVersion};
     public static int SPIRVMinorVersion = ${minorVersion};

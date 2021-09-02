@@ -1,13 +1,13 @@
-package uk.ac.manchester.spirvproto.lib.instructions;
+package uk.ac.manchester.spirvbeehivetoolkit.lib.instructions;
 
-import uk.ac.manchester.spirvproto.lib.disassembler.SPIRVPrintingOptions;
-import uk.ac.manchester.spirvproto.lib.instructions.operands.*;
+import uk.ac.manchester.spirvbeehivetoolkit.lib.disassembler.SPIRVPrintingOptions;
+import uk.ac.manchester.spirvbeehivetoolkit.lib.instructions.operands.*;
 
 import javax.annotation.Generated;
 import java.io.PrintStream;
 import java.nio.ByteBuffer;
 
-@Generated("beehive-lab.spirv-proto.generator")
+@Generated("beehive-lab.spirvbeehivetoolkit.generator")
 public class SPIRV${name} extends ${superClass} {
     <#if operands??>
     <#list operands as operand>

@@ -1,12 +1,12 @@
-package uk.ac.manchester.spirvproto.lib.instructions.operands;
+package uk.ac.manchester.spirvbeehivetoolkit.lib.instructions.operands;
 
-import uk.ac.manchester.spirvproto.lib.disassembler.SPIRVPrintingOptions;
+import uk.ac.manchester.spirvbeehivetoolkit.lib.disassembler.SPIRVPrintingOptions;
 
 import javax.annotation.Generated;
 import java.io.PrintStream;
 import java.nio.ByteBuffer;
 
-@Generated("beehive-lab.spirv-proto.generator")
+@Generated("beehive-lab.spirvbeehivetoolkit.generator")
 public class SPIRV${kind} implements SPIRVOperand {
     <#list bases as base>
     private final SPIRV${base} member${base?counter};

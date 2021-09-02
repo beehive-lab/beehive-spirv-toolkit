@@ -1,4 +1,4 @@
-package uk.ac.manchester.spirvproto.lib.disassembler;
+package uk.ac.manchester.spirvbeehivetoolkit.lib.disassembler;
 
 import java.util.HashMap;
 import javax.annotation.Generated;
@@ -8,7 +8,7 @@ import javax.annotation.Generated;
  * This standard contains all of the functions provided by them and
  * a mapping between the function names and corresponding numbers.
  */
-@Generated("beehive-lab.spirv-proto.generator")
+@Generated("beehive-lab.spirvbeehivetoolkit.generator")
 public class SPIRVExtInstMapper {
     private static HashMap<Integer, String> extInstNameMap;
 
