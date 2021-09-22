@@ -9,4 +9,3 @@ dependency-reduced-pom.xml
 *.spv
 /examples/rodinia-test/asm/
 /examples/rodinia-test/proto/
-lib/*
