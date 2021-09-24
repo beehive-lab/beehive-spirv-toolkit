@@ -2,10 +2,8 @@ package uk.ac.manchester.spirvbeehivetoolkit.lib.instructions.operands;
 
 import uk.ac.manchester.spirvbeehivetoolkit.lib.disassembler.SPIRVPrintingOptions;
 
-import javax.annotation.Generated;
 import java.io.PrintStream;
 
-@Generated("beehive-lab.spirv-proto.generator")
 public class SPIRVLiteralExtInstInteger extends SPIRVLiteralInteger {
     private final String name;
 

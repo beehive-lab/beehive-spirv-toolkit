@@ -16,7 +16,7 @@ Clone the repository:
 ```bash
 $ git clone https://github.com/beehive-lab/spirv-beehive-toolkit.git
 $ cd spirv-beehive-toolkit
-$ mvn clean package
+$ mvn clean install
 ```
 
 #### Structure
