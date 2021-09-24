@@ -28,6 +28,7 @@ package uk.ac.manchester.spirvbeehivetoolkit.generator;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateExceptionHandler;
+import uk.ac.manchester.spirvbeehivetoolkit.GeneratorHelper;
 import uk.ac.manchester.spirvbeehivetoolkit.generator.grammar.SPIRVEnumerant;
 import uk.ac.manchester.spirvbeehivetoolkit.generator.grammar.SPIRVExternalImport;
 import uk.ac.manchester.spirvbeehivetoolkit.generator.grammar.SPIRVGrammar;
@@ -36,7 +37,6 @@ import uk.ac.manchester.spirvbeehivetoolkit.generator.grammar.SPIRVOperand;
 import uk.ac.manchester.spirvbeehivetoolkit.generator.grammar.SPIRVOperandKind;
 import uk.ac.manchester.spirvbeehivetoolkit.generator.grammar.SPIRVOperandParameter;
 import uk.ac.manchester.spirvbeehivetoolkit.generator.grammar.SPIRVSpecification;
-import uk.ac.manchester.spirvbeehivetoolkit.generator.grammar.*;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -59,7 +59,12 @@ public class Generator {
 
     public Generator(File path, Constants constants) throws Exception {
         Configuration cfg = new Configuration(Configuration.VERSION_2_3_29);
-        cfg.setClassForTemplateLoading(Generator.class, "/resources/templates");
+        int majorJavaVersion = GeneratorHelper.getMajorJavaVersion();
+        if (majorJavaVersion != 8) {
+            cfg.setClassForTemplateLoading(Generator.class, "/resources/templates/jdk11plus");
+        } else {
+            cfg.setClassForTemplateLoading(Generator.class, "/resources/templates/jdk8");
+        }
         cfg.setDefaultEncoding("UTF-8");
         cfg.setTemplateExceptionHandler(TemplateExceptionHandler.RETHROW_HANDLER);
         cfg.setLogTemplateExceptions(false);
@@ -99,7 +104,7 @@ public class Generator {
 
     private void ensureDirExists(File directory) throws IOException {
         if (!directory.exists()) {
-            if (!directory.mkdir()) throw new IOException("Could not create directory: " + directory);
+            if (!directory.mkdirs()) throw new IOException("Could not create directory: " + directory);
         }
         else if (!directory.isDirectory()) throw new IOException(directory + " is not a directory");
     }
