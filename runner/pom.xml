@@ -4,19 +4,18 @@
   <parent>
     <artifactId>spirv-beehive-toolkit</artifactId>
     <groupId>beehive-lab</groupId>
-    <version>1.0-SNAPSHOT</version>
+    <version>0.0.1</version>
   </parent>
 
-  <name>runner</name>
-  <artifactId>spirv-runner</artifactId>
-  <version>1.0-SNAPSHOT</version>
-
+  <name>spirv-beehive-runner</name>
+  <artifactId>spirv-beehive-runner</artifactId>
+  <version>0.0.1</version>
 
   <dependencies>
     <dependency>
       <groupId>beehive-lab</groupId>
-      <artifactId>spirv-lib</artifactId>
-      <version>1.0-SNAPSHOT</version>
+      <artifactId>spirv-beehive-lib</artifactId>
+      <version>0.0.1</version>
     </dependency>
 
     <dependency>

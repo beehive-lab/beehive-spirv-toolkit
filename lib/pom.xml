@@ -4,12 +4,12 @@
   <parent>
       <artifactId>spirv-beehive-toolkit</artifactId>
       <groupId>beehive-lab</groupId>
-      <version>1.0-SNAPSHOT</version>
+      <version>0.0.1</version>
     </parent>
 
-  <artifactId>spirv-lib</artifactId>
-  <name>lib</name>
-  <version>1.0-SNAPSHOT</version>
+  <name>spirv-beehive-lib</name>
+  <artifactId>spirv-beehive-lib</artifactId>
+  <version>0.0.1</version>
 
   <build>
     <plugins>
