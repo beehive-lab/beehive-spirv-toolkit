@@ -39,8 +39,9 @@ import java.util.Arrays;
 import java.util.NoSuchElementException;
 
 public class Disassembler implements SPIRVTool {
-    private final int littleEndianMagicNumber = 0x07230203;
-    private final int bigEndianMagicNumber = 0x03022307;
+
+    private static final int LITTLE_ENDIAN_MAGIC_NUMBER = 0x07230203;
+    private static final int BIG_ENDIAN_MAGIC_NUMBER = 0x03022307;
 
     private final BinaryWordStream wordStream;
     private final PrintStream output;
@@ -66,8 +67,8 @@ public class Disassembler implements SPIRVTool {
     @Override
     public void run() throws Exception {
         int magicNumber = wordStream.getNextWord();
-        if (magicNumber == littleEndianMagicNumber) wordStream.setEndianness(ByteOrder.LITTLE_ENDIAN);
-        else if (magicNumber == bigEndianMagicNumber) wordStream.setEndianness(ByteOrder.BIG_ENDIAN);
+        if (magicNumber == LITTLE_ENDIAN_MAGIC_NUMBER) wordStream.setEndianness(ByteOrder.LITTLE_ENDIAN);
+        else if (magicNumber == BIG_ENDIAN_MAGIC_NUMBER) wordStream.setEndianness(ByteOrder.BIG_ENDIAN);
         else throw new InvalidBinarySPIRVInputException(magicNumber);
 
         header = new SPIRVHeader(

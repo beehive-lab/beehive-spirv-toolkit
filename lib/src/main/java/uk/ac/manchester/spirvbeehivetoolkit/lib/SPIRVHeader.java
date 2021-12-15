@@ -50,7 +50,6 @@ public class SPIRVHeader {
 
     @Override
     public String toString() {
-
         return String.format("; MagicNumber: 0x%x\n", magicNumber) +
                 String.format("; Version: %d.%d\n", majorVersion, minorVersion) +
                 String.format("; Generator ID: %d\n", genMagicNumber >> 16) +
