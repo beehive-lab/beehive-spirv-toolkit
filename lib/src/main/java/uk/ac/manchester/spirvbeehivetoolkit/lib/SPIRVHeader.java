@@ -28,7 +28,7 @@ package uk.ac.manchester.spirvbeehivetoolkit.lib;
 import java.nio.ByteBuffer;
 
 public class SPIRVHeader {
-    public final int magicNumber = 0x7230203;
+    public static final int SPIRV_MAGIC_NUMBER = 0x7230203;
     public final int majorVersion;
     public final int minorVersion;
     public final int genMagicNumber;
@@ -50,16 +50,16 @@ public class SPIRVHeader {
 
     @Override
     public String toString() {
-        return String.format("; MagicNumber: 0x%x\n", magicNumber) +
+        return String.format("; MagicNumber: 0x%x\n", SPIRV_MAGIC_NUMBER) +
                 String.format("; Version: %d.%d\n", majorVersion, minorVersion) +
-                String.format("; Generator ID: %d\n", genMagicNumber >> 16) +
+                String.format("; Generator ID: %d\n", genMagicNumber) +
                 String.format("; Bound: %d\n", bound) +
                 String.format("; Schema: %d\n", schema);
     }
 
     public void write(ByteBuffer output) {
         int version = (minorVersion << 8) | (majorVersion << 16);
-        output.putInt(magicNumber)
+        output.putInt(SPIRV_MAGIC_NUMBER)
               .putInt(version)
               .putInt(genMagicNumber)
               .putInt(bound)
