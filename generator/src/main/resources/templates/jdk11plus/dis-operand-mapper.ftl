@@ -173,7 +173,7 @@ public class SPIRVOperandMapper {
 
 <#macro bitenum operand>
         int value = operands.next();
-        SPIRV${operand.kind} retVal = SPIRV${operand.kind}.None();
+        SPIRV${operand.kind} retVal = SPIRV${operand.kind}.Init();
         <#list operand.enumerants as enum>
         if ((value & ${enum.value}) != 0) {
             <#if enum.parameters ??><#list enum.parameters as param>

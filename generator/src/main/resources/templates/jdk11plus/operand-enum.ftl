@@ -62,6 +62,12 @@ public class SPIRV${kind} extends SPIRVEnum {
     }
     </#if>
 
+    // We need to provide a default one only for initialization.
+    public static SPIRV${kind} Init() {
+        List<SPIRVOperand> params = new ArrayList<>(0);
+        return new SPIRV${kind}(0x0000, "Default", params);
+    }
+
     <#list enumerants as enum>
     public static SPIRV${kind} ${enum.name}(<#if enum.parameters??><#list enum.parameters as param>SPIRV${param.kind} ${param.name}<#sep>, </#sep></#list></#if>) {
         List<SPIRVOperand> params = new ArrayList<>(<#if enum.parameters??>${enum.parameters?size}<#else>0</#if>);
