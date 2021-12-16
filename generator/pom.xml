@@ -14,7 +14,7 @@
   <properties>
     <spirv.gen.majorversion>1</spirv.gen.majorversion>
     <spirv.gen.minorversion>2</spirv.gen.minorversion>
-    <spirv.gen.magicnumber>0x180000</spirv.gen.magicnumber>
+    <spirv.gen.magicnumber>0x020000</spirv.gen.magicnumber>
   </properties>
 
   <profiles>
