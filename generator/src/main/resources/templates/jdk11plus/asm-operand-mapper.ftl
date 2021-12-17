@@ -96,7 +96,7 @@ class SPIRVOperandMapper {
         }
         <#elseif operand.category == "BitEnum">
         String[] values = tokens.next().value.split("\\|");
-        SPIRV${operand.kind} retVal = SPIRV${operand.kind}.Init();
+        SPIRV${operand.kind} retVal = SPIRV${operand.kind}.None();
         for (String value : values) {
             switch (value) {
                 <#list operand.enumerants as enum>
