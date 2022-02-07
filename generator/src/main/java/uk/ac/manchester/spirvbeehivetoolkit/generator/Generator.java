@@ -46,9 +46,9 @@ import java.util.*;
 
 public class Generator {
     private final Configuration config;
-    private final SPIRVGrammar grammar;
+    private final SPIRVGrammar spirvGrammar;
     private final Constants constants;
-    private final SPIRVExternalImport openclImport;
+    private final SPIRVExternalImport openclImportGrammar;
     private final File operandsDir;
     private final File instructionsDir;
     private final File asmMapperDir;
@@ -74,8 +74,8 @@ public class Generator {
 
         this.constants = constants;
 
-        grammar = SPIRVSpecification.buildSPIRVGrammar(constants.majorVersion, constants.minorVersion);
-        openclImport = SPIRVExternalImport.importExternal("opencl.std");
+        spirvGrammar = SPIRVSpecification.buildSPIRVGrammar(constants.majorVersion, constants.minorVersion);
+        openclImportGrammar = SPIRVExternalImport.importExternal("opencl.std");
 
         rootDir = path;
         ensureDirExists(rootDir);
@@ -111,7 +111,7 @@ public class Generator {
 
     public void generate() throws Exception {
         cleanUpOperands();
-        cleanUpInstructions(grammar.getInstructions());
+        cleanUpInstructions(spirvGrammar.getInstructions());
 
         generateOperandClasses();
         generateInstructionClasses();
@@ -136,7 +136,7 @@ public class Generator {
     private void generateDisExtInstMapper() throws Exception {
         Template mapperTemplate = config.getTemplate("dis-extinst-mapper.ftl");
         Writer out = createWriter("ExtInstMapper", disMapperDir);
-        mapperTemplate.process(openclImport, out);
+        mapperTemplate.process(openclImportGrammar, out);
         out.flush();
         out.close();
     }
@@ -144,7 +144,7 @@ public class Generator {
     private void generateDisOperandMapper() throws Exception {
         Template mapperTemplate = config.getTemplate("dis-operand-mapper.ftl");
         Writer out = createWriter("OperandMapper", disMapperDir);
-        mapperTemplate.process(grammar, out);
+        mapperTemplate.process(spirvGrammar, out);
         out.flush();
         out.close();
     }
@@ -152,7 +152,7 @@ public class Generator {
     private void generateDisInstructionMapper() throws Exception {
         Template mapperTemplate = config.getTemplate("dis-instruction-mapper.ftl");
         Writer out = createWriter("InstMapper", disMapperDir);
-        mapperTemplate.process(grammar, out);
+        mapperTemplate.process(spirvGrammar, out);
         out.flush();
         out.close();
     }
@@ -160,7 +160,7 @@ public class Generator {
     private void generateInstRecognizer() throws Exception {
         Template recognizerTemplate = config.getTemplate("instruction-recognizer.ftl");
         Writer out = createWriter("InstRecognizer", asmMapperDir);
-        recognizerTemplate.process(grammar, out);
+        recognizerTemplate.process(spirvGrammar, out);
         out.flush();
         out.close();
     }
@@ -168,7 +168,7 @@ public class Generator {
     private void generateAsmExtInstMapper() throws Exception {
         Template mapperTemplate = config.getTemplate("asm-extinst-mapper.ftl");
         Writer out = createWriter("ExtInstMapper", asmMapperDir);
-        mapperTemplate.process(openclImport, out);
+        mapperTemplate.process(openclImportGrammar, out);
         out.flush();
         out.close();
     }
@@ -176,7 +176,7 @@ public class Generator {
     private void generateAsmOperandMapper() throws Exception {
         Template mapperTemplate = config.getTemplate("asm-operand-mapper.ftl");
         Writer out = createWriter("OperandMapper", asmMapperDir);
-        mapperTemplate.process(grammar, out);
+        mapperTemplate.process(spirvGrammar, out);
         out.flush();
         out.close();
     }
@@ -184,7 +184,7 @@ public class Generator {
     private void generateAsmInstructionMapper() throws Exception {
         Template mapperTemplate = config.getTemplate("asm-instruction-mapper.ftl");
         Writer out = createWriter("InstMapper", asmMapperDir);
-        mapperTemplate.process(grammar, out);
+        mapperTemplate.process(spirvGrammar, out);
         out.flush();
         out.close();
     }
@@ -192,7 +192,7 @@ public class Generator {
     private void generateInstructionClasses() throws Exception {
         Writer out;
         Template instructionTemplate = config.getTemplate("instruction.ftl");
-        for (SPIRVInstruction instruction : grammar.getInstructions()) {
+        for (SPIRVInstruction instruction : spirvGrammar.getInstructions()) {
             out = createWriter(instruction.name, instructionsDir);
 
             instructionTemplate.process(instruction, out);
@@ -208,13 +208,16 @@ public class Generator {
         Template compositeOperand = config.getTemplate("operand-composite.ftl");
         Template literalOperand = config.getTemplate("operand-literal.ftl");
 
-        for (SPIRVOperandKind operandKind : grammar.getOperandKinds()) {
+        for (SPIRVOperandKind operandKind : spirvGrammar.getOperandKinds()) {
 
             out = createWriter(operandKind.kind, operandsDir);
 
             Template templateToUse = enumOperand;
-            if (operandKind.category.equals("Composite")) templateToUse = compositeOperand;
-            else if (operandKind.category.equals("Literal")) templateToUse = literalOperand;
+            if (operandKind.category.equals("Composite")) {
+                templateToUse = compositeOperand;
+            } else if (operandKind.category.equals("Literal")) {
+                templateToUse = literalOperand;
+            }
 
             templateToUse.process(operandKind, out);
             out.flush();
@@ -254,7 +257,7 @@ public class Generator {
     }
 
     private void cleanUpOperands() {
-        for (SPIRVOperandKind kind : grammar.operandKinds) {
+        for (SPIRVOperandKind kind : spirvGrammar.operandKinds) {
             if (kind.bases != null) {
                 for (int i = 0; i < kind.bases.length; i++) {
                     if (kind.bases[i].startsWith("Id")) kind.bases[i] = "Id";
@@ -280,8 +283,8 @@ public class Generator {
             else if (kind.kind.startsWith("Id")) kind.kind = "Id";
         }
 
-        grammar.operandKinds = Arrays
-                .stream(grammar.operandKinds)
+        spirvGrammar.operandKinds = Arrays
+                .stream(spirvGrammar.operandKinds)
                 .filter(o -> !ignoredOperandKinds.contains(o.kind))
                 .toArray(SPIRVOperandKind[]::new);
     }
