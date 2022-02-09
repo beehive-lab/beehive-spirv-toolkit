@@ -25,14 +25,19 @@ int get_platform_with_2_1(cl_platform_id *ids, int num_platforms) {
 				puts("ERROR: clGetPlatformInfo failed"); return -1;
 		}
 		if (strlen(version) >= 10 && (strncmp(version, "OpenCL 3.0", 10) == 0)) {
-			return i;
-			//deviceNumber = i;
+			//return i;
+			deviceNumber = i;
 		}
 	}
 	return deviceNumber;
 }
 
 int main( int argc, char** argv) {
+
+    if (argc != 2) {
+        std::cout << "Profile the SPIRV binary as the first argument\n";
+        return -1;
+    }
 
 	FILE *f = fopen(argv[1], "rb");
 	fseek(f, 0, SEEK_END);
@@ -75,11 +80,9 @@ int main( int argc, char** argv) {
     h_c = (double*)malloc(bytes);
  
     // Initialize vectors on host
-    int i;
-    for( i = 0; i < n; i++ )
-    {
-        h_a[i] = sinf(i)*sinf(i);
-        h_b[i] = cosf(i)*cosf(i);
+    for(int i = 0; i < n; i++ ) {
+        h_a[i] = sinf(i) * sinf(i);
+        h_b[i] = cosf(i) * cosf(i);
     }
  
     size_t globalSize, localSize;
@@ -176,8 +179,9 @@ int main( int argc, char** argv) {
  
     //Sum up vector c and print result divided by n, this should equal 1 within error
     double sum = 0;
-    for(i=0; i<n; i++)
+    for(int i=0; i < n; i++) {
         sum += h_c[i];
+    }   
     printf("final result: %f\n", sum/n);
  
     // release OpenCL resources
