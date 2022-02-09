@@ -155,10 +155,8 @@ int main( int argc, char** argv) {
     d_c = clCreateBuffer(context, CL_MEM_WRITE_ONLY, bytes, NULL, NULL);
  
     // Write our data set into the input array in device memory
-    err = clEnqueueWriteBuffer(queue, d_a, CL_TRUE, 0,
-                                   bytes, h_a, 0, NULL, NULL);
-    err |= clEnqueueWriteBuffer(queue, d_b, CL_TRUE, 0,
-                                   bytes, h_b, 0, NULL, NULL);
+    err = clEnqueueWriteBuffer(queue, d_a, CL_TRUE, 0, bytes, h_a, 0, NULL, NULL);
+    err |= clEnqueueWriteBuffer(queue, d_b, CL_TRUE, 0, bytes, h_b, 0, NULL, NULL);
  
     // Set the arguments to our compute kernel
     err  = clSetKernelArg(kernel, 0, sizeof(cl_mem), &d_a);
@@ -167,21 +165,17 @@ int main( int argc, char** argv) {
     err |= clSetKernelArg(kernel, 3, sizeof(unsigned int), &n);
  
     // Execute the kernel over the entire range of the data set 
-    err = clEnqueueNDRangeKernel(queue, kernel, 1, NULL, &globalSize, &localSize,
-                                                              0, NULL, NULL);
- 
-    // Wait for the command queue to get serviced before reading back results
-    clFinish(queue);
+    err = clEnqueueNDRangeKernel(queue, kernel, 1, NULL, &globalSize, &localSize, 0, NULL, NULL);
  
     // Read the results from the device
-    clEnqueueReadBuffer(queue, d_c, CL_TRUE, 0,
-                                bytes, h_c, 0, NULL, NULL );
+    clEnqueueReadBuffer(queue, d_c, CL_TRUE, 0, bytes, h_c, 0, NULL, NULL );
  
     //Sum up vector c and print result divided by n, this should equal 1 within error
     double sum = 0;
     for(int i=0; i < n; i++) {
         sum += h_c[i];
     }   
+ 
     printf("final result: %f\n", sum/n);
  
     // release OpenCL resources
