@@ -30,11 +30,14 @@ import uk.ac.manchester.spirvbeehivetoolkit.lib.SPIRVHeader;
 import uk.ac.manchester.spirvbeehivetoolkit.lib.SPIRVInstScope;
 import uk.ac.manchester.spirvbeehivetoolkit.lib.SPIRVModule;
 import uk.ac.manchester.spirvbeehivetoolkit.lib.SPIRVTool;
-import uk.ac.manchester.spirvbeehivetoolkit.lib.*;
 import uk.ac.manchester.spirvbeehivetoolkit.lib.instructions.SPIRVInstruction;
 import uk.ac.manchester.spirvbeehivetoolkit.lib.instructions.SPIRVOpExtInstImport;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.Reader;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.channels.FileChannel;

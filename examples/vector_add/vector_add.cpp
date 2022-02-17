@@ -175,7 +175,6 @@ int main( int argc, char** argv) {
     for(int i=0; i < n; i++) {
         sum += h_c[i];
     }   
- 
     printf("final result: %f\n", sum/n);
  
     // release OpenCL resources

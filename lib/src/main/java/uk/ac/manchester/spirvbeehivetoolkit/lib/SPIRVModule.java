@@ -93,6 +93,7 @@ public class SPIRVModule implements SPIRVInstScope {
         idToInstMap = new HashMap<>();
     }
 
+    @Override
     public SPIRVInstScope add(SPIRVInstruction instruction) {
         ensureCapabilitiesPresent(instruction);
 
@@ -172,6 +173,7 @@ public class SPIRVModule implements SPIRVInstScope {
         return idGen.getNextId();
     }
 
+    @Override
     public SPIRVId getOrCreateId(String name) {
         return idGen.getOrCreateId(name);
     }
