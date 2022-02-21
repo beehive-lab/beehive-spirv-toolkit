@@ -21,7 +21,8 @@ $ mvn clean install
 ```
 
 #### Structure of this Repository
-There are 3 modules: `generator`, `lib`, `runner`.
+
+There are 3 Java modules: `generator`, `lib`, `runner`.
 
 The `generator` module is a standalone program that reads the included SPIR-V grammar files and writes classes needed by `lib` to the specified output directory.
 
@@ -59,7 +60,10 @@ The `runner` module is the "front-end" for the `lib` module. It only handles CLI
 
 Maven will create a fat-jar, that includes both `lib` and `runner` in the dist directory.
 
+
 ## Usage
+
+The running is a client application to be used from the the command line that allows developers to assembly SPIRV written in a text format into a SPIRV binary module, and dissasemble SPIRV modules into a text format. The application can be used as follows:
 
 ```bash
 spirv-beehive-toolkit [OPTIONS] <filepath>
