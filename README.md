@@ -1,15 +1,16 @@
 # SPIR-V Beehive Toolkit
 
 This is a prototype written in Java to disassemble and assemble SPIR-V binary modules.
+It provides a Java programming framework to allow client Java applications to assemble binary modules and dissasemble binary modules into text.
 More information on the format of SPIR-V can be found [here](docs/SPIRV.md).
 To see an example kernel in SPIR-V go [here](docs/EXAMPLE.md).
 
-## Build
+## How to Build?
 
 Dependencies:
 
-- Java (JDK 8)
-- Maven (>= 3.6.3)
+- Java JDK 11. It also supports JDK 8 but this branch will be deprecated soon. We highly recoomand JDK >= 11. 
+- Maven (>= 3.6.3) 
 
 Clone the repository:
 
@@ -19,7 +20,7 @@ $ cd spirv-beehive-toolkit
 $ mvn clean install
 ```
 
-#### Structure
+#### Structure of this Repository
 There are 3 modules: `generator`, `lib`, `runner`.
 
 The `generator` module is a standalone program that reads the included SPIR-V grammar files and writes classes needed by `lib` to the specified output directory.
