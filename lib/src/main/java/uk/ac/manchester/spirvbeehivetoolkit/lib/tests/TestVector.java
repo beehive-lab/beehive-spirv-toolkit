@@ -1474,8 +1474,8 @@ public class TestVector {
         //testVectorAdd();
         //testAssignWithLookUpBuffer();
 
-        //testIfCondition();
-        testCheckFor();
+        testIfCondition();
+        //testCheckFor();
     }
 
 }

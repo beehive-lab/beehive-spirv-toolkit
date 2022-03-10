@@ -2,6 +2,13 @@
 
 This file summarizes the new features and major changes for each *SPIRV-Beehive-Tookit* version.
 
+## SPIRV-Beehive-Toolkit 0.0.2
+10/03/2022
+
+ - Documentation improved
+ - Templates fixed
+ - Missing license headers applied
+ 
 
 ## SPIRV-Beehive-Toolkit 0.0.1 
 17/12/2021
