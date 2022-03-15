@@ -1,9 +1,6 @@
 # SPIR-V Beehive Toolkit
 
-This is a prototype written in Java to disassemble and assemble SPIR-V binary modules.
-It provides a Java programming framework to allow client Java applications to assemble binary modules and dissasemble binary modules into text.
-More information on the format of SPIR-V can be found [here](docs/SPIRV.md).
-To see an example kernel in SPIR-V go [here](docs/EXAMPLE.md).
+This is a prototype written in Java to disassemble and assemble SPIR-V binary modules. It provides a Java programming framework to allow client Java applications to assemble binary modules and dissasemble binary modules into text. More information on the format of SPIR-V can be found [here](docs/SPIRV.md). To see an example kernel in SPIR-V go [here](docs/EXAMPLE.md).
 
 ## How to Build?
 
@@ -19,47 +16,6 @@ $ git clone https://github.com/beehive-lab/spirv-beehive-toolkit.git
 $ cd spirv-beehive-toolkit
 $ mvn clean install
 ```
-
-#### Structure of this Repository
-
-There are 3 Java modules: `generator`, `lib`, `runner`.
-
-The `generator` module is a standalone program that reads the included SPIR-V grammar files and writes classes needed by `lib` to the specified output directory.
-
-This happens as part of the build controlled by the module's pom file. In order to change any of the behaviour the following snippet needs to be changed:
-
-```xml
-<plugin>
-  <groupId>org.codehaus.mojo</groupId>
-  <artifactId>exec-maven-plugin</artifactId>
-  <version>1.6.0</version>
-  <executions>
-    <execution>
-      <phase>package</phase>
-      <goals>
-        <goal>java</goal>
-      </goals>
-      <configuration>
-        <skip>${maven.exec.skip}</skip>
-        <mainClass>Runner</mainClass>
-        <arguments>
-          <argument>${project.parent.basedir}/lib/src/main/java/uk/ac/manchester/spirvbeehivetoolkit/lib</argument>
-          <argument>${spirv.gen.majorversion}</argument>
-          <argument>${spirv.gen.minorversion}</argument>
-          <argument>${spirv.gen.magicnumber}</argument>
-        </arguments>
-      </configuration>
-    </execution>
-  </executions>
-</plugin>
-```
-
-The `lib` module holds all of the SPIR-V related logic and code. It is able to assemble and disassemble SPIR-V files.
-
-The `runner` module is the "front-end" for the `lib` module. It only handles CLI argument parsing, calling the selected tool and error reporting.
-
-Maven will create a fat-jar, that includes both `lib` and `runner` in the dist directory.
-
 
 ## Usage
 
@@ -89,6 +45,30 @@ Alternatively, you can run the dissablembler using the provided jar-file:
 ```bash
 $ java -jar dist/spirv-beehive-toolkit.jar examples/vector_add/vector_add.spv
 ```
+
+## Dissasembler and Assembler 
+
+How to?
+
+```bash
+# SPIR-V Binary -> Text SPIR-V 
+$ java -jar dist/spirv-beehive-toolkit.jar -d test.spv -o test.spirvText
+
+# Text SPIR-V -> SPIR-V Binary
+$ java -jar dist/spirv-beehive-toolkit.jar -d  --tool asm -o out.spv test.spirvText
+```
+
+
+### Testing the dissasembler with SPIRV-DIS 
+
+```bash 
+$ java -cp lib/target/spirv-lib-1.0-SNAPSHOT.jar uk.ac.manchester.spirvbeehivetoolkit.lib.tests.TestRunnerAssembler
+$ spirv-dis /tmp/testSPIRV.spv
+
+## Validate spir-v
+$ spirv-val /tmp/testSPIRV.spv
+```
+
 ## Examples
 
 There are some examples included:
@@ -99,7 +79,8 @@ There are some examples included:
 All of these can be found in the `examples` directory. 
 In order to run any of the examples at least one OpenCL 2.1 or higher platform is needed (e.g. Intel iGPU).
 
-### Creating SPIR-V modules for testing
+
+#### Creating SPIR-V modules for testing
 
 To try the tool with different kernels either a binary SPIR-V module is needed or one that was hand written in the assembly language of SPIR-V.
 Since the assembly language is not very human friendly it is recommended that anything worth testing is first written in OpenCL C and then compiled to SPIR-V.
@@ -154,7 +135,50 @@ In a lot of cases vendors include their own ICD Loader (libOpenCL.so) in their d
 In this case you might have to install an updated icd-loader package or configure the ld path to load the updated one.
 To see more information on this visit the [ArchWiki page](https://wiki.archlinux.org/index.php/GPGPU)
 
-### Driver support
+
+## Structure of this Repository
+
+There are 3 Java modules: `generator`, `lib`, `runner`.
+
+The `generator` module is a standalone program that reads the included SPIR-V grammar files and writes classes needed by `lib` to the specified output directory.
+
+This happens as part of the build controlled by the module's pom file. In order to change any of the behaviour the following snippet needs to be changed:
+
+```xml
+<plugin>
+  <groupId>org.codehaus.mojo</groupId>
+  <artifactId>exec-maven-plugin</artifactId>
+  <version>1.6.0</version>
+  <executions>
+    <execution>
+      <phase>package</phase>
+      <goals>
+        <goal>java</goal>
+      </goals>
+      <configuration>
+        <skip>${maven.exec.skip}</skip>
+        <mainClass>Runner</mainClass>
+        <arguments>
+          <argument>${project.parent.basedir}/lib/src/main/java/uk/ac/manchester/spirvbeehivetoolkit/lib</argument>
+          <argument>${spirv.gen.majorversion}</argument>
+          <argument>${spirv.gen.minorversion}</argument>
+          <argument>${spirv.gen.magicnumber}</argument>
+        </arguments>
+      </configuration>
+    </execution>
+  </executions>
+</plugin>
+```
+
+The `lib` module holds all of the SPIR-V related logic and code. It is able to assemble and disassemble SPIR-V files.
+
+The `runner` module is the "front-end" for the `lib` module. It only handles CLI argument parsing, calling the selected tool and error reporting.
+
+Maven will create a fat-jar, that includes both `lib` and `runner` in the dist directory.
+
+
+
+## Driver support
 
 Unfortunately driver support for SPIR-V is lacking. 
 I have found that Intel is supporting OpenCL 2.1 on their iGPU and CPU devices.
@@ -169,20 +193,12 @@ It can be installed from [here](https://software.intel.com/content/www/us/en/dev
 This has not been tested while developing this tools, however it *should* work as expected.
 
 
-## Dissasembler 
+## License
 
-How to?
-
-```bash
-java -jar dist/spirv-beehive-toolkit.jar -d test.spv -o test.spirvText
-java -jar dist/spirv-beehive-toolkit.jar -d  --tool asm -o out.spv test.spirvText
-```
+This project is developed at [The University of Manchester](https://www.manchester.ac.uk/), and it is fully open source under the [MIT](https://github.com/beehive-lab/spirv-beehive-toolkit/blob/master/LICENSE) license.
 
 
-### Test Dissasembler
+## Acknowledgments
 
-```bash 
-java -cp lib/target/spirv-lib-1.0-SNAPSHOT.jar uk.ac.manchester.spirvbeehivetoolkit.lib.tests.TestRunnerAssembler
-spirv-dis /tmp/testSPIRV.spv
-```
+The work was partially funded by the EU Horizon 2020 [Elegant 957286](https://www.elegant-h2020.eu/) project, and Intel Coorporation (https://www.intel.it/content/www/it/it/homepage.html).
 
