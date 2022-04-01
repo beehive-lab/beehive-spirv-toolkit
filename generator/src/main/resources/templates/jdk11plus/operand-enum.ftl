@@ -63,7 +63,7 @@ public class SPIRV${kind} extends SPIRVEnum {
     </#if>
 
     <#list enumerants as enum>
-    public static SPIRV${kind} ${enum.name}(<#if enum.parameters??><#list enum.parameters as param>SPIRV${param.kind} ${param.name}<#sep>, </#sep></#list></#if>) {
+    public static SPIRV${kind} <#if enum.name?matches("\\d+\\w+") == true>_</#if>${enum.name}(<#if enum.parameters??><#list enum.parameters as param>SPIRV${param.kind} ${param.name}<#sep>, </#sep></#list></#if>) {
         List<SPIRVOperand> params = new ArrayList<>(<#if enum.parameters??>${enum.parameters?size}<#else>0</#if>);
         <#if enum.parameters??><#list enum.parameters as param>
         params.add(${param.name});

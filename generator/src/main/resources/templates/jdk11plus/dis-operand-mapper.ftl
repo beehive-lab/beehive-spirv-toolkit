@@ -164,7 +164,7 @@ public class SPIRVOperandMapper {
                 </#list>
 
                 </#if>
-                return SPIRV${operand.kind}.${enum.name}(<#if enum.parameters ??><#list enum.parameters as param>operand${param?counter}<#sep>, </#sep></#list></#if>);
+                return SPIRV${operand.kind}.<#if enum.name?matches("\\d+\\w+") == true>_</#if>${enum.name}(<#if enum.parameters ??><#list enum.parameters as param>operand${param?counter}<#sep>, </#sep></#list></#if>);
             }
             </#list>
             default: throw new InvalidSPIRVEnumerantException("${operand.kind}", Integer.toString(value));
@@ -179,7 +179,7 @@ public class SPIRVOperandMapper {
             <#if enum.parameters ??><#list enum.parameters as param>
             SPIRV${param.kind} operand${param?counter} = map${param.kind}(operands, scope);
             </#list></#if>
-            retVal.add(SPIRV${operand.kind}.${enum.name}(<#if enum.parameters ??><#list enum.parameters as param>operand${param?counter}<#sep>, </#sep></#list></#if>));
+            retVal.add(SPIRV${operand.kind}.<#if enum.name?matches("\\d+\\w+") == true>_</#if>${enum.name}(<#if enum.parameters ??><#list enum.parameters as param>operand${param?counter}<#sep>, </#sep></#list></#if>));
         }
         </#list>
         return retVal;
