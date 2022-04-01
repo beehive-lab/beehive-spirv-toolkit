@@ -46,7 +46,6 @@ public class SPIRVInstMapper {
             case ${instruction.opCode?string.computer}: instruction = create${instruction.name}(line, scope); break;
 </#if>
 </#list>
-
             default: throw new InvalidSPIRVOpcodeException(opCode);
         }
 

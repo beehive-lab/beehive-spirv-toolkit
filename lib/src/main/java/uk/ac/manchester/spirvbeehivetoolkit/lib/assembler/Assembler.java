@@ -68,7 +68,7 @@ public class Assembler implements SPIRVTool {
     public SPIRVModule assemble() {
         SPIRVModule module = new SPIRVModule(new SPIRVHeader(
                 1,
-                2,
+                6,
                 32,
                 0,
                 0
