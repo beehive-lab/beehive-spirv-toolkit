@@ -157,7 +157,10 @@ public class SPIRVOperandMapper {
 <#macro valueenum operand>
         int value = operands.next();
         switch (value) {
-            <#list operand.enumerants as enum>
+             <#assign newList = [] />
+             <#list operand.enumerants as enum>
+               <#if ! newList?seq_contains(enum.value)>
+                 <#assign newList = newList + [enum.value] />
             case ${enum.value}: {
                 <#if enum.parameters ??><#list enum.parameters as param>
                 SPIRV${param.kind} operand${param?counter} = map${param.kind}(operands, scope);
@@ -166,6 +169,7 @@ public class SPIRVOperandMapper {
                 </#if>
                 return SPIRV${operand.kind}.<#if enum.name?matches("\\d+\\w+") == true>_</#if>${enum.name}(<#if enum.parameters ??><#list enum.parameters as param>operand${param?counter}<#sep>, </#sep></#list></#if>);
             }
+            </#if>
             </#list>
             default: throw new InvalidSPIRVEnumerantException("${operand.kind}", Integer.toString(value));
         }
@@ -173,13 +177,21 @@ public class SPIRVOperandMapper {
 
 <#macro bitenum operand>
         int value = operands.next();
+
+    <#if operand.kind?matches("RayFlags") == true>
+        SPIRV${operand.kind} retVal = SPIRV${operand.kind}.NoneKHR();
+    <#elseif operand.kind?matches("FragmentShadingRate") == true>
+        SPIRV${operand.kind} retVal = SPIRV${operand.kind}.Vertical2Pixels();
+    <#else>
         SPIRV${operand.kind} retVal = SPIRV${operand.kind}.None();
-        <#list operand.enumerants as enum>
+    </#if>
+
+     <#list operand.enumerants as enum>
         if ((value & ${enum.value}) != 0) {
             <#if enum.parameters ??><#list enum.parameters as param>
             SPIRV${param.kind} operand${param?counter} = map${param.kind}(operands, scope);
             </#list></#if>
-            retVal.add(SPIRV${operand.kind}.<#if enum.name?matches("\\d+\\w+") == true>_</#if>${enum.name}(<#if enum.parameters ??><#list enum.parameters as param>operand${param?counter}<#sep>, </#sep></#list></#if>));
+            retVal.add(SPIRV${operand.kind}.${enum.name}(<#if enum.parameters ??><#list enum.parameters as param>operand${param?counter}<#sep>, </#sep></#list></#if>));
         }
         </#list>
         return retVal;

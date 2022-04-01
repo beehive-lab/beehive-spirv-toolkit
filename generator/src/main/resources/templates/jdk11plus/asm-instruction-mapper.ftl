@@ -44,7 +44,6 @@ class SPIRVInstMapper {
             </#list>
             default: throw new IllegalArgumentException(instruction.value);
         }
-
         return decoded;
     }
 

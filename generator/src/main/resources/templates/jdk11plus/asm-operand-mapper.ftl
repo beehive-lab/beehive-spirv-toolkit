@@ -84,19 +84,32 @@ class SPIRVOperandMapper {
         <#if operand.category == "ValueEnum">
         SPIRVToken token = tokens.next();
         switch(token.value) {
+
+            <#assign newList = [] />
             <#list operand.enumerants as enum>
+                <#if ! newList?seq_contains(enum.value)>
+                  <#assign newList = newList + [enum.value] />
+
             case "${enum.name}": {
                 <#if enum.parameters ??><#list enum.parameters as param>
                 SPIRV${param.kind} operand${param?counter} = SPIRVOperandMapper.map${param.kind}(tokens, scope);
                 </#list></#if>
                 return SPIRV${operand.kind}.<#if enum.name?matches("\\d+\\w+") == true>_</#if>${enum.name}(<#if enum.parameters ??><#list enum.parameters as param>operand${param?counter}<#sep>, </#sep></#list></#if>);
             }
+                </#if>
             </#list>
             default: throw new IllegalArgumentException("${operand.kind}: " + token.value);
         }
         <#elseif operand.category == "BitEnum">
         String[] values = tokens.next().value.split("\\|");
+        <#if operand.kind?matches("RayFlags") == true>
+        SPIRV${operand.kind} retVal = SPIRV${operand.kind}.NoneKHR();
+        <#elseif operand.kind?matches("FragmentShadingRate") == true>
+        SPIRV${operand.kind} retVal = SPIRV${operand.kind}.Vertical2Pixels();
+        <#else>
         SPIRV${operand.kind} retVal = SPIRV${operand.kind}.None();
+        </#if>
+
         for (String value : values) {
             switch (value) {
                 <#list operand.enumerants as enum>
