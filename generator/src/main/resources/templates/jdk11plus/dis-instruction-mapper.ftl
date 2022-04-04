@@ -39,16 +39,15 @@ public class SPIRVInstMapper {
         SPIRVInstruction instruction;
         int opCode = line.next();
         switch (opCode) {
-<#assign newList = [] />
+<#assign newList = [-1] />
 <#list instructions as instruction>
-<#if ! newList?seq_contains(instruction.opCode)>
-<#assign newList = newList + [instruction.opCode] />
+    <#if ! (newList?first == instruction.opCode) >
+    <#assign newList =  [instruction.opCode] + newList   />
             case ${instruction.opCode?string.computer}: instruction = create${instruction.name}(line, scope); break;
-</#if>
+    </#if>
 </#list>
             default: throw new InvalidSPIRVOpcodeException(opCode);
         }
-
         return instruction;
     }
 

@@ -85,10 +85,10 @@ class SPIRVOperandMapper {
         SPIRVToken token = tokens.next();
         switch(token.value) {
 
-            <#assign newList = [] />
+            <#assign newList = ["-1"] />
             <#list operand.enumerants as enum>
-                <#if ! newList?seq_contains(enum.value)>
-                  <#assign newList = newList + [enum.value] />
+                <#if ! (newList?first == enum.value) >
+                  <#assign newList = [enum.value] + newList />
 
             case "${enum.name}": {
                 <#if enum.parameters ??><#list enum.parameters as param>

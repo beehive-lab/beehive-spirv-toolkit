@@ -157,10 +157,10 @@ public class SPIRVOperandMapper {
 <#macro valueenum operand>
         int value = operands.next();
         switch (value) {
-             <#assign newList = [] />
+             <#assign newList = ["-1"] />
              <#list operand.enumerants as enum>
-               <#if ! newList?seq_contains(enum.value)>
-                 <#assign newList = newList + [enum.value] />
+               <#if ! (newList?first == enum.value)>
+                 <#assign newList = [enum.value] + newList />
             case ${enum.value}: {
                 <#if enum.parameters ??><#list enum.parameters as param>
                 SPIRV${param.kind} operand${param?counter} = map${param.kind}(operands, scope);
