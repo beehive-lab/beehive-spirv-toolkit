@@ -43,7 +43,7 @@ $ ./beehive-spirv-toolkit examples/vector_add/vector_add.spv
 Alternatively, you can run the dissablembler using the provided jar-file:
 
 ```bash
-$ java -jar dist/spirv-beehive-toolkit.jar examples/vector_add/vector_add.spv
+$ java -jar dist/beehive-spirv-toolkit.jar examples/vector_add/vector_add.spv
 ```
 
 ## Dissasembler and Assembler 
@@ -52,17 +52,17 @@ How to?
 
 ```bash
 # SPIR-V Binary -> Text SPIR-V 
-$ java -jar dist/spirv-beehive-toolkit.jar -d test.spv -o test.spirvText
+$ java -jar dist/beehive-spirv-toolkit.jar -d test.spv -o test.spirvText
 
 # Text SPIR-V -> SPIR-V Binary
-$ java -jar dist/spirv-beehive-toolkit.jar -d  --tool asm -o out.spv test.spirvText
+$ java -jar dist/beehive-spirv-toolkit.jar -d  --tool asm -o out.spv test.spirvText
 ```
 
 
 ### Testing the dissasembler with SPIRV-DIS 
 
 ```bash 
-$ java -cp lib/target/spirv-lib-1.0-SNAPSHOT.jar uk.ac.manchester.beehivespirvtoolkit.lib.tests.TestRunnerAssembler
+$ java -cp lib/target/beehive-spirv-lib-0.0.2.jar uk.ac.manchester.beehivespirvtoolkit.lib.tests.TestRunnerAssembler
 $ spirv-dis /tmp/testSPIRV.spv
 
 ## Validate spir-v
@@ -201,4 +201,3 @@ This project is developed at [The University of Manchester](https://www.manchest
 ## Acknowledgments
 
 The work was partially funded by the EU Horizon 2020 [Elegant 957286](https://www.elegant-h2020.eu/) project, and Intel Coorporation (https://www.intel.it/content/www/it/it/homepage.html).
-
