@@ -2,19 +2,19 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
-    <artifactId>spirv-beehive-toolkit</artifactId>
+    <artifactId>beehive-spirv-toolkit</artifactId>
     <groupId>beehive-lab</groupId>
     <version>0.0.2</version>
   </parent>
 
-  <name>spirv-beehive-runner</name>
-  <artifactId>spirv-beehive-runner</artifactId>
+  <name>beehive-spirv-runner</name>
+  <artifactId>beehive-spirv-runner</artifactId>
   <version>0.0.2</version>
 
   <dependencies>
     <dependency>
       <groupId>beehive-lab</groupId>
-      <artifactId>spirv-beehive-lib</artifactId>
+      <artifactId>beehive-spirv-lib</artifactId>
       <version>0.0.2</version>
     </dependency>
 
@@ -36,7 +36,7 @@
         <configuration>
           <finalName>spirv-beehive-toolkit</finalName>
           <outputDirectory>../dist</outputDirectory>
-      
+
           <filters>
             <filter>
               <artifact>beehive-lab:lib</artifact>
