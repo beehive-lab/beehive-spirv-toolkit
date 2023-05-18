@@ -23,19 +23,19 @@
 * SOFTWARE.
 */
 
-package uk.ac.manchester.spirvbeehivetoolkit.lib.assembler;
+package uk.ac.manchester.beehivespirvtoolkit.lib.assembler;
 
-import uk.ac.manchester.spirvbeehivetoolkit.lib.SPIRVInstScope;
-import uk.ac.manchester.spirvbeehivetoolkit.lib.instructions.SPIRVInstruction;
-import uk.ac.manchester.spirvbeehivetoolkit.lib.instructions.SPIRVOpTypeFloat;
-import uk.ac.manchester.spirvbeehivetoolkit.lib.instructions.SPIRVOpTypeInt;
-import uk.ac.manchester.spirvbeehivetoolkit.lib.instructions.operands.*;
+import uk.ac.manchester.beehivespirvtoolkit.lib.SPIRVInstScope;
+import uk.ac.manchester.beehivespirvtoolkit.lib.instructions.SPIRVInstruction;
+import uk.ac.manchester.beehivespirvtoolkit.lib.instructions.SPIRVOpTypeFloat;
+import uk.ac.manchester.beehivespirvtoolkit.lib.instructions.SPIRVOpTypeInt;
+import uk.ac.manchester.beehivespirvtoolkit.lib.instructions.operands.*;
 
 import java.math.BigInteger;
 import java.util.Iterator;
 import javax.annotation.Generated;
 
-@Generated("beehive-lab.spirvbeehivetoolkit.generator")
+@Generated("beehive-lab.beehivespirvtoolkit.generator")
 class SPIRVOperandMapper {
     public static SPIRVId mapId(Iterator<SPIRVToken> tokens, SPIRVInstScope scope) {
         return scope.getOrCreateId(tokens.next().value);

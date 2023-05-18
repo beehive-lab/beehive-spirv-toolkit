@@ -2,14 +2,14 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
-    <artifactId>spirv-beehive-toolkit</artifactId>
+    <artifactId>beehive-spirv-toolkit</artifactId>
     <groupId>beehive-lab</groupId>
-    <version>0.0.1</version>
+    <version>0.0.2</version>
   </parent>
 
-  <name>spirv-beehive-generator</name>
-  <artifactId>spirv-beehive-generator</artifactId>
-  <version>0.0.1</version>
+  <name>beehive-spirv-generator</name>
+  <artifactId>beehive-spirv-generator</artifactId>
+  <version>0.0.2</version>
 
   <properties>
     <spirv.gen.majorversion>1</spirv.gen.majorversion>
@@ -80,9 +80,9 @@
             </goals>
             <configuration>
               <skip>${maven.exec.skip}</skip>
-              <mainClass>uk.ac.manchester.spirvbeehivetoolkit.generator.Runner</mainClass>
+              <mainClass>uk.ac.manchester.beehivespirvtoolkit.generator.Runner</mainClass>
               <arguments>
-                <argument>${project.parent.basedir}/lib/src/main/java/uk/ac/manchester/spirvbeehivetoolkit/lib</argument>
+                <argument>${project.parent.basedir}/lib/src/main/java/uk/ac/manchester/beehivespirvtoolkit/lib</argument>
                 <argument>${spirv.gen.majorversion}</argument>
                 <argument>${spirv.gen.minorversion}</argument>
                 <argument>${spirv.gen.magicnumber}</argument>
@@ -102,7 +102,7 @@
 
           <transformers>
             <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-              <mainClass>uk.ac.manchester.spirvbeehivetoolkit.generator.Runner</mainClass>
+              <mainClass>uk.ac.manchester.beehivespirvtoolkit.generator.Runner</mainClass>
             </transformer>
           </transformers>
 

@@ -23,14 +23,14 @@
 * SOFTWARE.
 */
 
-package uk.ac.manchester.spirvbeehivetoolkit.lib.instructions.operands;
+package uk.ac.manchester.beehivespirvtoolkit.lib.instructions.operands;
 
 import javax.annotation.processing.Generated;
 import java.util.List;
 import java.util.ArrayList;
 import java.nio.ByteBuffer;
 
-@Generated("beehive-lab.spirvbeehivetoolkit.generator")
+@Generated("beehive-lab.beehivespirvtoolkit.generator")
 public class SPIRV${kind} extends SPIRVEnum {
 
     protected SPIRV${kind}(int value, String name, List<SPIRVOperand> parameters, SPIRVCapability... capabilities) {

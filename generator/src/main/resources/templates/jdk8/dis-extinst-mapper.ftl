@@ -23,7 +23,7 @@
 * SOFTWARE.
 */
 
-package uk.ac.manchester.spirvbeehivetoolkit.lib.disassembler;
+package uk.ac.manchester.beehivespirvtoolkit.lib.disassembler;
 
 import java.util.HashMap;
 import javax.annotation.Generated;
@@ -33,7 +33,7 @@ import javax.annotation.Generated;
  * This standard contains all of the functions provided by them and
  * a mapping between the function names and corresponding numbers.
  */
-@Generated("beehive-lab.spirvbeehivetoolkit.generator")
+@Generated("beehive-lab.beehivespirvtoolkit.generator")
 public class SPIRVExtInstMapper {
     private static HashMap<Integer, String> extInstNameMap;
 

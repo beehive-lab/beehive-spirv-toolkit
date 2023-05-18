@@ -1,4 +1,4 @@
-# SPIR-V Beehive Toolkit
+# Beehive SPIR-V Toolkit
 
 This is a prototype written in Java to disassemble and assemble SPIR-V binary modules. It provides a Java programming framework to allow client Java applications to assemble binary modules and dissasemble binary modules into text. More information on the format of SPIR-V can be found [here](docs/SPIRV.md). To see an example kernel in SPIR-V go [here](docs/EXAMPLE.md).
 
@@ -12,7 +12,7 @@ Dependencies:
 Clone the repository:
 
 ```bash
-$ git clone https://github.com/beehive-lab/spirv-beehive-toolkit.git
+$ git clone https://github.com/beehive-lab/beehive-spirv-toolkit.git
 $ cd spirv-beehive-toolkit
 $ mvn clean install
 ```
@@ -22,7 +22,7 @@ $ mvn clean install
 The running is a client application to be used from the the command line that allows developers to assembly SPIRV written in a text format into a SPIRV binary module, and dissasemble SPIRV modules into a text format. The application can be used as follows:
 
 ```bash
-spirv-beehive-toolkit [OPTIONS] <filepath>
+beehive-spirv-toolkit [OPTIONS] <filepath>
  -c,--no-color       Do not use coloured output
  -d,--debug          Print debug information
  -e,--no-header      Do not print the header
@@ -37,13 +37,13 @@ spirv-beehive-toolkit [OPTIONS] <filepath>
 To run the disassembler:
 
 ```bash
-$ ./spirv-beehive-toolkit examples/vector_add/vector_add.spv
+$ ./beehive-spirv-toolkit test.spv
 ```
 
 Alternatively, you can run the dissablembler using the provided jar-file:
 
 ```bash
-$ java -jar dist/spirv-beehive-toolkit.jar examples/vector_add/vector_add.spv
+$ java -jar dist/beehive-spirv-toolkit.jar test.spv 
 ```
 
 ## Dissasembler and Assembler 
@@ -52,17 +52,20 @@ How to?
 
 ```bash
 # SPIR-V Binary -> Text SPIR-V 
-$ java -jar dist/spirv-beehive-toolkit.jar -d test.spv -o test.spirvText
+$ java -jar dist/beehive-spirv-toolkit.jar -d test.spv -o test.spirvText
 
 # Text SPIR-V -> SPIR-V Binary
-$ java -jar dist/spirv-beehive-toolkit.jar -d  --tool asm -o out.spv test.spirvText
+$ java -jar dist/beehive-spirv-toolkit.jar -d  --tool asm -o out.spv test.spirvText
+
+# Dissasenble again (Binary to Text)
+$ java -jar dist/beehive-spirv-toolkit.jar out.spv 
 ```
 
 
 ### Testing the dissasembler with SPIRV-DIS 
 
 ```bash 
-$ java -cp lib/target/spirv-lib-1.0-SNAPSHOT.jar uk.ac.manchester.spirvbeehivetoolkit.lib.tests.TestRunnerAssembler
+$ java -cp lib/target/beehive-spirv-lib-0.0.2.jar uk.ac.manchester.beehivespirvtoolkit.lib.tests.TestRunnerAssembler
 $ spirv-dis /tmp/testSPIRV.spv
 
 ## Validate spir-v
@@ -201,4 +204,3 @@ This project is developed at [The University of Manchester](https://www.manchest
 ## Acknowledgments
 
 The work was partially funded by the EU Horizon 2020 [Elegant 957286](https://www.elegant-h2020.eu/) project, and Intel Coorporation (https://www.intel.it/content/www/it/it/homepage.html).
-

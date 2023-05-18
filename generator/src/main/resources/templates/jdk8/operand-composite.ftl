@@ -23,15 +23,15 @@
 * SOFTWARE.
 */
 
-package uk.ac.manchester.spirvbeehivetoolkit.lib.instructions.operands;
+package uk.ac.manchester.beehivespirvtoolkit.lib.instructions.operands;
 
-import uk.ac.manchester.spirvbeehivetoolkit.lib.disassembler.SPIRVPrintingOptions;
+import uk.ac.manchester.beehivespirvtoolkit.lib.disassembler.SPIRVPrintingOptions;
 
 import javax.annotation.Generated;
 import java.io.PrintStream;
 import java.nio.ByteBuffer;
 
-@Generated("beehive-lab.spirvbeehivetoolkit.generator")
+@Generated("beehive-lab.beehivespirvtoolkit.generator")
 public class SPIRV${kind} implements SPIRVOperand {
     <#list bases as base>
     private final SPIRV${base} member${base?counter};
