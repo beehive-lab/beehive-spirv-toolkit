@@ -23,13 +23,13 @@
 * SOFTWARE.
 */
 
-package uk.ac.manchester.spirvbeehivetoolkit.lib.assembler;
+package uk.ac.manchester.beehivespirvtoolkit.lib.assembler;
 
 import java.util.HashSet;
 import java.util.Set;
 import javax.annotation.processing.Generated;
 
-@Generated("beehive-lab.spirvbeehivetoolkit.generator")
+@Generated("beehive-lab.beehivespirvtoolkit.generator")
 class SPIRVInstRecognizer {
     private final Set<String> instructions;
 

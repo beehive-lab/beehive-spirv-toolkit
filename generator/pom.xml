@@ -82,7 +82,7 @@
               <skip>${maven.exec.skip}</skip>
               <mainClass>uk.ac.manchester.beehivespirvtoolkit.generator.Runner</mainClass>
               <arguments>
-                <argument>${project.parent.basedir}/lib/src/main/java/uk/ac/manchester/spirvbeehivetoolkit/lib</argument>
+                <argument>${project.parent.basedir}/lib/src/main/java/uk/ac/manchester/beehivespirvtoolkit/lib</argument>
                 <argument>${spirv.gen.majorversion}</argument>
                 <argument>${spirv.gen.minorversion}</argument>
                 <argument>${spirv.gen.magicnumber}</argument>

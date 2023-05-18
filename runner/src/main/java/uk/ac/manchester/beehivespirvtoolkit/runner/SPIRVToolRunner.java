@@ -31,11 +31,11 @@ import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
-import uk.ac.manchester.spirvbeehivetoolkit.lib.SPIRVTool;
-import uk.ac.manchester.spirvbeehivetoolkit.lib.assembler.Assembler;
-import uk.ac.manchester.spirvbeehivetoolkit.lib.disassembler.Disassembler;
-import uk.ac.manchester.spirvbeehivetoolkit.lib.disassembler.SPIRVDisassemblerOptions;
-import uk.ac.manchester.spirvbeehivetoolkit.lib.disassembler.SPVFileReader;
+import uk.ac.manchester.beehivespirvtoolkit.lib.SPIRVTool;
+import uk.ac.manchester.beehivespirvtoolkit.lib.assembler.Assembler;
+import uk.ac.manchester.beehivespirvtoolkit.lib.disassembler.Disassembler;
+import uk.ac.manchester.beehivespirvtoolkit.lib.disassembler.SPIRVDisassemblerOptions;
+import uk.ac.manchester.beehivespirvtoolkit.lib.disassembler.SPVFileReader;
 
 import java.io.File;
 import java.io.FileReader;

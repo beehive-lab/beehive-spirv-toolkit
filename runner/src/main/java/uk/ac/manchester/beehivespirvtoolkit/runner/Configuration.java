@@ -25,7 +25,7 @@
 
 package uk.ac.manchester.beehivespirvtoolkit.runner;
 
-import uk.ac.manchester.spirvbeehivetoolkit.lib.SPIRVTool;
+import uk.ac.manchester.beehivespirvtoolkit.lib.SPIRVTool;
 
 public class Configuration {
     private final boolean debug;

@@ -23,11 +23,11 @@
 * SOFTWARE.
 */
 
-package uk.ac.manchester.spirvbeehivetoolkit.lib;
+package uk.ac.manchester.beehivespirvtoolkit.lib;
 
 import javax.annotation.processing.Generated;
 
-@Generated("beehive-lab.spirvbeehivetoolkit.generator")
+@Generated("beehive-lab.beehivespirvtoolkit.generator")
 public class SPIRVGeneratorConstants {
     public static int SPIRVMajorVersion = ${majorVersion};
     public static int SPIRVMinorVersion = ${minorVersion};

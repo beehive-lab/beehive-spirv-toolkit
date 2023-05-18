@@ -23,11 +23,11 @@
 * SOFTWARE.
 */
 
-package uk.ac.manchester.spirvbeehivetoolkit.lib.instructions.operands;
+package uk.ac.manchester.beehivespirvtoolkit.lib.instructions.operands;
 
 import javax.annotation.Generated;
 
-@Generated("beehive-lab.spirvbeehivetoolkit.generator")
+@Generated("beehive-lab.beehivespirvtoolkit.generator")
 public class SPIRV${kind} extends SPIRVLiteralInteger {
     public SPIRV${kind}(int value) {
         super(value);

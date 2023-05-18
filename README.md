@@ -62,7 +62,7 @@ $ java -jar dist/spirv-beehive-toolkit.jar -d  --tool asm -o out.spv test.spirvT
 ### Testing the dissasembler with SPIRV-DIS 
 
 ```bash 
-$ java -cp lib/target/spirv-lib-1.0-SNAPSHOT.jar uk.ac.manchester.spirvbeehivetoolkit.lib.tests.TestRunnerAssembler
+$ java -cp lib/target/spirv-lib-1.0-SNAPSHOT.jar uk.ac.manchester.beehivespirvtoolkit.lib.tests.TestRunnerAssembler
 $ spirv-dis /tmp/testSPIRV.spv
 
 ## Validate spir-v
