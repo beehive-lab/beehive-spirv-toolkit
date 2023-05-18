@@ -34,7 +34,7 @@
         <artifactId>maven-shade-plugin</artifactId>
         <version>3.2.4</version>
         <configuration>
-          <finalName>spirv-beehive-toolkit</finalName>
+          <finalName>beehive-spirv-toolkit</finalName>
           <outputDirectory>../dist</outputDirectory>
 
           <filters>
