@@ -23,24 +23,24 @@
  * SOFTWARE.
  */
 
-package uk.ac.manchester.spirvbeehivetoolkit.generator.grammar;
+package uk.ac.manchester.beehivespirvtoolkit.generator.grammar;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class SPIRVOperandParameter {
-    @JsonProperty("kind")
-    public String kind;
+public class SPIRVExternalInstruction {
+    @JsonProperty("opname")
+    public String opName;
 
-    @JsonProperty("name")
-    public String name;
+    @JsonProperty("opcode")
+    public int opCode;
 
-    public String getKind() {
-        return kind;
+    public int getOpCode() {
+        return opCode;
     }
 
-    public String getName() {
-        return name;
+    public String getOpName() {
+        return opName;
     }
 }

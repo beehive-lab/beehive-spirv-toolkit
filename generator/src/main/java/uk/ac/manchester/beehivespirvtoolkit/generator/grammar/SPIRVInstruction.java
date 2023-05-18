@@ -23,29 +23,66 @@
  * SOFTWARE.
  */
 
-package uk.ac.manchester.spirvbeehivetoolkit.generator.grammar;
+package uk.ac.manchester.beehivespirvtoolkit.generator.grammar;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class SPIRVGrammar {
-    @JsonProperty("magic_number")
-    public String magicNumber;
+public class SPIRVInstruction {
+    @JsonProperty("opname")
+    public String name;
 
-    @JsonProperty("instructions")
-    public SPIRVInstruction[] instructions;
+    @JsonProperty("opcode")
+    public int opCode;
 
-    @JsonProperty("operand_kinds")
-    public SPIRVOperandKind[] operandKinds;
+    @JsonProperty("operands")
+    public SPIRVOperand[] operands;
 
-    public SPIRVGrammar() {}
+    @JsonProperty("capabilities")
+    public String[] capabilities;
 
-    public SPIRVInstruction[] getInstructions() {
-        return instructions;
+    public String superClass;
+
+    public boolean hasReturnType;
+
+    public boolean hasResult;
+
+    public SPIRVInstruction() {
+        hasReturnType = false;
+        hasResult = false;
     }
 
-    public SPIRVOperandKind[] getOperandKinds() {
-        return operandKinds;
+    @Override
+    public String toString() {
+        return getName();
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public int getOpCode() {
+        return opCode;
+    }
+
+    public SPIRVOperand[] getOperands() {
+        return operands;
+    }
+
+    public String getSuperClass() {
+        return superClass;
+    }
+
+    public boolean getHasReturnType() {
+        return hasReturnType;
+    }
+
+    public boolean getHasResult() {
+        return hasResult;
+    }
+
+    public String[] getCapabilities() {
+        return capabilities;
     }
 }

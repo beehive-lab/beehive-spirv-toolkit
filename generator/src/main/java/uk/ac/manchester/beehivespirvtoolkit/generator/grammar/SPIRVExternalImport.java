@@ -23,10 +23,29 @@
  * SOFTWARE.
  */
 
-package uk.ac.manchester.spirvbeehivetoolkit.generator.grammar;
+package uk.ac.manchester.beehivespirvtoolkit.generator.grammar;
 
-public class SPIRVUnsupportedExternalImport extends Exception {
-    public SPIRVUnsupportedExternalImport(String name) {
-        super("Unsupported external import: " + name);
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import java.io.IOException;
+import java.net.URL;
+
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class SPIRVExternalImport {
+    @JsonProperty("instructions")
+    public SPIRVExternalInstruction[] instructions;
+
+    public SPIRVExternalInstruction[] getInstructions() {
+        return instructions;
+    }
+
+    public static SPIRVExternalImport importExternal(String name) throws IOException, SPIRVUnsupportedExternalImport {
+
+        String pathToSpecs = String.format("resources/versions/unified/%s.grammar.json", name.replace("\"", "").toLowerCase());
+        URL resource = SPIRVExternalImport.class.getClassLoader().getResource(pathToSpecs);
+        if (resource == null) throw new SPIRVUnsupportedExternalImport(name);
+        return new ObjectMapper().readValue(resource, SPIRVExternalImport.class);
     }
 }

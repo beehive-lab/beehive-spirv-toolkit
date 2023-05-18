@@ -23,66 +23,28 @@
  * SOFTWARE.
  */
 
-package uk.ac.manchester.spirvbeehivetoolkit.generator.grammar;
+package uk.ac.manchester.beehivespirvtoolkit.generator;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
+public class Constants {
+    public final int majorVersion;
+    public final int minorVersion;
+    public final int genNumber;
 
-@JsonIgnoreProperties(ignoreUnknown = true)
-public class SPIRVInstruction {
-    @JsonProperty("opname")
-    public String name;
-
-    @JsonProperty("opcode")
-    public int opCode;
-
-    @JsonProperty("operands")
-    public SPIRVOperand[] operands;
-
-    @JsonProperty("capabilities")
-    public String[] capabilities;
-
-    public String superClass;
-
-    public boolean hasReturnType;
-
-    public boolean hasResult;
-
-    public SPIRVInstruction() {
-        hasReturnType = false;
-        hasResult = false;
+    public Constants(int majorVersion, int minorVersion, int genNumber) {
+        this.majorVersion = majorVersion;
+        this.minorVersion = minorVersion;
+        this.genNumber = genNumber;
     }
 
-    @Override
-    public String toString() {
-        return getName();
+    public int getMajorVersion() {
+        return majorVersion;
     }
 
-    public String getName() {
-        return name;
+    public int getMinorVersion() {
+        return minorVersion;
     }
 
-    public int getOpCode() {
-        return opCode;
-    }
-
-    public SPIRVOperand[] getOperands() {
-        return operands;
-    }
-
-    public String getSuperClass() {
-        return superClass;
-    }
-
-    public boolean getHasReturnType() {
-        return hasReturnType;
-    }
-
-    public boolean getHasResult() {
-        return hasResult;
-    }
-
-    public String[] getCapabilities() {
-        return capabilities;
+    public int getGenNumber() {
+        return genNumber;
     }
 }

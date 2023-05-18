@@ -23,20 +23,20 @@
  * SOFTWARE.
  */
 
-package uk.ac.manchester.spirvbeehivetoolkit.generator;
+package uk.ac.manchester.beehivespirvtoolkit.generator;
 
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateExceptionHandler;
-import uk.ac.manchester.spirvbeehivetoolkit.GeneratorHelper;
-import uk.ac.manchester.spirvbeehivetoolkit.generator.grammar.SPIRVEnumerant;
-import uk.ac.manchester.spirvbeehivetoolkit.generator.grammar.SPIRVExternalImport;
-import uk.ac.manchester.spirvbeehivetoolkit.generator.grammar.SPIRVGrammar;
-import uk.ac.manchester.spirvbeehivetoolkit.generator.grammar.SPIRVInstruction;
-import uk.ac.manchester.spirvbeehivetoolkit.generator.grammar.SPIRVOperand;
-import uk.ac.manchester.spirvbeehivetoolkit.generator.grammar.SPIRVOperandKind;
-import uk.ac.manchester.spirvbeehivetoolkit.generator.grammar.SPIRVOperandParameter;
-import uk.ac.manchester.spirvbeehivetoolkit.generator.grammar.SPIRVSpecification;
+import uk.ac.manchester.beehivespirvtoolkit.GeneratorHelper;
+import uk.ac.manchester.beehivespirvtoolkit.generator.grammar.SPIRVEnumerant;
+import uk.ac.manchester.beehivespirvtoolkit.generator.grammar.SPIRVExternalImport;
+import uk.ac.manchester.beehivespirvtoolkit.generator.grammar.SPIRVGrammar;
+import uk.ac.manchester.beehivespirvtoolkit.generator.grammar.SPIRVInstruction;
+import uk.ac.manchester.beehivespirvtoolkit.generator.grammar.SPIRVOperand;
+import uk.ac.manchester.beehivespirvtoolkit.generator.grammar.SPIRVOperandKind;
+import uk.ac.manchester.beehivespirvtoolkit.generator.grammar.SPIRVOperandParameter;
+import uk.ac.manchester.beehivespirvtoolkit.generator.grammar.SPIRVSpecification;
 
 import java.io.File;
 import java.io.FileWriter;

@@ -23,7 +23,7 @@
  * SOFTWARE.
  */
 
-package uk.ac.manchester.spirvbeehivetoolkit.generator;
+package uk.ac.manchester.beehivespirvtoolkit.generator;
 
 import java.util.HashMap;
 

@@ -23,38 +23,32 @@
  * SOFTWARE.
  */
 
-package uk.ac.manchester.spirvbeehivetoolkit.generator.grammar;
+package uk.ac.manchester.beehivespirvtoolkit.generator.grammar;
+
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class SPIRVOperandKind {
-    @JsonProperty("category")
-    public String category;
-
+public class SPIRVOperand {
     @JsonProperty("kind")
     public String kind;
 
-    @JsonProperty("bases")
-    public String[] bases;
+    @JsonProperty("name")
+    public String name;
 
-    @JsonProperty("enumerants")
-    public SPIRVEnumerant[] enumerants;
-
-    public String getCategory() {
-        return category;
-    }
+    @JsonProperty("quantifier")
+    public char quantifier;
 
     public String getKind() {
         return kind;
     }
 
-    public SPIRVEnumerant[] getEnumerants() {
-        return enumerants;
+    public String getName() {
+        return name;
     }
 
-    public String[] getBases() {
-        return bases;
+    public char getQuantifier() {
+        return quantifier;
     }
 }

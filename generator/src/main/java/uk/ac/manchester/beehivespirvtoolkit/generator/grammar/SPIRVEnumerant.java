@@ -23,24 +23,38 @@
  * SOFTWARE.
  */
 
-package uk.ac.manchester.spirvbeehivetoolkit.generator.grammar;
+package uk.ac.manchester.beehivespirvtoolkit.generator.grammar;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
-import java.io.IOException;
-import java.net.URL;
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class SPIRVEnumerant {
+    @JsonProperty("enumerant")
+    public String name;
 
-public class SPIRVSpecification {
+    @JsonProperty("value")
+    public String value;
 
-    public static SPIRVGrammar buildSPIRVGrammar(int majorVersion, int minorVersion) throws IOException {
-        ObjectMapper mapper = new ObjectMapper();
+    @JsonProperty("parameters")
+    public SPIRVOperandParameter[] parameters;
 
-        String pathToSpecs = String.format("resources/versions/%d.%d/spirv.core.grammar.json", majorVersion, minorVersion);
-        URL resource = SPIRVSpecification.class.getClassLoader().getResource(pathToSpecs);
-        if (resource == null) {
-            // Fall back to unified
-            resource = SPIRVSpecification.class.getClassLoader().getResource("resources/versions/unified/spirv.core.grammar.json");
-        }
-        return mapper.readValue(resource, SPIRVGrammar.class);
+    @JsonProperty("capabilities")
+    public String[] capabilities;
+
+    public String getName() {
+        return name;
+    }
+
+    public String getValue() {
+        return value;
+    }
+
+    public SPIRVOperandParameter[] getParameters() {
+        return parameters;
+    }
+
+    public String[] getCapabilities() {
+        return capabilities;
     }
 }

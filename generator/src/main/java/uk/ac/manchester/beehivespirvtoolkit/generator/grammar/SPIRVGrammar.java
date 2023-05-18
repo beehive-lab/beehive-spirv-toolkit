@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2022, APT Group, Department of Computer Science,
+ * Copyright (c) 2021, APT Group, Department of Computer Science,
  * The University of Manchester.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -22,17 +22,30 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package uk.ac.manchester.spirvbeehivetoolkit;
 
-public class GeneratorHelper {
+package uk.ac.manchester.beehivespirvtoolkit.generator.grammar;
 
-    public static int getMajorJavaVersion() {
-        String version = System.getProperty("java.version");
-        if(version.startsWith("1.")) {
-            version = version.substring(2, 3);
-        } else {
-            int dot = version.indexOf(".");
-            if(dot != -1) { version = version.substring(0, dot); }
-        } return Integer.parseInt(version);
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class SPIRVGrammar {
+    @JsonProperty("magic_number")
+    public String magicNumber;
+
+    @JsonProperty("instructions")
+    public SPIRVInstruction[] instructions;
+
+    @JsonProperty("operand_kinds")
+    public SPIRVOperandKind[] operandKinds;
+
+    public SPIRVGrammar() {}
+
+    public SPIRVInstruction[] getInstructions() {
+        return instructions;
+    }
+
+    public SPIRVOperandKind[] getOperandKinds() {
+        return operandKinds;
     }
 }

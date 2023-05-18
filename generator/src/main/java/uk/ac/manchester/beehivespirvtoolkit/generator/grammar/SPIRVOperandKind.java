@@ -23,28 +23,38 @@
  * SOFTWARE.
  */
 
-package uk.ac.manchester.spirvbeehivetoolkit.generator;
+package uk.ac.manchester.beehivespirvtoolkit.generator.grammar;
 
-public class Constants {
-    public final int majorVersion;
-    public final int minorVersion;
-    public final int genNumber;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
-    public Constants(int majorVersion, int minorVersion, int genNumber) {
-        this.majorVersion = majorVersion;
-        this.minorVersion = minorVersion;
-        this.genNumber = genNumber;
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class SPIRVOperandKind {
+    @JsonProperty("category")
+    public String category;
+
+    @JsonProperty("kind")
+    public String kind;
+
+    @JsonProperty("bases")
+    public String[] bases;
+
+    @JsonProperty("enumerants")
+    public SPIRVEnumerant[] enumerants;
+
+    public String getCategory() {
+        return category;
     }
 
-    public int getMajorVersion() {
-        return majorVersion;
+    public String getKind() {
+        return kind;
     }
 
-    public int getMinorVersion() {
-        return minorVersion;
+    public SPIRVEnumerant[] getEnumerants() {
+        return enumerants;
     }
 
-    public int getGenNumber() {
-        return genNumber;
+    public String[] getBases() {
+        return bases;
     }
 }

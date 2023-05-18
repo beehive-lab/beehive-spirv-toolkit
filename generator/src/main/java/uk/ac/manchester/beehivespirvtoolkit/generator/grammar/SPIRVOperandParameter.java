@@ -23,17 +23,24 @@
  * SOFTWARE.
  */
 
-package uk.ac.manchester.spirvbeehivetoolkit.generator;
+package uk.ac.manchester.beehivespirvtoolkit.generator.grammar;
 
-import java.io.File;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class Runner {
-    public static void main(String[] args) {
-        try {
-            Constants constants = new Constants(Integer.decode(args[1]), Integer.decode(args[2]), Integer.decode(args[3]));
-            new Generator(new File(args[0]), constants).generate();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class SPIRVOperandParameter {
+    @JsonProperty("kind")
+    public String kind;
+
+    @JsonProperty("name")
+    public String name;
+
+    public String getKind() {
+        return kind;
+    }
+
+    public String getName() {
+        return name;
     }
 }

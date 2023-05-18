@@ -23,32 +23,24 @@
  * SOFTWARE.
  */
 
-package uk.ac.manchester.spirvbeehivetoolkit.generator.grammar;
+package uk.ac.manchester.beehivespirvtoolkit.generator.grammar;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import java.io.IOException;
+import java.net.URL;
 
-@JsonIgnoreProperties(ignoreUnknown = true)
-public class SPIRVOperand {
-    @JsonProperty("kind")
-    public String kind;
+public class SPIRVSpecification {
 
-    @JsonProperty("name")
-    public String name;
+    public static SPIRVGrammar buildSPIRVGrammar(int majorVersion, int minorVersion) throws IOException {
+        ObjectMapper mapper = new ObjectMapper();
 
-    @JsonProperty("quantifier")
-    public char quantifier;
-
-    public String getKind() {
-        return kind;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public char getQuantifier() {
-        return quantifier;
+        String pathToSpecs = String.format("resources/versions/%d.%d/spirv.core.grammar.json", majorVersion, minorVersion);
+        URL resource = SPIRVSpecification.class.getClassLoader().getResource(pathToSpecs);
+        if (resource == null) {
+            // Fall back to unified
+            resource = SPIRVSpecification.class.getClassLoader().getResource("resources/versions/unified/spirv.core.grammar.json");
+        }
+        return mapper.readValue(resource, SPIRVGrammar.class);
     }
 }
