@@ -37,13 +37,13 @@ beehive-spirv-toolkit [OPTIONS] <filepath>
 To run the disassembler:
 
 ```bash
-$ ./beehive-spirv-toolkit examples/vector_add/vector_add.spv
+$ ./beehive-spirv-toolkit test.spv
 ```
 
 Alternatively, you can run the dissablembler using the provided jar-file:
 
 ```bash
-$ java -jar dist/beehive-spirv-toolkit.jar examples/vector_add/vector_add.spv
+$ java -jar dist/beehive-spirv-toolkit.jar test.spv 
 ```
 
 ## Dissasembler and Assembler 
@@ -56,6 +56,9 @@ $ java -jar dist/beehive-spirv-toolkit.jar -d test.spv -o test.spirvText
 
 # Text SPIR-V -> SPIR-V Binary
 $ java -jar dist/beehive-spirv-toolkit.jar -d  --tool asm -o out.spv test.spirvText
+
+# Dissasenble again (Binary to Text)
+$ java -jar dist/beehive-spirv-toolkit.jar out.spv 
 ```
 
 
