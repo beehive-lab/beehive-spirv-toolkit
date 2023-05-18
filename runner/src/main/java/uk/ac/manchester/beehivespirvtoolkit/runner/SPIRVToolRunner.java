@@ -23,7 +23,7 @@
  * SOFTWARE.
  */
 
-package uk.ac.manchester.spirvbeehivetoolkit.runner;
+package uk.ac.manchester.beehivespirvtoolkit.runner;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;

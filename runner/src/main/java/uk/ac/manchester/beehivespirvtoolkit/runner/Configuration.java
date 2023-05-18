@@ -23,7 +23,7 @@
  * SOFTWARE.
  */
 
-package uk.ac.manchester.spirvbeehivetoolkit.runner;
+package uk.ac.manchester.beehivespirvtoolkit.runner;
 
 import uk.ac.manchester.spirvbeehivetoolkit.lib.SPIRVTool;
 
