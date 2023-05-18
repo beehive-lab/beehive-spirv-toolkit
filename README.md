@@ -1,4 +1,4 @@
-# SPIR-V Beehive Toolkit
+# Beehive SPIR-V Toolkit
 
 This is a prototype written in Java to disassemble and assemble SPIR-V binary modules. It provides a Java programming framework to allow client Java applications to assemble binary modules and dissasemble binary modules into text. More information on the format of SPIR-V can be found [here](docs/SPIRV.md). To see an example kernel in SPIR-V go [here](docs/EXAMPLE.md).
 
@@ -12,7 +12,7 @@ Dependencies:
 Clone the repository:
 
 ```bash
-$ git clone https://github.com/beehive-lab/spirv-beehive-toolkit.git
+$ git clone https://github.com/beehive-lab/beehive-spirv-toolkit.git
 $ cd spirv-beehive-toolkit
 $ mvn clean install
 ```
@@ -22,7 +22,7 @@ $ mvn clean install
 The running is a client application to be used from the the command line that allows developers to assembly SPIRV written in a text format into a SPIRV binary module, and dissasemble SPIRV modules into a text format. The application can be used as follows:
 
 ```bash
-spirv-beehive-toolkit [OPTIONS] <filepath>
+beehive-spirv-toolkit [OPTIONS] <filepath>
  -c,--no-color       Do not use coloured output
  -d,--debug          Print debug information
  -e,--no-header      Do not print the header
@@ -37,7 +37,7 @@ spirv-beehive-toolkit [OPTIONS] <filepath>
 To run the disassembler:
 
 ```bash
-$ ./spirv-beehive-toolkit examples/vector_add/vector_add.spv
+$ ./beehive-spirv-toolkit examples/vector_add/vector_add.spv
 ```
 
 Alternatively, you can run the dissablembler using the provided jar-file:
