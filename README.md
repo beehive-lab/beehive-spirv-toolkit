@@ -6,7 +6,7 @@ This is a prototype written in Java to disassemble and assemble SPIR-V binary mo
 
 Dependencies:
 
-- Java JDK 11. It also supports JDK 8 but this branch will be deprecated soon. We highly recoomand JDK >= 11. 
+- Java JDK 21. It also supports JDK 17, 11 and 8 but this branch will be deprecated soon. We highly recoomand JDK >= 11. 
 - Maven (>= 3.6.3) 
 
 Clone the repository:
@@ -19,7 +19,7 @@ $ mvn clean install
 
 ## Usage
 
-The running is a client application to be used from the the command line that allows developers to assembly SPIRV written in a text format into a SPIRV binary module, and dissasemble SPIRV modules into a text format. The application can be used as follows:
+The running is a client application to be used from the command line that allows developers to assembly SPIR-V written in a text format into a SPIR-V binary module, and dissasemble SPIR-V modules into a text format. The application can be used as follows:
 
 ```bash
 beehive-spirv-toolkit [OPTIONS] <filepath>
@@ -46,7 +46,7 @@ Alternatively, you can run the dissablembler using the provided jar-file:
 $ java -jar dist/beehive-spirv-toolkit.jar test.spv 
 ```
 
-## Dissasembler and Assembler 
+## Dissasembler and Assembler SPIR-V modules from the command line utility
 
 How to?
 
@@ -72,24 +72,14 @@ $ spirv-dis /tmp/testSPIRV.spv
 $ spirv-val /tmp/testSPIRV.spv
 ```
 
-## Examples
-
-There are some examples included:
-1. A simple vector addition
-2. A simple matrix multiplication
-3. From the [rodinia benchmarks](https://github.com/yuhc/gpu-rodinia) lud was modified to use a SPIR-V kernel instead of an OpenCL C kernel.
-
-All of these can be found in the `examples` directory. 
-In order to run any of the examples at least one OpenCL 2.1 or higher platform is needed (e.g. Intel iGPU).
-
 
 #### Creating SPIR-V modules for testing
 
-To try the tool with different kernels either a binary SPIR-V module is needed or one that was hand written in the assembly language of SPIR-V.
+To try the tool with different kernels either a binary SPIR-V module is needed or one that was hand-written in the assembly language of SPIR-V.
 Since the assembly language is not very human friendly it is recommended that anything worth testing is first written in OpenCL C and then compiled to SPIR-V.
 
 To achieve this a compiled version of what the Khronos Group recommends follows. The original can be found [here](https://www.khronos.org/blog/offline-compilation-of-opencl-kernels-into-spir-v-using-open-source-tooling).
-There are some example kernels provided in the examples directory.
+There are some example kernels provided in the example directory.
 
 Tools needed:
 
@@ -130,7 +120,7 @@ OR
 $ ./vector_add.bin ./vector_add.spv
 ```
 
-This requires at least one device with a driver that supports OpenCL 2.1 or higher (Intel Graphics or the experimental Intel CPU driver) and an OpenCL ICD Loader that supports OpenCL 2.1 or higher. 
+**This requires at least one device with a driver that supports OpenCL 2.1 or higher** (Intel Graphics or the experimental Intel CPU driver) and an OpenCL ICD Loader that supports OpenCL 2.1 or higher. 
 
 The application tries to run the program on the first device of the last OCL Platform (check `clinfo` to see, which one that is). Your setup might be different and you might have to change that [here](https://github.com/beehive-lab/spirv-beehive-toolkit/blob/665a19e9527f2bf5121ecc23c19e17656bfbf0a2/examples/vector_add_il.c#L72)
 
@@ -138,62 +128,28 @@ In a lot of cases vendors include their own ICD Loader (libOpenCL.so) in their d
 In this case you might have to install an updated icd-loader package or configure the ld path to load the updated one.
 To see more information on this visit the [ArchWiki page](https://wiki.archlinux.org/index.php/GPGPU)
 
+## Publications
 
-## Structure of this Repository
+- Juan Fumero, Gyorgy Rethy, Athanasios Stratikopoulos, Nikos Foutris, Christos Kotselidis. **Beehive SPIR-V Toolkit: A Composable and Functional API for Runtime SPIR-V Code Generation**, VMIL'23. [pdf](https://dl.acm.org/doi/pdf/10.1145/3623507.3623555)
 
-There are 3 Java modules: `generator`, `lib`, `runner`.
-
-The `generator` module is a standalone program that reads the included SPIR-V grammar files and writes classes needed by `lib` to the specified output directory.
-
-This happens as part of the build controlled by the module's pom file. In order to change any of the behaviour the following snippet needs to be changed:
-
-```xml
-<plugin>
-  <groupId>org.codehaus.mojo</groupId>
-  <artifactId>exec-maven-plugin</artifactId>
-  <version>1.6.0</version>
-  <executions>
-    <execution>
-      <phase>package</phase>
-      <goals>
-        <goal>java</goal>
-      </goals>
-      <configuration>
-        <skip>${maven.exec.skip}</skip>
-        <mainClass>Runner</mainClass>
-        <arguments>
-          <argument>${project.parent.basedir}/lib/src/main/java/uk/ac/manchester/spirvbeehivetoolkit/lib</argument>
-          <argument>${spirv.gen.majorversion}</argument>
-          <argument>${spirv.gen.minorversion}</argument>
-          <argument>${spirv.gen.magicnumber}</argument>
-        </arguments>
-      </configuration>
-    </execution>
-  </executions>
-</plugin>
+```bibtex
+@inproceedings{10.1145/3623507.3623555,
+    author = {Fumero, Juan and Rethy, Gy\"{o}rgy and Stratikopoulos, Athanasios and Foutris, Nikos and Kotselidis, Christos},
+    title = {Beehive SPIR-V Toolkit: A Composable and Functional API for Runtime SPIR-V Code Generation},
+    year = {2023},
+    isbn = {9798400704017},
+    publisher = {Association for Computing Machinery},
+    address = {New York, NY, USA},
+    url = {https://doi.org/10.1145/3623507.3623555},
+    doi = {10.1145/3623507.3623555},
+    booktitle = {Proceedings of the 15th ACM SIGPLAN International Workshop on Virtual Machines and Intermediate Languages},
+    pages = {61--72},
+    numpages = {12},
+    keywords = {Library, Java, API, SPIR-V, Runtime Code Generation, Metaprogramming},
+    location = {Cascais, Portugal},
+    series = {VMIL 2023}
+}
 ```
-
-The `lib` module holds all of the SPIR-V related logic and code. It is able to assemble and disassemble SPIR-V files.
-
-The `runner` module is the "front-end" for the `lib` module. It only handles CLI argument parsing, calling the selected tool and error reporting.
-
-Maven will create a fat-jar, that includes both `lib` and `runner` in the dist directory.
-
-
-
-## Driver support
-
-Unfortunately driver support for SPIR-V is lacking. 
-I have found that Intel is supporting OpenCL 2.1 on their iGPU and CPU devices.
-Ubuntu should already have the updated graphics version in apt however you can also download the [latest](https://github.com/intel/compute-runtime/releases) or build from [source](https://github.com/intel/compute-runtime/blob/master/BUILD.md).
-There are some guides on how to build from source online as well: https://gist.github.com/Brainiarc7/1d13c7f432ba03a8e38720c83cd973d5. 
-In my case I had to build the igc (Intel Graphics Compiler) and gmm (Graphics Memory Management) from source and install them (with `make install`) as the apt provided versions were out of date.
-This way the standalone igc compiler will be available to run on any related files.
-
-
-Intel's latest OpenCL CPU runtime also supports SPIR-V.
-It can be installed from [here](https://software.intel.com/content/www/us/en/develop/articles/opencl-drivers.html#cpu-section).
-This has not been tested while developing this tools, however it *should* work as expected.
 
 
 ## License
