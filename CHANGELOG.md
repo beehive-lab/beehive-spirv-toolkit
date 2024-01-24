@@ -2,7 +2,14 @@
 
 This file summarizes the new features and major changes for each *SPIRV-Beehive-Tookit* version.
 
-## SPIRV-Beehive-Toolkit 0.0.2
+## SPIRV-Beehive-Toolkit v0.0.3
+24/01/2024
+
+- Add support for Half types 
+- Workspace renamed to `beehive-spirv-toolkit`
+- Documentation updated
+
+## SPIRV-Beehive-Toolkit v0.0.2
 10/03/2022
 
  - Documentation improved
@@ -10,7 +17,7 @@ This file summarizes the new features and major changes for each *SPIRV-Beehive-
  - Missing license headers applied
  
 
-## SPIRV-Beehive-Toolkit 0.0.1 
+## SPIRV-Beehive-Toolkit v0.0.1 
 17/12/2021
 
  - Initial implementation for SPIRV 1.2 
