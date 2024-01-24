@@ -106,6 +106,10 @@ public class SPIRVOperandMapper {
         if (type instanceof SPIRVOpTypeFloat) {
             int width = ((SPIRVOpTypeFloat) type)._width.value;
 
+            if (width == 16) {
+                width = 32;
+            }
+
             byte[][] words = new byte[width / 32][4];
             for (int i = 0; i < width / 32; i++) {
                 byte[] word = operands.nextInBytes();
@@ -123,11 +127,15 @@ public class SPIRVOperandMapper {
                 numberInBytes[arrayIndex + 2] = words[i][1];
                 numberInBytes[arrayIndex + 3] = words[i][0];
             }
-
+            if (((SPIRVOpTypeFloat) type)._width.value == 16) {
+                SPIRVContextDependentFloat contextDependent = new SPIRVContextDependentFloat(Float.intBitsToFloat(ByteBuffer.wrap(numberInBytes).getInt()));
+                contextDependent.setHalfFlag();
+                return contextDependent;
+            }
             if (width == 32) return new SPIRVContextDependentFloat(Float.intBitsToFloat(ByteBuffer.wrap(numberInBytes).getInt()));
             if (width == 64) return new SPIRVContextDependentDouble(Double.longBitsToDouble(ByteBuffer.wrap(numberInBytes).getLong()));
 
-            throw new RuntimeException("OpTypeInt cannot have width of " + width);
+            throw new RuntimeException("TypeFloat cannot have width of " + width);
         }
 
         throw new RuntimeException("Unknown type for ContextDependentLiteral: " + type.getClass().getName());

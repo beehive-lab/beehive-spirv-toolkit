@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2021, APT Group, Department of Computer Science,
+ * Copyright (c) 2024, APT Group, Department of Computer Science,
  * The University of Manchester.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -24,26 +24,21 @@
  */
 package uk.ac.manchester.beehivespirvtoolkit.lib.instructions.operands;
 
-import uk.ac.manchester.beehivespirvtoolkit.lib.disassembler.SPIRVPrintingOptions;
-
 import java.io.PrintStream;
 import java.nio.ByteBuffer;
 
-public class SPIRVContextDependentFloat extends SPIRVLiteralContextDependentNumber {
-    private final float value;
-    private boolean isHalf;
+import uk.ac.manchester.beehivespirvtoolkit.lib.disassembler.SPIRVPrintingOptions;
 
-    public SPIRVContextDependentFloat(float value) {
+public class SPIRVContextDependentHalfFloat extends SPIRVLiteralContextDependentNumber {
+    private final int value;
+
+    public SPIRVContextDependentHalfFloat(int value) {
         this.value = value;
-    }
-
-    public void setHalfFlag() {
-        isHalf = true;
     }
 
     @Override
     public void write(ByteBuffer output) {
-        output.putFloat(value);
+        output.putInt(value);
     }
 
     @Override
@@ -53,22 +48,14 @@ public class SPIRVContextDependentFloat extends SPIRVLiteralContextDependentNumb
 
     @Override
     public void print(PrintStream output, SPIRVPrintingOptions options) {
-        if (isHalf) {
-            output.print(Float.toHexString(value));
-        } else {
-            String number;
-            if (value == (int) value) {
-                number = String.format("%d", (int) value);
-            } else {
-                number = String.format("%s", value);
-            }
-            output.print(number);
-        }
+        output.print(value);
     }
 
     @Override
     public boolean equals(Object other) {
-        if (other instanceof SPIRVContextDependentFloat) return this.value == ((SPIRVContextDependentFloat) other).value;
-        else return super.equals(other);
+        if (other instanceof SPIRVContextDependentHalfFloat)
+            return this.value == ((SPIRVContextDependentHalfFloat) other).value;
+        else
+            return super.equals(other);
     }
 }

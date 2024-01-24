@@ -65,6 +65,7 @@ class SPIRVOperandMapper {
         if (type instanceof SPIRVOpTypeFloat) {
             int width = ((SPIRVOpTypeFloat) type)._width.value;
 
+            if (width == 16) return new SPIRVContextDependentHalfFloat(Float.floatToFloat16(Float.parseFloat(number)));
             if (width == 32) return new SPIRVContextDependentFloat(Float.parseFloat(number));
             if (width == 64) return new SPIRVContextDependentDouble(Double.parseDouble(number));
 
