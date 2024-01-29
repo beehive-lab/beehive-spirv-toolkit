@@ -159,4 +159,11 @@ This project is developed at [The University of Manchester](https://www.manchest
 
 ## Acknowledgments
 
-The work was partially funded by the EU Horizon 2020 [Elegant 957286](https://www.elegant-h2020.eu/) project, and Intel Coorporation (https://www.intel.it/content/www/it/it/homepage.html).
+This work is partially funded by [Intel corporation](https://www.intel.com/content/www/us/en/homepage.html).
+In addition, it has been supported by the following EU & UKRI grants (most recent first):
+- EU Horizon Europe & UKRI [AERO 101092850](https://aero-project.eu/).
+- EU Horizon Europe & UKRI [INCODE 101093069](https://incode-project.eu/).
+- EU Horizon Europe & UKRI [ENCRYPT 101070670](https://encrypt-project.eu).
+- EU Horizon Europe & UKRI [TANGO 101070052](https://tango-project.eu).
+- EU Horizon 2020 [ELEGANT 957286](https://www.elegant-h2020.eu/).
+
