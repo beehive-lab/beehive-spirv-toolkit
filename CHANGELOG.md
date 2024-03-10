@@ -2,6 +2,11 @@
 
 This file summarizes the new features and major changes for each *SPIRV-Beehive-Tookit* version.
 
+## SPIRV-Beehive-Toolkit v0.0.4
+08/03/2024
+
+- Add Windows support
+
 ## SPIRV-Beehive-Toolkit v0.0.3
 24/01/2024
 
