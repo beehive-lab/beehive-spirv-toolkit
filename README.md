@@ -61,7 +61,7 @@ java -jar dist/beehive-spirv-toolkit.jar test.spv
 ```
 
 
-## Disassembler/ assembler roundtrip of SPIR-V modules on the command line
+## Disassembler/assembler roundtrip of SPIR-V modules on the command line
 
 How to?
 
