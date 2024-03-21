@@ -5,7 +5,7 @@ This file summarizes the new features and major changes for each *SPIRV-Beehive-
 ## SPIRV-Beehive-Toolkit v0.0.4
 14/03/2024
 
-- Add Windwos installer support
+- Add Windows support in the installer
 
 ## SPIRV-Beehive-Toolkit v0.0.3
 24/01/2024
