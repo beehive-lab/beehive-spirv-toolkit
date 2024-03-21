@@ -91,7 +91,7 @@ spirv-val testSPIRV.spv
 
 ### Testing the disassembler with SPIRV-DIS on Windows
 
-The disassembler and validator for testing (`spirv-dis` and `spirv-val`) are available from [The Khronos Group](https://github.com/KhronosGroup/SPIRV-Tools). Building the tools requires an [LLVM](https://github.com/llvm/llvm-project) build-tree. Another implementation is Intels' LLVM based [_oneAPI DPC++ compiler_](https://github.com/intel/llvm).
+The disassembler and validator for testing (`spirv-dis` and `spirv-val`) are available from [The Khronos Group](https://github.com/KhronosGroup/SPIRV-Tools). Building the tools requires an [LLVM](https://github.com/llvm/llvm-project) build-tree. Another implementation is the Intel LLVM-based [_oneAPI DPC++ compiler_](https://github.com/intel/llvm).
 
 ### Creating SPIR-V modules for testing on Linux
 
