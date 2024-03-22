@@ -6,7 +6,7 @@ This is a prototype written in Java to disassemble and assemble SPIR-V binary mo
 ## Build on Linux
 
 Dependencies:
-- Java JDK 21. It also supports JDK 17, 11 and 8 but this branch will be deprecated soon. We highly recommend JDK 21.
+- Java JDK 21+.
 - Maven >= 3.6.3
 
 Clone the repository:
@@ -19,13 +19,14 @@ mvn clean install
 
 ## Build on Windows
 
-Working configurations:
+Tested setup/configurations:
+
 - Lenovo IdeaPad Gaming 3 15IHU6
+- Dell XPS 8950 
 - Windows 11
 - Maven 3.9.1, JDK 21
 
-Note: Repo builds without changes on Winos as well as on Linos.
-
+Note: Repo builds without changes on Windows, MacOS and Linux.
 
 ## Usage
 
@@ -59,7 +60,6 @@ Alternatively, you can run the disassembler using the provided jar-file:
 ```bash
 java -jar dist/beehive-spirv-toolkit.jar test.spv
 ```
-
 
 ## Disassembler/assembler roundtrip of SPIR-V modules on the command line
 
