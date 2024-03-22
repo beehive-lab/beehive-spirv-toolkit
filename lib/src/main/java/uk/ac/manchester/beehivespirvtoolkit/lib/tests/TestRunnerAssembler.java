@@ -148,7 +148,7 @@ public class TestRunnerAssembler {
         blockScope.add(new SPIRVOpReturn());
         functionScope.add(new SPIRVOpFunctionEnd());
 
-        writeModuleToFile(module,"/tmp/testSPIRV.spv");
+        writeModuleToFile(module,"testSPIRV.spv");
     }
 
     public static void testSPIRVModule() throws InvalidSPIRVModuleException {
@@ -256,7 +256,7 @@ public class TestRunnerAssembler {
         functionScope.add(new SPIRVOpFunctionParameter(opTypeInt, param3));
         functionScope.add(new SPIRVOpFunctionEnd());
 
-        writeModuleToFile(module,"/tmp/testSPIRV.spv");
+        writeModuleToFile(module,"testSPIRV.spv");
     }
 
     public static void main(String[] args) throws InvalidSPIRVModuleException {

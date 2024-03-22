@@ -2,20 +2,30 @@
 
 This is a prototype written in Java to disassemble and assemble SPIR-V binary modules. It provides a Java programming framework to allow client Java applications to assemble binary modules and dissasemble binary modules into text. More information on the format of SPIR-V can be found [here](docs/SPIRV.md). To see an example kernel in SPIR-V go [here](docs/EXAMPLE.md).
 
-## How to Build?
+
+## Build on Linux
 
 Dependencies:
-
-- Java JDK 21. It also supports JDK 17, 11 and 8 but this branch will be deprecated soon. We highly recoomand JDK >= 11. 
-- Maven (>= 3.6.3) 
+- Java JDK 21. It also supports JDK 17, 11 and 8 but this branch will be deprecated soon. We highly recommend JDK 21.
+- Maven >= 3.6.3
 
 Clone the repository:
 
 ```bash
-$ git clone https://github.com/beehive-lab/beehive-spirv-toolkit.git
-$ cd spirv-beehive-toolkit
-$ mvn clean install
+git clone https://github.com/beehive-lab/beehive-spirv-toolkit.git
+cd spirv-beehive-toolkit
+mvn clean install
 ```
+
+## Build on Windows
+
+Working configurations:
+- Lenovo IdeaPad Gaming 3 15IHU6
+- Windows 11
+- Maven 3.9.1, JDK 21
+
+Note: Repo builds without changes on Winos as well as on Linos.
+
 
 ## Usage
 
@@ -37,96 +47,110 @@ beehive-spirv-toolkit [OPTIONS] <filepath>
 To run the disassembler:
 
 ```bash
-$ ./beehive-spirv-toolkit test.spv
+# Linux
+./beehive-spirv-toolkit test.spv
+
+# Windows
+.\beehive-spirv-toolkit.cmd test.spv
 ```
 
-Alternatively, you can run the dissablembler using the provided jar-file:
+Alternatively, you can run the disassembler using the provided jar-file:
 
 ```bash
-$ java -jar dist/beehive-spirv-toolkit.jar test.spv 
+java -jar dist/beehive-spirv-toolkit.jar test.spv
 ```
 
-## Dissasembler and Assembler SPIR-V modules from the command line utility
+
+## Disassembler/assembler roundtrip of SPIR-V modules on the command line
 
 How to?
 
 ```bash
-# SPIR-V Binary -> Text SPIR-V 
-$ java -jar dist/beehive-spirv-toolkit.jar -d test.spv -o test.spirvText
+# SPIR-V binary -> text SPIR-V
+java -jar dist/beehive-spirv-toolkit.jar -d test.spv -o test.spirvText
 
-# Text SPIR-V -> SPIR-V Binary
-$ java -jar dist/beehive-spirv-toolkit.jar -d  --tool asm -o out.spv test.spirvText
+# Text SPIR-V -> SPIR-V binary
+java -jar dist/beehive-spirv-toolkit.jar -d  --tool asm -o out.spv test.spirvText
 
-# Dissasenble again (Binary to Text)
-$ java -jar dist/beehive-spirv-toolkit.jar out.spv 
+# Disassemble again (binary to text)
+java -jar dist/beehive-spirv-toolkit.jar out.spv
 ```
 
+### Testing the disassembler with SPIRV-DIS on Linux
 
-### Testing the dissasembler with SPIRV-DIS 
+```bash
+## Create SPIR-V binary
+java -cp lib/target/beehive-spirv-lib-0.0.3.jar uk.ac.manchester.beehivespirvtoolkit.lib.tests.TestRunnerAssembler
 
-```bash 
-$ java -cp lib/target/beehive-spirv-lib-0.0.3.jar uk.ac.manchester.beehivespirvtoolkit.lib.tests.TestRunnerAssembler
-$ spirv-dis /tmp/testSPIRV.spv
+## Disassemble SPIR-V binary
+spirv-dis testSPIRV.spv
 
-## Validate spir-v
-$ spirv-val /tmp/testSPIRV.spv
+## Validate SPIR-V
+spirv-val testSPIRV.spv
 ```
 
+### Testing the disassembler with SPIRV-DIS on Windows
 
-#### Creating SPIR-V modules for testing
+The disassembler and validator for testing (`spirv-dis` and `spirv-val`) are available from [The Khronos Group](https://github.com/KhronosGroup/SPIRV-Tools). Building the tools requires an [LLVM](https://github.com/llvm/llvm-project) build-tree. Another implementation is the Intel LLVM-based [_oneAPI DPC++ compiler_](https://github.com/intel/llvm).
 
-To try the tool with different kernels either a binary SPIR-V module is needed or one that was hand-written in the assembly language of SPIR-V.
-Since the assembly language is not very human friendly it is recommended that anything worth testing is first written in OpenCL C and then compiled to SPIR-V.
+### Creating SPIR-V modules for testing on Linux
 
-To achieve this a compiled version of what the Khronos Group recommends follows. The original can be found [here](https://www.khronos.org/blog/offline-compilation-of-opencl-kernels-into-spir-v-using-open-source-tooling).
-There are some example kernels provided in the example directory.
+To try the tool with different kernels either a binary SPIR-V module is needed or one that was hand-written in the assembly language of SPIR-V. Since the assembly language is not very human friendly it is recommended that anything worth testing is first written in OpenCL C and then compiled to SPIR-V.
+
+To achieve this a compiled version of what the Khronos Group recommends follows. The original can be found [here](https://www.khronos.org/blog/offline-compilation-of-opencl-kernels-into-spir-v-using-open-source-tooling). There are some example kernels provided in the example directory.
 
 Tools needed:
 
 - clang (version 10.0.0 or higher) (To install: `$ sudo apt-get install clang`)
-- llvm-spirv (See build instructions [here](https://github.com/KhronosGroup/SPIRV-LLVM) )
+- llvm-spirv (See build instructions [here](https://github.com/KhronosGroup/SPIRV-LLVM-Translator))
 
 Go into the vector add example directory:
 
 ```bash
-$ cd examples/vector_add
+cd examples/vector_add
 ```
 
-First, the kernel (.cl file) needs to be compiled to LLVM IR:
-```bash 
-$ clang -cc1 -triple spir vector_add.cl -O0 -finclude-default-header -emit-llvm-bc -o vector_add.bc
-```
-
-Then the LLVM IR can be compiled into SPIR-V:`
+First, the kernel (`.cl` file) needs to be compiled to LLVM IR:
 ```bash
-$ llvm-spirv vector_add.bc -o vector_add.spv
+clang -cc1 -triple spir vector_add.cl -O0 -finclude-default-header -emit-llvm-bc -o vector_add.bc
+```
+
+Then the LLVM IR can be compiled into SPIR-V:
+```bash
+llvm-spirv vector_add.bc -o vector_add.spv
 ```
 
 Now there is at least one SPIR-V module available.
 
 An OpenCL program can then read this module using `clCreateProgramWithIL();`
-To demonstrate with vector_add:
+
+To demonstrate with `vector_add`:
 
 ```bash
-$ make build
+make build
 ```
 
-And can be run with: 
+And can be run with:
 ```bash
-$ make run
+make run
 ```
 OR
 ```bash
-$ ./vector_add.bin ./vector_add.spv
+./vector_add.bin ./vector_add.spv
 ```
 
-**This requires at least one device with a driver that supports OpenCL 2.1 or higher** (Intel Graphics or the experimental Intel CPU driver) and an OpenCL ICD Loader that supports OpenCL 2.1 or higher. 
+**This requires at least one device with a driver that supports OpenCL 2.1 or higher** (Intel Graphics or the experimental Intel CPU driver) and an OpenCL ICD Loader that supports OpenCL 2.1 or higher.
 
 The application tries to run the program on the first device of the last OCL Platform (check `clinfo` to see, which one that is). Your setup might be different and you might have to change that [here](https://github.com/beehive-lab/spirv-beehive-toolkit/blob/665a19e9527f2bf5121ecc23c19e17656bfbf0a2/examples/vector_add_il.c#L72)
 
-In a lot of cases vendors include their own ICD Loader (libOpenCL.so) in their driver package, which means that an outdated ICD Loader might be in use on your system and you won't be able to run the example as `OPENCL_2_1 cannot be found`. 
+In a lot of cases vendors include their own ICD Loader (libOpenCL.so) in their driver package, which means that an outdated ICD Loader might be in use on your system and you won't be able to run the example as `OPENCL_2_1 cannot be found`.
 In this case you might have to install an updated icd-loader package or configure the ld path to load the updated one.
 To see more information on this visit the [ArchWiki page](https://wiki.archlinux.org/index.php/GPGPU)
+
+### Creating SPIR-V modules for testing on Windows
+
+Methods and tool are the same as for Windows. The tool (`llvm-spirv`) is provided by [The Khronos Group](https://github.com/KhronosGroup/SPIRV-LLVM-Translator) and requires [LLVM](https://github.com/llvm/llvm-project) to build.
+
 
 ## Publications
 
@@ -166,4 +190,3 @@ In addition, it has been supported by the following EU & UKRI grants (most recen
 - EU Horizon Europe & UKRI [ENCRYPT 101070670](https://encrypt-project.eu).
 - EU Horizon Europe & UKRI [TANGO 101070052](https://tango-project.eu).
 - EU Horizon 2020 [ELEGANT 957286](https://www.elegant-h2020.eu/).
-

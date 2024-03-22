@@ -19,15 +19,15 @@
         <version>3.0.2</version>
         <configuration>
           <outputDirectory>${project.build.outputDirectory}/resources</outputDirectory>
-      </configuration>
+        </configuration>
       </plugin>
         <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-compiler-plugin</artifactId>
-            <configuration>
-                <source>9</source>
-                <target>9</target>
-            </configuration>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-compiler-plugin</artifactId>
+          <configuration>
+            <source>9</source>
+            <target>9</target>
+          </configuration>
         </plugin>
 
     </plugins>
