@@ -4,12 +4,12 @@
   <parent>
     <artifactId>beehive-spirv-toolkit</artifactId>
     <groupId>beehive-lab</groupId>
-    <version>0.0.3</version>
+    <version>0.0.4</version>
   </parent>
 
   <name>beehive-spirv-generator</name>
   <artifactId>beehive-spirv-generator</artifactId>
-  <version>0.0.3</version>
+  <version>0.0.4</version>
 
   <properties>
     <spirv.gen.majorversion>1</spirv.gen.majorversion>

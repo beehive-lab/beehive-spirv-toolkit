@@ -6,6 +6,7 @@ This file summarizes the new features and major changes for each *SPIRV-Beehive-
 14/03/2024
 
 - Add Windows support in the installer
+- Minium JDK Required: JDK 21
 
 ## SPIRV-Beehive-Toolkit v0.0.3
 24/01/2024

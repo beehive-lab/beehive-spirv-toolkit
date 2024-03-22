@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>beehive-lab</groupId>
     <artifactId>beehive-spirv-toolkit</artifactId>
-    <version>0.0.3</version>
+    <version>0.0.4</version>
     <name>beehive-spirv-toolkit</name>
     <packaging>pom</packaging>
 
