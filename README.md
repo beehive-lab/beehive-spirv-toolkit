@@ -13,7 +13,7 @@ Clone the repository:
 
 ```bash
 git clone https://github.com/beehive-lab/beehive-spirv-toolkit.git
-cd spirv-beehive-toolkit
+cd beehive-spirv-toolkit
 mvn clean install
 ```
 

@@ -2,11 +2,16 @@
 
 This file summarizes the new features and major changes for each *SPIRV-Beehive-Tookit* version.
 
+## SPIRV-Beehive-Toolkit v0.0.5
+31/10/2025
+
+- Add Maven wrapper script
+
 ## SPIRV-Beehive-Toolkit v0.0.4
 14/03/2024
 
 - Add Windows support in the installer
-- Minium JDK Required: JDK 21
+- Minimum JDK Required: JDK 21
 
 ## SPIRV-Beehive-Toolkit v0.0.3
 24/01/2024
